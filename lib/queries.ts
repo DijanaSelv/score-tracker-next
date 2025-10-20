@@ -1,8 +1,14 @@
+"use server";
+
 import pool from "./db.js";
 
 export async function getBoardGames() {
   const { rows } = await pool.query(
-    "SELECT * FROM boardgame ORDER BY boardgameid"
+    `SELECT bg.*, COUNT (s.sessionid) AS session_count, MAX(s.date) AS last_played
+    FROM boardgame bg 
+    LEFT JOIN session s ON bg.boardgameid = s.boardgameid
+    GROUP BY bg.boardgameid
+    ORDER BY boardgameid`
   );
   return rows;
 }
@@ -30,4 +36,15 @@ export async function getSessionDetails(sessionId: number) {
      WHERE sp.sessionid = ${sessionId}`
   );
   return rows;
+}
+
+export async function addBoardGame(name: string) {
+  const slug = name.toLowerCase().replace(/\s+/g, "-");
+  console.log("Generated slug:", slug, name);
+  const { rows } = await pool.query(
+    `INSERT INTO boardgame (name, slug) VALUES 
+    ('${name}', '${slug}')`
+  );
+  console.log("Inserted board game:", rows[0]);
+  //return rows[0];
 }
