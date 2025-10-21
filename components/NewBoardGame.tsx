@@ -39,7 +39,7 @@ const NewBoardGame = () => {
         onClick={() => {
           setNewGamePopupOpen((prev) => !prev);
         }}
-        className="cursor-pointer border  hover:border-teal-700 transition-class  text-sm  px-2 py-1 rounded-md hover:rounded-none"
+        className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class  text-sm  px-2 py-1 rounded-md hover:rounded-none"
       >
         + Add New Game
       </button>
