@@ -26,12 +26,12 @@ export default function BoardGamesList({ boardGames }: { boardGames: any[] }) {
 
   return (
     <section>
-      <div className="flex items-center  mb-8 justify-end divide-x divide-slate-400">
+      <div className="flex items-center  mb-8 justify-end divide-x divide-slate-400 text-sm">
         <label className="px-4">Sort by:</label>
         <select
           onChange={(e) => setSortTerm(e.target.value as any)}
           value={sortTerm}
-          className=" px-4 cursor-pointer transition-class outline-none appearance-none relative"
+          className=" px-4 cursor-pointer transition-class outline-none appearance-none relative "
         >
           <option value="name">Name</option>
           <option value="last_played">Last Played</option>
@@ -40,10 +40,11 @@ export default function BoardGamesList({ boardGames }: { boardGames: any[] }) {
 
         <button
           onClick={() => setsortDescending((prev) => !prev)}
-          className="   px-4 text-sm cursor-pointer  transition-class"
+          className="   px-4 text-xs cursor-pointer  transition-class"
+          aria-label={`Sort ${sortDescending ? "ascending" : "descending"}`}
         >
           <i
-            aria-label={`Sort ${sortDescending ? "ascending" : "descending"}`}
+            aria-hidden
             className={`fa-solid fa-arrow-down transition-class ${
               sortDescending && "rotate-180"
             }`}
@@ -62,7 +63,7 @@ export default function BoardGamesList({ boardGames }: { boardGames: any[] }) {
             <a
               href={`/boardgame/${game.slug}`}
               key={game.boardgameid}
-              className="flex flex-col justify-between border border-slate-400 p-4 hover:border-teal-700 transition-class rounded-lg hover:rounded-none"
+              className="flex flex-col justify-between border border-slate-400 p-4 hover:border-teal-700 transition-class rounded-lg hover:rounded-none hover:shadow-md hover:shadow-teal-600/20"
             >
               <h3 className="font-medium lg:text-xl md:text-lg text-base pb-2">
                 {game.name}

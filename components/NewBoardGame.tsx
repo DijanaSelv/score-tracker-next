@@ -1,12 +1,14 @@
 "use client";
 import { useRef, useState } from "react";
 import { addBoardGame } from "../lib/queries";
+import { useRouter } from "next/navigation";
 
 const NewBoardGame = () => {
   const [newGamePopupOpen, setNewGamePopupOpen] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [addingGame, setAddingGame] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
 
   const closeAndResetForm = () => {
     setNewGamePopupOpen(false);
@@ -23,6 +25,7 @@ const NewBoardGame = () => {
     try {
       await addBoardGame(name);
       closeAndResetForm();
+      router.refresh();
     } catch (error) {
       console.error("Error adding board game:", error);
       if (error.message.includes("duplicate key")) {
