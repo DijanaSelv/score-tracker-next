@@ -13,6 +13,17 @@ export async function getBoardGames() {
   return rows;
 }
 
+export async function getPlayers() {
+  const { rows } = await pool.query(
+    `
+    SELECT * 
+    FROM player
+    ORDER BY name
+    `
+  );
+  return rows;
+}
+
 export async function getBoardGameBySlug(slug: string) {
   const { rows } = await pool.query("SELECT * FROM boardgame WHERE slug = $1", [
     slug,
@@ -47,4 +58,29 @@ export async function addBoardGame(name: string) {
   );
   console.log("Inserted board game:", rows[0]);
   //return rows[0];
+}
+
+export async function addSession(
+  boardgameid: number,
+  date: Date,
+  playersandscores: any[]
+) {
+  const { rows } = await pool.query(
+    `INSERT INTO session (boardgameid, date) VALUES
+    ('${boardgameid}', '${date.toISOString()}')
+    RETURNING sessionid
+    `
+  );
+  const sessionid = rows[0].sessionid;
+
+  await Promise.all(
+    playersandscores.map((sessionplayer) =>
+      pool.query(
+        `
+        INSERT INTO sessionplayer (sessionid, playerid, score) VALUES
+        ('${sessionid}', '${sessionplayer.id}', '${sessionplayer.score}')
+        `
+      )
+    )
+  );
 }

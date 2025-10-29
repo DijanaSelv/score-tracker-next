@@ -1,16 +1,22 @@
 import Image from "next/image";
 import NewBoardGame from "../../components/NewBoardGame";
-import { getBoardGames } from "../../lib/queries";
+import { getBoardGames, getPlayers } from "../../lib/queries";
 import BoardGamesList from "../../components/BoardGamesList";
+import NewSession from "../../components/NewSession";
 
 export default async function Home() {
   const boardGames = await getBoardGames();
+  const players = await getPlayers();
+  console.log(players);
 
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+    <div className="font-sans items-center justify-center min-h-screen p-8 flex">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <BoardGamesList boardGames={boardGames} />
-        <NewBoardGame />
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <NewBoardGame />
+          <NewSession boardGames={boardGames} players={players} />
+        </div>
       </main>
     </div>
   );
