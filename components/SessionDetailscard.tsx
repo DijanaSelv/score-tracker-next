@@ -12,10 +12,12 @@ export async function SessionDetailsCard(session: {
 
   return (
     <div>
-      <h2>Session Details</h2>
-      <div>
+      <div className="max-w-60">
         {sessionDetailsOrdered.map((item: { score: number; name: string }) => (
-          <div key={`${session.sessionid}-${item.name}`} className="flex gap-4">
+          <div
+            key={`${session.sessionid}-${item.name}`}
+            className="grid grid-cols-2 gap-5"
+          >
             <div> {item.name}</div>
             <div> {item.score}</div>
           </div>

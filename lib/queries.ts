@@ -33,7 +33,7 @@ export async function getBoardGameBySlug(slug: string) {
 
 export async function getSessions(boardGameId: number) {
   const { rows } = await pool.query(
-    "SELECT * FROM session where boardgameid = $1",
+    "SELECT * FROM session where boardgameid = $1 ORDER BY date DESC",
     [boardGameId]
   );
   return rows;
@@ -43,8 +43,9 @@ export async function getSessionDetails(sessionId: number) {
   const { rows } = await pool.query(
     `SELECT sp.score, p.name
      FROM SessionPlayer sp 
-     JOIN Player p on sp.playerid = p.playerid 
-     WHERE sp.sessionid = ${sessionId}`
+     JOIN Player p on sp.playerid = p.playerid
+     WHERE sp.sessionid = ${sessionId}
+     ORDER BY sp.score`
   );
   return rows;
 }
