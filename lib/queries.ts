@@ -52,12 +52,11 @@ export async function getSessionDetails(sessionId: number) {
 
 export async function addBoardGame(name: string) {
   const slug = name.toLowerCase().replace(/\s+/g, "-");
-  console.log("Generated slug:", slug, name);
   const { rows } = await pool.query(
     `INSERT INTO boardgame (name, slug) VALUES 
     ('${name}', '${slug}')`
   );
-  console.log("Inserted board game:", rows[0]);
+
   //return rows[0];
 }
 
@@ -66,20 +65,62 @@ export async function addSession(
   date: Date,
   playersandscores: any[]
 ) {
+  const newPlayers = playersandscores.filter(
+    (playerrow) => playerrow.player.isNew
+  );
+  console.log(newPlayers);
+  let addedPlayers = [];
+
+  /* first we add the new players to the database if any */
+  if (newPlayers.length) {
+    const results = await Promise.all(
+      newPlayers.map((newPlayer) =>
+        pool.query(
+          `
+        INSERT INTO player (name) VALUES
+        ('${newPlayer.player.name}')
+        RETURNING *
+        `
+        )
+      )
+    );
+    /* we take the added players because we will need their ids */
+    addedPlayers = results.flatMap((res) => res.rows);
+    console.log(addedPlayers, "addedplayers");
+  }
+
+  /* add the session */
   const { rows } = await pool.query(
     `INSERT INTO session (boardgameid, date) VALUES
     ('${boardgameid}', '${date.toISOString()}')
     RETURNING sessionid
     `
   );
+
+  /* we complete the playerscore with the ids of the newly added players */
   const sessionid = rows[0].sessionid;
+  const allPlayerScoresToBeAdded = playersandscores.map((playerrow) => {
+    if (playerrow.player.isNew) {
+      const addedPlayer = addedPlayers.find(
+        (p) => p.name == playerrow.player.name
+      );
+      return {
+        ...playerrow,
+        player: { id: addedPlayer.playerid, isNew: false },
+      };
+    } else {
+      return playerrow;
+    }
+  });
+
+  /* add the player scores */
 
   await Promise.all(
-    playersandscores.map((sessionplayer) =>
+    allPlayerScoresToBeAdded.map((sessionplayer) =>
       pool.query(
         `
         INSERT INTO sessionplayer (sessionid, playerid, score) VALUES
-        ('${sessionid}', '${sessionplayer.id}', '${sessionplayer.score}')
+        ('${sessionid}', '${sessionplayer.player.id}', '${sessionplayer.score}')
         `
       )
     )

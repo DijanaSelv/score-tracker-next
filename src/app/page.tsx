@@ -7,7 +7,6 @@ import NewSession from "../../components/NewSession";
 export default async function Home() {
   const boardGames = await getBoardGames();
   const players = await getPlayers();
-  console.log(players);
 
   return (
     <div className="font-sans items-center justify-center min-h-screen p-8 flex">
