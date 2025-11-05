@@ -3,6 +3,7 @@ import NewBoardGame from "../../components/NewBoardGame";
 import { getBoardGames, getPlayers } from "../../lib/queries";
 import BoardGamesList from "../../components/BoardGamesList";
 import NewSession from "../../components/NewSession";
+import NewPlayer from "../../components/NewPlayer";
 
 export default async function Home() {
   const boardGames = await getBoardGames();
@@ -15,6 +16,7 @@ export default async function Home() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <NewBoardGame />
           <NewSession boardGames={boardGames} players={players} />
+          <NewPlayer />
         </div>
       </main>
     </div>

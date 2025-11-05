@@ -1,25 +1,25 @@
 "use client";
+
 import { useRef, useState } from "react";
-import { addBoardGame } from "../lib/queries";
+import { addPlayer } from "../lib/queries";
 import { useRouter } from "next/navigation";
 
-const NewBoardGame = () => {
-  const [newGamePopupOpen, setNewGamePopupOpen] = useState<boolean>(false);
+const NewPlayer = () => {
+  const [NewPlayerPopup, setNewPlayerPopup] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [addingGame, setAddingGame] = useState<boolean>(false);
+  const [addingPlayer, setAddingPlayer] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
 
   const closeAndResetForm = () => {
-    setNewGamePopupOpen(false);
+    setNewPlayerPopup(false);
     formRef.current?.reset();
     setError(null);
   };
 
-  const submitBoardGame = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitPlayer = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(e.target);
     const name = formData.get("name") as string;
 
     if (!name) {
@@ -28,32 +28,30 @@ const NewBoardGame = () => {
     }
 
     try {
-      setAddingGame(true);
-      await addBoardGame(name);
+      setAddingPlayer(true);
+      await addPlayer(name);
       closeAndResetForm();
       router.refresh();
     } catch (error) {
-      console.error("Error adding board game:", error);
       if (error.message.includes("duplicate key")) {
-        setError("A board game with this name already exists.");
+        setError("A player with this name already exists.");
       } else {
         setError("An unexpected error occurred. Please try again.");
       }
     }
-    setAddingGame(false);
   };
+
   return (
     <>
       <button
         onClick={() => {
-          setNewGamePopupOpen((prev) => !prev);
+          setNewPlayerPopup((prev) => !prev);
         }}
         className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class  text-sm  px-2 py-1 rounded-md hover:rounded-none"
       >
-        + Add New Game
+        + Add New Player
       </button>
-
-      {newGamePopupOpen && (
+      {NewPlayerPopup && (
         <div
           onClick={closeAndResetForm}
           className={
@@ -68,13 +66,13 @@ const NewBoardGame = () => {
             <form
               ref={formRef}
               className="flex flex-col gap-1 min-w-xs new-game-form"
-              onSubmit={submitBoardGame}
+              onSubmit={submitPlayer}
             >
               <label htmlFor="name">Name</label>
               <input
-                required
                 type="text"
                 placeholder="name"
+                required
                 id="name"
                 name="name"
                 className="border px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
@@ -84,7 +82,7 @@ const NewBoardGame = () => {
                 type="submit"
                 className="mt-2 cursor-pointer border  hover:border-teal-700 transition-class    px-2 py-1.5"
               >
-                {addingGame ? "Adding..." : "+ Add Board Game"}
+                {addingPlayer ? "Adding..." : "+ Add Player"}
               </button>
             </form>
           </div>
@@ -94,4 +92,4 @@ const NewBoardGame = () => {
   );
 };
 
-export default NewBoardGame;
+export default NewPlayer;

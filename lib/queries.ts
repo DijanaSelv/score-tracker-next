@@ -126,3 +126,13 @@ export async function addSession(
     )
   );
 }
+
+/* Add player */
+export async function addPlayer(name: string) {
+  const { rows } = await pool.query(
+    `
+    INSERT INTO player (name) VALUES
+    ('${name}')
+    `
+  );
+}

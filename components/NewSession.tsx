@@ -67,7 +67,7 @@ const NewSession = ({
     setNewSessionPopupOpen(false);
     formRef.current?.reset();
     setPlayerScores([
-      { player: { id: undefined, name: "", isNew: false }, score: undefined },
+      { player: { id: undefined, name: "", isNew: false }, score: 0 },
     ]);
     setError(null);
   };
@@ -81,13 +81,23 @@ const NewSession = ({
 
   const submitSession = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setAddingSession(true);
+
     const formData = new FormData(e.currentTarget);
     const dateValue = formData.get("date");
+    const boardgameid = Number(formData.get("boardgame"));
+
+    if (
+      typeof dateValue !== "string" ||
+      !boardgameid ||
+      (playerScores.length <= 1 && playerScores[0]?.player.id == undefined)
+    ) {
+      setError("You must fill all fields.");
+      return;
+    }
     const date = new Date(dateValue);
-    const boardgameid = formData.get("boardgame") as number;
 
     try {
+      setAddingSession(true);
       await addSession(boardgameid, date, playerScores);
       closeAndResetForm();
       router.refresh();
@@ -262,7 +272,7 @@ const NewSession = ({
                         ...prev,
                         {
                           player: { id: undefined, isNew: false, name: "" },
-                          score: undefined,
+                          score: 0,
                         },
                       ])
                     }
