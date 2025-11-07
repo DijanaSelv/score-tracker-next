@@ -4,6 +4,7 @@ import { getSessionDetails } from "../lib/queries";
 export async function SessionDetailsCard(session: {
   sessionid: number;
   date: string;
+  position: number;
 }) {
   const sessionDetails = await getSessionDetails(session.sessionid);
   const sessionDetailsOrdered = sessionDetails.sort(
@@ -13,15 +14,18 @@ export async function SessionDetailsCard(session: {
   return (
     <div>
       <div className="max-w-60">
-        {sessionDetailsOrdered.map((item: { score: number; name: string }) => (
-          <div
-            key={`${session.sessionid}-${item.name}`}
-            className="grid grid-cols-2 gap-5"
-          >
-            <div> {item.name}</div>
-            <div> {item.score}</div>
-          </div>
-        ))}
+        {sessionDetailsOrdered.map(
+          (item: { score: number; name: string; position: number }) => (
+            <div
+              key={`${session.sessionid}-${item.name}`}
+              className="grid grid-cols-3 gap-5"
+            >
+              <div> {item.name}</div>
+              <div> {item.score}</div>
+              <div> {item.position}</div>
+            </div>
+          )
+        )}
       </div>
     </div>
   );

@@ -2,6 +2,8 @@
 
 import pool from "./db.js";
 
+/* GET STUFF  */
+
 export async function getBoardGames() {
   const { rows } = await pool.query(
     `SELECT bg.*, COUNT (s.sessionid) AS session_count, MAX(s.date) AS last_played
@@ -41,14 +43,63 @@ export async function getSessions(boardGameId: number) {
 
 export async function getSessionDetails(sessionId: number) {
   const { rows } = await pool.query(
-    `SELECT sp.score, p.name
+    `SELECT sp.score, sp.position, p.name
      FROM SessionPlayer sp 
      JOIN Player p on sp.playerid = p.playerid
      WHERE sp.sessionid = ${sessionId}
-     ORDER BY sp.score`
+     ORDER BY sp.position`
   );
   return rows;
 }
+
+export async function getBoardGameHighScore(sessionIds: number[]) {
+  const { rows } = await pool.query(
+    `
+    SELECT sp.score, p.name
+    FROM sessionplayer sp
+    JOIN Player p on sp.playerid = p.playerid
+    WHERE sp.sessionid IN (${sessionIds.join(",")})
+    ORDER BY sp.score DESC
+    LIMIT 1 
+    `
+  );
+  return rows[0] || null;
+}
+
+export async function getMostFrequentPlayers(sessionIds: number[]) {
+  const { rows } = await pool.query(
+    `
+    SELECT p.name, COUNT (*) as games_played
+    FROM sessionplayer sp
+    JOIN Player p on sp.playerid = p.playerid
+    WHERE sp.sessionid in (${sessionIds.join(",")})
+    GROUP BY p.name
+    ORDER BY games_played DESC
+    LIMIT 1 
+    `
+  );
+
+  return rows[0] || null;
+}
+
+export async function getMostTimesWon(sessionIds: number[]) {
+  const { rows } = await pool.query(
+    `
+    SELECT p.name, COUNT (*) as games_won
+    FROM sessionplayer sp
+    JOIN player p on sp.playerid = p.playerid
+    WHERE sp.sessionid in (${sessionIds.join(",")}) AND sp.position = 1
+    GROUP BY p.name
+    ORDER BY games_won DESC
+    LIMIT 1
+    `
+  );
+
+  return rows[0] || null;
+}
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ADD STUFF */
+
+/* BOARD GAME */
 
 export async function addBoardGame(name: string) {
   const slug = name.toLowerCase().replace(/\s+/g, "-");
@@ -60,6 +111,7 @@ export async function addBoardGame(name: string) {
   //return rows[0];
 }
 
+/* SESSION */
 export async function addSession(
   boardgameid: number,
   date: Date,
@@ -68,7 +120,7 @@ export async function addSession(
   const newPlayers = playersandscores.filter(
     (playerrow) => playerrow.player.isNew
   );
-  console.log(newPlayers);
+
   let addedPlayers = [];
 
   /* first we add the new players to the database if any */
@@ -86,7 +138,6 @@ export async function addSession(
     );
     /* we take the added players because we will need their ids */
     addedPlayers = results.flatMap((res) => res.rows);
-    console.log(addedPlayers, "addedplayers");
   }
 
   /* add the session */
@@ -99,7 +150,7 @@ export async function addSession(
 
   /* we complete the playerscore with the ids of the newly added players */
   const sessionid = rows[0].sessionid;
-  const allPlayerScoresToBeAdded = playersandscores.map((playerrow) => {
+  const allPlayerScores = playersandscores.map((playerrow) => {
     if (playerrow.player.isNew) {
       const addedPlayer = addedPlayers.find(
         (p) => p.name == playerrow.player.name
@@ -113,21 +164,29 @@ export async function addSession(
     }
   });
 
+  const sortedPLlayerScoresWithPositions = allPlayerScores
+    .sort((a, b) => b.score - a.score)
+    .map((playerScore, i) => ({
+      id: playerScore.player.id,
+      score: playerScore.score,
+      position: i + 1,
+    }));
+
   /* add the player scores */
 
   await Promise.all(
-    allPlayerScoresToBeAdded.map((sessionplayer) =>
+    sortedPLlayerScoresWithPositions.map((sessionplayer) =>
       pool.query(
         `
-        INSERT INTO sessionplayer (sessionid, playerid, score) VALUES
-        ('${sessionid}', '${sessionplayer.player.id}', '${sessionplayer.score}')
+        INSERT INTO sessionplayer (sessionid, playerid, score, position) VALUES
+        ('${sessionid}', '${sessionplayer.id}', '${sessionplayer.score}', ${sessionplayer.position})
         `
       )
     )
   );
 }
 
-/* Add player */
+/* PLAYER */
 export async function addPlayer(name: string) {
   const { rows } = await pool.query(
     `
