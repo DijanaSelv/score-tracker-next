@@ -22,6 +22,7 @@ const boardGame = async ({ params }: Props) => {
   const { slug } = await params;
 
   const boardGame = await getBoardGameBySlug(slug);
+
   const sessions = await getSessions(boardGame.boardgameid);
 
   const sessionIds = sessions.map((session: Session) => session.sessionid);
@@ -57,10 +58,12 @@ const boardGame = async ({ params }: Props) => {
       ) : (
         <div>
           <p className="mb-4">Treba da se deshni edna partija.</p>
-          <NewSession />
         </div>
       )}
 
+      <div className="mt-4">
+        <NewSession defaultBoardGameSelected={+boardGame.boardgameid} />
+      </div>
       <div className="mt-12">
         <h2 className="font-semibold lg:text-lg">Statistics:</h2>
         <div className="mt-4 flex flex-row *:pr-6 gap-6 divide-x divide-foreground/10 ">

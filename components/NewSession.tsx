@@ -4,7 +4,11 @@ import { addSession } from "../lib/queries";
 import { useRouter } from "next/navigation";
 import { useGlobalData } from "@/app/context/GlobalDataContext";
 
-const NewSession = () => {
+const NewSession = ({
+  defaultBoardGameSelected,
+}: {
+  defaultBoardGameSelected?: number | undefined;
+}) => {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const { players, boardGames } = useGlobalData();
@@ -12,6 +16,7 @@ const NewSession = () => {
   const [newSessionPopupOpen, setNewSessionPopupOpen] =
     useState<boolean>(false);
 
+  console.log(defaultBoardGameSelected, "defaultBoardGameSelected");
   /* UX states */
   const [error, setError] = useState<string | null>(null);
   const [addingSession, setAddingSession] = useState<boolean>(false);
@@ -108,8 +113,6 @@ const NewSession = () => {
     setAddingSession(false);
   };
 
-  console.log(playerScores);
-
   return (
     <>
       <button
@@ -155,7 +158,7 @@ const NewSession = () => {
                   id="boardgame"
                   name="boardgame"
                   className="border px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
-                  defaultValue={undefined}
+                  defaultValue={defaultBoardGameSelected}
                 >
                   <option value={undefined}>Choose...</option>
                   {boardGames.map((game) => (
