@@ -1,12 +1,12 @@
-import NewSession from "../../../../components/NewSession";
-import { SessionDetailsCard } from "../../../../components/SessionDetailscard";
+import NewSession from "@/../components/NewSession";
+import { SessionDetailsCard } from "@/../components/SessionDetailscard";
 import {
   getBoardGameBySlug,
   getSessions,
   getBoardGameHighScore,
   getMostFrequentPlayers,
   getMostTimesWon,
-} from "../../../../lib/queries";
+} from "@/../lib/queries";
 
 interface Props {
   params: { slug: string };
