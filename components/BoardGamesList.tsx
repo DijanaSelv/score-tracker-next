@@ -1,10 +1,13 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import { useGlobalData } from "@/app/context/GlobalDataContext";
 
-export default function BoardGamesList({ boardGames }: { boardGames: any[] }) {
+export default function BoardGamesList() {
   const [sortTerm, setSortTerm] = useState<
     "name" | "last_played" | "session_count"
   >("name");
+
+  const { boardGames } = useGlobalData();
 
   const [sortDescending, setsortDescending] = useState<boolean>(true);
 

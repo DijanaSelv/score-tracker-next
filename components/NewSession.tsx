@@ -2,16 +2,12 @@
 import { useRef, useState } from "react";
 import { addSession } from "../lib/queries";
 import { useRouter } from "next/navigation";
+import { useGlobalData } from "@/app/context/GlobalDataContext";
 
-const NewSession = ({
-  boardGames,
-  players,
-}: {
-  boardGames: any[];
-  players: any[];
-}) => {
+const NewSession = () => {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
+  const { players, boardGames } = useGlobalData();
 
   const [newSessionPopupOpen, setNewSessionPopupOpen] =
     useState<boolean>(false);

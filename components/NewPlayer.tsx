@@ -17,9 +17,9 @@ const NewPlayer = () => {
     setError(null);
   };
 
-  const submitPlayer = async (e) => {
+  const submitPlayer = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
 
     if (!name) {

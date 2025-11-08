@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { getBoardGames, getPlayers } from "@/../lib/queries";
+
+import GlobalDataProvider from "@/app/providers/GlobalDataProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,17 +21,24 @@ export const metadata: Metadata = {
     "Track scores and keep statistics for your favorite board games with ease.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [boardGames, players] = await Promise.all([
+    getBoardGames(),
+    getPlayers(),
+  ]);
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <GlobalDataProvider boardGames={boardGames} players={players}>
+          {children}
+        </GlobalDataProvider>
 
         {/* Font awesome */}
         <script

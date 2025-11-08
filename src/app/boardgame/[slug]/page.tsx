@@ -6,8 +6,6 @@ import {
   getBoardGameHighScore,
   getMostFrequentPlayers,
   getMostTimesWon,
-  getBoardGames,
-  getPlayers,
 } from "../../../../lib/queries";
 
 interface Props {
@@ -23,8 +21,6 @@ const boardGame = async ({ params }: Props) => {
   // await props and params so we don't access properties on a proxied object
   const { slug } = await params;
 
-  const boardGames = await getBoardGames();
-  const players = await getPlayers();
   const boardGame = await getBoardGameBySlug(slug);
   const sessions = await getSessions(boardGame.boardgameid);
 
@@ -61,7 +57,7 @@ const boardGame = async ({ params }: Props) => {
       ) : (
         <div>
           <p className="mb-4">Treba da se deshni edna partija.</p>
-          <NewSession boardGames={boardGames} players={players} />
+          <NewSession />
         </div>
       )}
 
