@@ -39,12 +39,13 @@ const NewPlayer = () => {
         setError("An unexpected error occurred. Please try again.");
       }
     }
+    setAddingPlayer(false);
   };
 
   return (
     <>
       <button
-        onClick={() => {
+        onMouseDown={() => {
           setNewPlayerPopup((prev) => !prev);
         }}
         className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class  text-sm  px-2 py-1 rounded-md hover:rounded-none"
@@ -53,14 +54,14 @@ const NewPlayer = () => {
       </button>
       {NewPlayerPopup && (
         <div
-          onClick={closeAndResetForm}
+          onMouseDown={closeAndResetForm}
           className={
             "fixed inset-0 bg-foreground/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center"
           }
         >
           <div
             className="mx-auto my-auto bg-background p-4 modal-content"
-            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
           >
             <h2 className="text-lg font-semibold mb-4">Add New Board Game</h2>
             <form

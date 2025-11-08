@@ -33,6 +33,21 @@ export async function getBoardGameBySlug(slug: string) {
   return rows[0];
 }
 
+export async function getPlayerDataBySlug(slug: string) {
+  const { rows } = await pool.query(
+    `
+    SELECT p.name as playername, bg.slug as boardgameslug , sp.position, s.sessionid, s.date, sp.score, bg.name as boardgamename
+    FROM player p
+    JOIN sessionplayer sp on sp.playerid = p.playerid
+    JOIN session s on s.sessionid = sp.sessionid
+    JOIN boardgame bg on bg.boardgameid = s.boardgameid
+    WHERE p.slug = '${slug}'
+    ORDER BY s.date DESC
+    `
+  );
+  return rows;
+}
+
 export async function getSessions(boardGameId: number) {
   const { rows } = await pool.query(
     "SELECT * FROM session where boardgameid = $1 ORDER BY date DESC",
@@ -43,7 +58,7 @@ export async function getSessions(boardGameId: number) {
 
 export async function getSessionDetails(sessionId: number) {
   const { rows } = await pool.query(
-    `SELECT sp.score, sp.position, p.name
+    `SELECT sp.score, sp.position, p.name, p.slug
      FROM SessionPlayer sp 
      JOIN Player p on sp.playerid = p.playerid
      WHERE sp.sessionid = ${sessionId}
@@ -192,6 +207,16 @@ export async function addPlayer(name: string) {
     `
     INSERT INTO player (name) VALUES
     ('${name}')
+    RETURNING *
     `
+  );
+
+  const playerid = Number(rows[0].playerid);
+
+  const slug = `${rows[0].name.toLowerCase().replace(/\s+/g, "-")}-${playerid}`;
+
+  await pool.query(
+    `UPDATE player SET slug = '${slug}' 
+    WHERE playerid = ${playerid}`
   );
 }

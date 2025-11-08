@@ -16,7 +16,6 @@ const NewSession = ({
   const [newSessionPopupOpen, setNewSessionPopupOpen] =
     useState<boolean>(false);
 
-  console.log(defaultBoardGameSelected, "defaultBoardGameSelected");
   /* UX states */
   const [error, setError] = useState<string | null>(null);
   const [addingSession, setAddingSession] = useState<boolean>(false);

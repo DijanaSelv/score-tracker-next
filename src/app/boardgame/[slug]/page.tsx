@@ -1,5 +1,7 @@
 import NewSession from "@/../components/NewSession";
 import { SessionDetailsCard } from "@/../components/SessionDetailscard";
+
+import type { Session, Props } from "@/../lib/types";
 import {
   getBoardGameBySlug,
   getSessions,
@@ -7,15 +9,6 @@ import {
   getMostFrequentPlayers,
   getMostTimesWon,
 } from "@/../lib/queries";
-
-interface Props {
-  params: { slug: string };
-}
-interface Session {
-  sessionid: number;
-  date: string;
-  position: number;
-}
 
 const boardGame = async ({ params }: Props) => {
   // await props and params so we don't access properties on a proxied object
