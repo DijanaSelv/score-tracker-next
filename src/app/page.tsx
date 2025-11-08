@@ -3,6 +3,7 @@ import NewBoardGame from "../../components/NewBoardGame";
 import BoardGamesList from "../../components/BoardGamesList";
 import NewSession from "../../components/NewSession";
 import NewPlayer from "../../components/NewPlayer";
+import ExplorePlayers from "../../components/ExplorePlayers";
 
 export default async function Home() {
   return (
@@ -13,6 +14,7 @@ export default async function Home() {
           <NewBoardGame />
           <NewSession />
           <NewPlayer />
+          <ExplorePlayers />
         </div>
       </main>
     </div>

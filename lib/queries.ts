@@ -38,9 +38,9 @@ export async function getPlayerDataBySlug(slug: string) {
     `
     SELECT p.name as playername, bg.slug as boardgameslug , sp.position, s.sessionid, s.date, sp.score, bg.name as boardgamename
     FROM player p
-    JOIN sessionplayer sp on sp.playerid = p.playerid
-    JOIN session s on s.sessionid = sp.sessionid
-    JOIN boardgame bg on bg.boardgameid = s.boardgameid
+    LEFT JOIN sessionplayer sp on sp.playerid = p.playerid
+    LEFT JOIN session s on s.sessionid = sp.sessionid
+    LEFT JOIN boardgame bg on bg.boardgameid = s.boardgameid
     WHERE p.slug = '${slug}'
     ORDER BY s.date DESC
     `
