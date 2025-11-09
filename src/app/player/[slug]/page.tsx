@@ -7,6 +7,11 @@ const PlayerPage = async ({ params }: Props) => {
   const { slug } = await params;
 
   const player = await getPlayerDataBySlug(slug);
+
+  const playerClient = player.map((item: any) => ({
+    ...item,
+    date: item.date.toLocaleDateString("en-GB"),
+  }));
   console.log(player, "player");
 
   return (
@@ -20,7 +25,7 @@ const PlayerPage = async ({ params }: Props) => {
           </h2>
 
           {player.length > 1 && player[0].date != null ? (
-            <PlayerClient playerData={player} />
+            <PlayerClient playerData={playerClient} />
           ) : (
             <div className="mt-12">
               {" "}

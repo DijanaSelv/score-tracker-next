@@ -1,21 +1,44 @@
 "use client";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 type PlayerRow = {
   boardgamename: string;
   playername: string;
   position: number | null;
   score: number;
-  date: Date;
+  date: string;
   sessionid: number;
   boardgameslug: string;
+};
+
+type FilterConditions = {
+  boardGameNameFilter: string | null;
+  dateFilter: string | null;
+  positionFilter: number | null;
+};
+
+type headerItem = {
+  text: string;
+  filterValues?: any[];
+  filterKey?: keyof FilterConditions;
 };
 
 const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
   const [sortCondition, setSortCondition] = useState<string>("boardgamename");
   const [sortDescending, setSortDescending] = useState<boolean>(true);
+  const [filterConditions, setFilterConditions] = useState<FilterConditions>({
+    boardGameNameFilter: null,
+    dateFilter: null,
+    positionFilter: null,
+  });
 
-  const sortedPlayerData = playerData.sort((a, b) => {
+  const uniqueBoardGamesNames = new Set(
+    playerData.map((item) => item.boardgamename)
+  );
+  const uniquePositions = new Set(playerData.map((item) => item.position));
+  const uniqueDates = new Set(playerData.map((item) => item.date));
+
+  const sortedPlayerData = [...playerData].sort((a, b) => {
     switch (sortCondition) {
       case "boardgamename":
         return a.boardgamename.localeCompare(b.boardgamename);
@@ -24,15 +47,59 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
       case "score":
         return b.score - a.score;
       case "date":
-        return b.date.getTime() - a.date.getTime();
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
       default:
         return 0;
     }
   });
 
-  const finalSortedData = sortDescending
+  const orderedData = sortDescending
     ? sortedPlayerData
-    : sortedPlayerData.reverse();
+    : [...sortedPlayerData].reverse();
+
+  const filterData = () => {
+    let filterData = orderedData;
+    if (filterConditions.boardGameNameFilter) {
+      filterData = filterData.filter(
+        (row) => row.boardgamename == filterConditions.boardGameNameFilter
+      );
+    }
+    if (filterConditions.dateFilter) {
+      filterData = filterData.filter(
+        (row) => row.date == filterConditions.dateFilter
+      );
+    }
+    if (filterConditions.positionFilter) {
+      filterData = filterData.filter(
+        (row) => row.position == filterConditions.positionFilter
+      );
+    }
+
+    return filterData;
+  };
+
+  const finalDataForDisplay = filterData();
+
+  const tableHeaders: headerItem[] = [
+    {
+      text: "date",
+      filterValues: Array.from(uniqueDates),
+      filterKey: "dateFilter",
+    },
+    {
+      text: "board game",
+      filterValues: Array.from(uniqueBoardGamesNames),
+      filterKey: "boardGameNameFilter",
+    },
+    {
+      text: "score",
+    },
+    {
+      text: "position",
+      filterValues: Array.from(uniquePositions),
+      filterKey: "positionFilter",
+    },
+  ];
 
   return (
     <section>
@@ -52,7 +119,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
         </div>
         <button
           onClick={() => setSortDescending((prev) => !prev)}
-          className="cursor-pointer"
+          className="cursor-pointer "
         >
           <i
             className={`fa-solid fa-arrow-down transition-class ${
@@ -66,18 +133,62 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
 
       <div className="mt-12 ">
         <div className="grid grid-cols-5 bg-foreground/5  py-1.5 font-medium px-2">
-          <div>date</div>
-          <div>board game</div>
-          <div>score</div>
-          <div>position</div>
+          {/* HEADERS THAT ALSO HAVE FILTERS */}
+          {tableHeaders.map((header, i) => (
+            <div className="flex items-center gap-2" key={`header-${i}`}>
+              <h3>{header.text}</h3>
+
+              {header.filterValues && (
+                <>
+                  <button className="cursor-pointer size-4 flex items-center justify-center group transition-class relative gap-0.5">
+                    <i className="fa-solid fa-filter text-xs group-hover:text-teal-700 transition-class"></i>
+
+                    <div className=" opacity-0 -translate-y-1 pointer-event-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-fit h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-0.5 transition-class  ">
+                      {header.filterValues.map((value, i) => (
+                        <div
+                          key={`${header.filterKey}-filter-button-${i}`}
+                          onClick={() =>
+                            setFilterConditions((prev) => ({
+                              ...prev,
+                              [header.filterKey!]: value,
+                            }))
+                          }
+                          className="hover:text-teal-700 transition-class cursor-pointer"
+                        >
+                          {value}
+                        </div>
+                      ))}
+                    </div>
+                  </button>
+                  {filterConditions[header.filterKey!] && (
+                    <button
+                      className=" class flex items-center gap-0.5 text-[10px] cursor-pointer hover:text-red-500 transition-class"
+                      key={`header-clear-filter-button-${i}`}
+                      onClick={() =>
+                        setFilterConditions((prev) => ({
+                          ...prev,
+                          [header.filterKey!]: null,
+                        }))
+                      }
+                    >
+                      <span>{filterConditions[header.filterKey!]}</span>{" "}
+                      <i className="fa-solid fa-xmark text-[9px]"></i>
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
+
           <div></div>
         </div>
-        {finalSortedData.map((row: PlayerRow, i: number) => (
+        {/* THE ROWS */}
+        {finalDataForDisplay.map((row: PlayerRow, i: number) => (
           <div
-            className="grid grid-cols-5 w-full py-1 border-y border-collapse hover:border-teal-700/50 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/5"
+            className="grid grid-cols-5 w-full py-1 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3"
             key={`playerrow-${i}`}
           >
-            <div>{row.date.toLocaleDateString("en-GB")}</div>
+            <div>{row.date}</div>
             <a className="block" href={`/boardgame/${row.boardgameslug}`}>
               {row.boardgamename}
             </a>

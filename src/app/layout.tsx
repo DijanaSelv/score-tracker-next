@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Trackerooni | Board Game Score Tracker",
+  title: "Dash | Board Game Score Tracker",
   description:
     "Track scores and keep statistics for your favorite board games with ease.",
 };
