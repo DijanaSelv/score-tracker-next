@@ -20,6 +20,7 @@ const boardGame = async ({ params }: Props) => {
 
   const sessionIds = sessions.map((session: Session) => session.sessionid);
 
+  /* here we get statistics from the backend, compared to the player page where we calculate them in the frontend */
   const highScore =
     sessionIds.length > 0 ? await getBoardGameHighScore(sessionIds) : null;
   const mostFrequentPlayers =

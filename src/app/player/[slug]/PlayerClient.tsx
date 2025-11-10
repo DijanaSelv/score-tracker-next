@@ -101,6 +101,38 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     },
   ];
 
+  /* here we calculate statistics on the frontent, compared to boardgame page where we get them from the backend */
+  const findMostOcurringValues = (arr: any[]) => {
+    const counts: Record<string, number> = {};
+    for (const i of arr) {
+      counts[i] = (counts[i] || 0) + 1;
+    }
+
+    const maxCount = Math.max(...Object.values(counts));
+
+    return {
+      values: Object.keys(counts)
+        .filter((key) => counts[key] === maxCount)
+        .map((key) => key),
+      ocurrence: maxCount,
+    };
+  };
+
+  const mostOccuringGames = findMostOcurringValues(
+    playerData.map((item) => item.boardgamename)
+  );
+
+  const mostWonGame = (() => {
+    const wonGames = playerData
+      .filter((session) => session.position == 1)
+      .map((session) => session.boardgamename);
+
+    const mostWonGames = findMostOcurringValues(wonGames);
+
+    return mostWonGames;
+  })();
+  console.log(mostWonGame);
+
   return (
     <section>
       <div className="flex flex-row gap-5 divide-x divide-foreground/10 *:pr-5 mt-12 justify-end">
@@ -216,6 +248,31 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
             <button className="block cursor-pointer">session details</button>
           </div>
         ))}
+      </div>
+
+      <div className="flex items-center divide-x divide-foreground/10 *:pr-4 gap-4 mt-12">
+        <div>
+          <h4 className="pb-1 font-semibold">
+            Most played game{mostOccuringGames.values.length > 1 && "s"}:{" "}
+          </h4>
+          <p>{mostOccuringGames.values.join(", ")}</p>
+          <p className="text-sm">
+            (played {mostOccuringGames.ocurrence} time
+            {mostOccuringGames.ocurrence > 1 && "s"})
+          </p>
+        </div>
+        {mostWonGame.values.length > 0 ? (
+          <div>
+            <h4 className="pb-1 font-semibold">What you're best at:</h4>
+            <p>{mostWonGame.values.join(", ")}</p>
+            <p>
+              (won {mostWonGame.ocurrence} time
+              {mostWonGame.ocurrence > 1 && "s"})
+            </p>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     </section>
   );
