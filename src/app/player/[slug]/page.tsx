@@ -10,7 +10,7 @@ const PlayerPage = async ({ params }: Props) => {
 
   const playerClient = player.map((item: any) => ({
     ...item,
-    date: item.date.toLocaleDateString("en-GB"),
+    date: item.date.toISOString(),
   }));
   console.log(player, "player");
 
@@ -20,8 +20,8 @@ const PlayerPage = async ({ params }: Props) => {
         <>
           <h2 className="lg:text-2xl">
             Check out{" "}
-            <span className="font-semibold">{player[0].playername}'s</span>{" "}
-            stuff
+            <span className="font-semibold">{player[0].playername}</span>'s{" "}
+            sessions
           </h2>
 
           {player.length > 1 && player[0].date != null ? (

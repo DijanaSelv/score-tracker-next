@@ -141,7 +141,11 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
               {header.filterValues && (
                 <>
                   <button className="cursor-pointer size-4 flex items-center justify-center group transition-class relative gap-0.5">
-                    <i className="fa-solid fa-filter text-xs group-hover:text-teal-700 transition-class"></i>
+                    <i
+                      className="fa-solid fa-filter text-xs group-hover:text-teal-700 transition-class"
+                      aria-hidden="true"
+                      aria-label="filter icon"
+                    ></i>
 
                     <div className=" opacity-0 -translate-y-1 pointer-event-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-fit h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-0.5 transition-class  ">
                       {header.filterValues.map((value, i) => (
@@ -155,7 +159,10 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
                           }
                           className="hover:text-teal-700 transition-class cursor-pointer"
                         >
-                          {value}
+                          {typeof value === "string" &&
+                          !isNaN(Date.parse(value))
+                            ? new Date(value).toLocaleDateString("en-GB")
+                            : value}
                         </div>
                       ))}
                     </div>
@@ -171,7 +178,19 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
                         }))
                       }
                     >
-                      <span>{filterConditions[header.filterKey!]}</span>{" "}
+                      <span>
+                        {typeof filterConditions[header.filterKey!] ===
+                          "string" &&
+                        !isNaN(
+                          Date.parse(
+                            filterConditions[header.filterKey!] as string
+                          )
+                        )
+                          ? new Date(
+                              filterConditions[header.filterKey!] as string
+                            ).toLocaleDateString("en-GB")
+                          : filterConditions[header.filterKey!]}
+                      </span>{" "}
                       <i className="fa-solid fa-xmark text-[9px]"></i>
                     </button>
                   )}
@@ -188,7 +207,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
             className="grid grid-cols-5 w-full py-1 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3"
             key={`playerrow-${i}`}
           >
-            <div>{row.date}</div>
+            <div>{new Date(row.date).toLocaleDateString("en-GB")}</div>
             <a className="block" href={`/boardgame/${row.boardgameslug}`}>
               {row.boardgamename}
             </a>
