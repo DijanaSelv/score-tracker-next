@@ -1,3 +1,4 @@
+"use server";
 import type { Props } from "@/../lib/types";
 import PlayerClient from "./PlayerClient";
 
@@ -12,7 +13,8 @@ const PlayerPage = async ({ params }: Props) => {
     ...item,
     date: item.date.toISOString(),
   }));
-  // console.log(player, "player");
+
+  console.log(player, "player");
 
   return (
     <div className="container mx-auto px-4 lg:px-6 flex flex-col justify-center pt-16">

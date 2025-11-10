@@ -21,3 +21,10 @@ export type Session = {
 export type Props = {
   params: { slug: string };
 };
+
+export type SessionRow = {
+  id: number;
+  date: string;
+  notes?: string;
+  players: { name: string; score: number }[];
+};

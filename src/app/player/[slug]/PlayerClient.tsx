@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import type { SessionRow } from "@/../lib/types";
+import { SessionDetailsCard } from "../../../../components/SessionDetailscard";
 
 type PlayerRow = {
   boardgamename: string;
@@ -31,6 +33,12 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     dateFilter: null,
     positionFilter: null,
   });
+  const [sessionData, setSessionData] = useState<{
+    boardgamename: string | null;
+    boardgameslug: string | null;
+    sessions: any[] | null;
+    date: string | null;
+  } | null>(null);
 
   const uniqueBoardGamesNames = new Set(
     playerData.map((item) => item.boardgamename)
@@ -131,10 +139,56 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
 
     return mostWonGames;
   })();
-  console.log(mostWonGame);
+
+  /* See more button to open the session modal */
+  const onClickSession = async (
+    sessionid: number,
+    date: string,
+    boardgamename: string,
+    boardgameslug: string
+  ) => {
+    const res = await fetch(`../api/session/${sessionid}`);
+    const sessions = await res.json();
+    setSessionData({ boardgamename, boardgameslug, date, sessions });
+  };
+
+  console.log(sessionData);
 
   return (
     <section>
+      {/* Session Details Popup */}
+      {sessionData && (
+        <div
+          onMouseDown={() => setSessionData(null)}
+          className={
+            "fixed inset-0 bg-foreground/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-999"
+          }
+        >
+          <div
+            className="mx-auto my-auto bg-background p-4 modal-content"
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-lg font-semibold mb-4">
+              {sessionData.boardgamename}
+            </h2>
+            <h2 className="text-lg font-semibold mb-4">{sessionData.date}</h2>
+            <div className="min-w-96">
+              <div className="flex flex-col gap-2">
+                {sessionData.sessions?.map((session, i) => (
+                  <div
+                    className="grid grid-cols-3 gap-4"
+                    key={`sessionplayer-${i}`}
+                  >
+                    <p>{session.name}</p>
+                    <p>{session.score}</p>
+                    <p>{session.position}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex flex-row gap-5 divide-x divide-foreground/10 *:pr-5 mt-12 justify-end">
         <div>
           <label>Sort by:</label>
@@ -245,7 +299,19 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
             </a>
             <div>{row.score}</div>
             <div>{row.position}</div>
-            <button className="block cursor-pointer">session details</button>
+            <button
+              className="block cursor-pointer"
+              onClick={() =>
+                onClickSession(
+                  row.sessionid,
+                  new Date(row.date).toLocaleDateString("en-GB"),
+                  row.boardgamename,
+                  row.boardgameslug
+                )
+              }
+            >
+              see more
+            </button>
           </div>
         ))}
       </div>
