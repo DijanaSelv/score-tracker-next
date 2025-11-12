@@ -11,7 +11,7 @@ const PlayerPage = async ({ params }: Props) => {
 
   const playerClient = player.map((item: any) => ({
     ...item,
-    date: item.date.toISOString(),
+    date: item.date ? item.date.toISOString() : "",
   }));
 
   console.log(player, "player");
