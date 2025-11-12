@@ -15,6 +15,12 @@ export default async function Home() {
           <NewSession />
           <NewPlayer />
           <ExplorePlayers />
+          <a
+            href="/sessions-log/"
+            className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class  text-sm  px-2 py-1 rounded-md hover:rounded-none"
+          >
+            Sessions Log
+          </a>
         </div>
       </main>
     </div>

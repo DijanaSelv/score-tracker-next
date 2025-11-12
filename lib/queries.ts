@@ -26,6 +26,20 @@ export async function getPlayers() {
   return rows;
 }
 
+export async function getAllSessions() {
+  const { rows } = await pool.query(
+    `
+    SELECT s.date, bg.name as boardgamename, bg.slug as boardgameslug, p.name as winner, p.slug as winnerslug, s.sessionid as sessionid
+    FROM session s
+    JOIN boardgame bg on bg.boardgameid = s.boardgameid
+    JOIN sessionplayer sp on sp.sessionid = s.sessionid
+    JOIN  player p on p.playerid = sp.playerid and sp.position = 1
+    `
+  );
+
+  return rows;
+}
+
 export async function getBoardGameBySlug(slug: string) {
   const { rows } = await pool.query("SELECT * FROM boardgame WHERE slug = $1", [
     slug,

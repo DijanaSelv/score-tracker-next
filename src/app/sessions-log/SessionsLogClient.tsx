@@ -1,20 +1,19 @@
 "use client";
 import { useState } from "react";
 
-type PlayerRow = {
+type SessionRow = {
   boardgamename: string;
-  playername: string;
-  position: number | null;
-  score: number;
+  boardgameslug: string;
   date: string;
   sessionid: number;
-  boardgameslug: string;
+  winner: string;
+  winnerslug: string;
 };
 
 type FilterConditions = {
   boardGameNameFilter: string | null;
   dateFilter: string | null;
-  positionFilter: number | null;
+  winnerFilter: string | null;
 };
 
 type headerItem = {
@@ -23,13 +22,17 @@ type headerItem = {
   filterKey?: keyof FilterConditions;
 };
 
-const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
+const SessionsLogClient = ({
+  sessionsData,
+}: {
+  sessionsData: SessionRow[];
+}) => {
   const [sortCondition, setSortCondition] = useState<string>("boardgamename");
   const [sortDescending, setSortDescending] = useState<boolean>(true);
   const [filterConditions, setFilterConditions] = useState<FilterConditions>({
     boardGameNameFilter: null,
     dateFilter: null,
-    positionFilter: null,
+    winnerFilter: null,
   });
   const [sessionData, setSessionData] = useState<{
     boardgamename: string | null;
@@ -39,19 +42,17 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
   } | null>(null);
 
   const uniqueBoardGamesNames = new Set(
-    playerData.map((item) => item.boardgamename)
+    sessionsData.map((item) => item.boardgamename)
   );
-  const uniquePositions = new Set(playerData.map((item) => item.position));
-  const uniqueDates = new Set(playerData.map((item) => item.date));
+  const uniqueWinners = new Set(sessionsData.map((item) => item.winner));
+  const uniqueDates = new Set(sessionsData.map((item) => item.date));
 
-  const sortedPlayerData = [...playerData].sort((a, b) => {
+  const sortedSessionsData = [...sessionsData].sort((a, b) => {
     switch (sortCondition) {
       case "boardgamename":
         return a.boardgamename.localeCompare(b.boardgamename);
-      case "position":
-        return (a.position ?? -1) - (b.position ?? -1);
-      case "score":
-        return b.score - a.score;
+      case "winner":
+        return a.winner.localeCompare(b.winner);
       case "date":
         return new Date(b.date).getTime() - new Date(a.date).getTime();
       default:
@@ -60,8 +61,8 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
   });
 
   const orderedData = sortDescending
-    ? sortedPlayerData
-    : [...sortedPlayerData].reverse();
+    ? sortedSessionsData
+    : [...sortedSessionsData].reverse();
 
   const filterData = () => {
     let filterData = orderedData;
@@ -75,9 +76,9 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
         (row) => row.date == filterConditions.dateFilter
       );
     }
-    if (filterConditions.positionFilter) {
+    if (filterConditions.winnerFilter) {
       filterData = filterData.filter(
-        (row) => row.position == filterConditions.positionFilter
+        (row) => row.winner == filterConditions.winnerFilter
       );
     }
 
@@ -97,13 +98,11 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
       filterValues: Array.from(uniqueBoardGamesNames),
       filterKey: "boardGameNameFilter",
     },
+
     {
-      text: "score",
-    },
-    {
-      text: "position",
-      filterValues: Array.from(uniquePositions),
-      filterKey: "positionFilter",
+      text: "winner",
+      filterValues: Array.from(uniqueWinners),
+      filterKey: "winnerFilter",
     },
   ];
 
@@ -125,18 +124,12 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
   };
 
   const mostOccuringGames = findMostOcurringValues(
-    playerData.map((item) => item.boardgamename)
+    sessionsData.map((item) => item.boardgamename)
   );
 
-  const mostWonGame = (() => {
-    const wonGames = playerData
-      .filter((session) => session.position == 1)
-      .map((session) => session.boardgamename);
-
-    const mostWonGames = findMostOcurringValues(wonGames);
-
-    return mostWonGames;
-  })();
+  const playerThatWonMost = findMostOcurringValues(
+    sessionsData.map((item) => item.winner)
+  );
 
   /* See more button to open the session modal */
   const onClickSession = async (
@@ -149,8 +142,6 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     const sessions = await res.json();
     setSessionData({ boardgamename, boardgameslug, date, sessions });
   };
-
-  console.log(sessionData);
 
   return (
     <section>
@@ -197,8 +188,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
           >
             <option value="date">date</option>
             <option value="boardgamename">board game</option>
-            <option value="score">score</option>
-            <option value="position">position</option>
+            <option value="winner">winner</option>
           </select>
         </div>
         <button
@@ -286,7 +276,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
           <div></div>
         </div>
         {/* THE ROWS */}
-        {finalDataForDisplay.map((row: PlayerRow, i: number) => (
+        {finalDataForDisplay.map((row: SessionRow, i: number) => (
           <div
             className="grid grid-cols-5 w-full py-1 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3"
             key={`playerrow-${i}`}
@@ -295,8 +285,10 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
             <a className="block" href={`/boardgame/${row.boardgameslug}`}>
               {row.boardgamename}
             </a>
-            <div>{row.score}</div>
-            <div>{row.position}</div>
+            <a className="block" href={`/player/${row.winnerslug}`}>
+              {row.winner}
+            </a>
+
             <button
               className="block cursor-pointer"
               onClick={() =>
@@ -325,13 +317,13 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
             {mostOccuringGames.ocurrence > 1 && "s"})
           </p>
         </div>
-        {mostWonGame.values.length > 0 ? (
+        {playerThatWonMost.values.length > 0 ? (
           <div>
-            <h4 className="pb-1 font-semibold">What you're best at:</h4>
-            <p>{mostWonGame.values.join(", ")}</p>
+            <h4 className="pb-1 font-semibold">G.O.A.T:</h4>
+            <p>{playerThatWonMost.values.join(", ")}</p>
             <p>
-              (won {mostWonGame.ocurrence} time
-              {mostWonGame.ocurrence > 1 && "s"})
+              (won {playerThatWonMost.ocurrence} time
+              {playerThatWonMost.ocurrence > 1 && "s"})
             </p>
           </div>
         ) : (
@@ -342,4 +334,4 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
   );
 };
 
-export default PlayerClient;
+export default SessionsLogClient;
