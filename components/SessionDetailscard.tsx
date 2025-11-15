@@ -29,7 +29,7 @@ export async function SessionDetailsCard(session: Session) {
                 {" "}
                 {item.name}
               </a>
-              <div> {item.score}</div>
+              <div className="odometer"> {item.score}</div>
               <div> {item.position}</div>
             </div>
           )

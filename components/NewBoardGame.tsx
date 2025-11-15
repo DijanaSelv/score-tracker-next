@@ -2,6 +2,8 @@
 import { useRef, useState } from "react";
 import { addBoardGame } from "../lib/queries";
 import { useRouter } from "next/navigation";
+import { createPortal } from "react-dom";
+import PrimaryButton from "./PrimaryButton";
 
 const NewBoardGame = () => {
   const [newGamePopupOpen, setNewGamePopupOpen] = useState<boolean>(false);
@@ -44,52 +46,53 @@ const NewBoardGame = () => {
   };
   return (
     <>
-      <button
-        onClick={() => {
+      <PrimaryButton
+        onClickHandle={() => {
           setNewGamePopupOpen((prev) => !prev);
         }}
-        className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class  text-sm  px-2 py-1 rounded-md hover:rounded-none"
       >
-        + Add New Game
-      </button>
+        + New Game
+      </PrimaryButton>
 
-      {newGamePopupOpen && (
-        <div
-          onClick={closeAndResetForm}
-          className={
-            "fixed inset-0 bg-foreground/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center"
-          }
-        >
+      {newGamePopupOpen &&
+        createPortal(
           <div
-            className="mx-auto my-auto bg-background p-4 modal-content"
-            onClick={(e) => e.stopPropagation()}
+            onClick={closeAndResetForm}
+            className={
+              "fixed inset-0 bg-foreground/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-9999"
+            }
           >
-            <h2 className="text-lg font-semibold mb-4">Add New Board Game</h2>
-            <form
-              ref={formRef}
-              className="flex flex-col gap-1 min-w-xs new-game-form"
-              onSubmit={submitBoardGame}
+            <div
+              className="mx-auto my-auto bg-background p-4 modal-content"
+              onClick={(e) => e.stopPropagation()}
             >
-              <label htmlFor="name">Name</label>
-              <input
-                required
-                type="text"
-                placeholder="name"
-                id="name"
-                name="name"
-                className="border px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
-              />
-              {error && <p className="text-red-500 text-sm">{error}</p>}
-              <button
-                type="submit"
-                className="mt-2 cursor-pointer border  hover:border-teal-700 transition-class    px-2 py-1.5"
+              <h2 className="text-lg font-semibold mb-4">Add New Board Game</h2>
+              <form
+                ref={formRef}
+                className="flex flex-col gap-1 min-w-xs new-game-form"
+                onSubmit={submitBoardGame}
               >
-                {addingGame ? "Adding..." : "+ Add Board Game"}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+                <label htmlFor="name">Name</label>
+                <input
+                  required
+                  type="text"
+                  placeholder="name"
+                  id="name"
+                  name="name"
+                  className="border px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
+                />
+                {error && <p className="text-red-500 text-sm">{error}</p>}
+                <button
+                  type="submit"
+                  className="mt-2 cursor-pointer border  hover:border-teal-700 transition-class    px-2 py-1.5"
+                >
+                  {addingGame ? "Adding..." : "+ Add Board Game"}
+                </button>
+              </form>
+            </div>
+          </div>,
+          document.body
+        )}
     </>
   );
 };

@@ -37,7 +37,7 @@ const boardGame = async ({ params }: Props) => {
           {sessions.map((session: Session) => (
             <div
               key={session.sessionid}
-              className="p-4 border rounded-md flex flex-col gap-2.5"
+              className="p-4 border rounded-sm flex flex-col gap-2.5"
             >
               <p className="font-medium">
                 {" "}

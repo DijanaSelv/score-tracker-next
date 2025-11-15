@@ -12,7 +12,7 @@ const ExplorePlayers = () => {
         onMouseDown={() => {
           setPlayerListPopup((prev) => !prev);
         }}
-        className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class  text-sm  px-2 py-1 rounded-md hover:rounded-none"
+        className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class  text-sm  px-2 py-1 rounded-sm hover:rounded-none"
       >
         Explore Players
       </button>

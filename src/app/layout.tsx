@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Electrolize, Zen_Dots, Sansation } from "next/font/google";
 import "./globals.css";
 import { getBoardGames, getPlayers } from "@/../lib/queries";
+import NavBar from "../../components/NavBar";
 
 import GlobalDataProvider from "@/app/providers/GlobalDataProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const electrolize = Electrolize({
+  variable: "--font-electrolize",
   subsets: ["latin"],
+  weight: "400",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const zenDots = Zen_Dots({
+  variable: "--font-zen-dots",
   subsets: ["latin"],
+  weight: "400",
+});
+const fontSans = Sansation({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -32,19 +40,24 @@ export default async function RootLayout({
   ]);
 
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html
+      lang="en"
+      className={`${fontSans.variable} ${electrolize.variable}  ${zenDots.variable}`}
+    >
+      <body className={`${electrolize.className} antialiased`}>
+        <NavBar />
         <GlobalDataProvider boardGames={boardGames} players={players}>
           {children}
         </GlobalDataProvider>
 
         {/* Font awesome */}
-        <script
-          src="https://kit.fontawesome.com/5ce6ff5a25.js"
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+          integrity="sha512-..."
           crossOrigin="anonymous"
-        ></script>
+          referrerPolicy="no-referrer"
+        />
       </body>
     </html>
   );

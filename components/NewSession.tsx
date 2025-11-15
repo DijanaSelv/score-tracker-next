@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { addSession } from "../lib/queries";
 import { useRouter } from "next/navigation";
 import { useGlobalData } from "@/app/context/GlobalDataContext";
+import PrimaryButton from "./PrimaryButton";
 
 const NewSession = ({
   defaultBoardGameSelected,
@@ -114,14 +115,13 @@ const NewSession = ({
 
   return (
     <>
-      <button
-        onClick={() => {
+      <PrimaryButton
+        onClickHandle={() => {
           setNewSessionPopupOpen((prev) => !prev);
         }}
-        className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class  text-sm  px-2 py-1 rounded-md hover:rounded-none"
       >
-        + Add New Session
-      </button>
+        + New Session
+      </PrimaryButton>
 
       {newSessionPopupOpen && (
         <div

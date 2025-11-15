@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useGlobalData } from "@/app/context/GlobalDataContext";
 
 export default function BoardGamesList() {
@@ -66,7 +66,19 @@ export default function BoardGamesList() {
             <a
               href={`/boardgame/${game.slug}`}
               key={game.boardgameid}
-              className="flex flex-col justify-between border border-slate-400 p-4 hover:border-teal-700 transition-class rounded-lg hover:rounded-none hover:shadow-md hover:shadow-teal-600/20"
+              className="flex flex-col justify-between border border-slate-400 p-4 hover:border-teal-700 rounded-sm hover:rounded-none hover:shadow-md card-neon-hover bg-background "
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                e.currentTarget.style.setProperty("--mx", `${x}px`);
+                e.currentTarget.style.setProperty("--my", `${y}px`);
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.setProperty("--mx", `0px`);
+                e.currentTarget.style.setProperty("--my", `0px`);
+              }}
             >
               <h3 className="font-medium lg:text-xl md:text-lg text-base pb-2">
                 {game.name}
@@ -83,9 +95,8 @@ export default function BoardGamesList() {
                     Sessions: {game.session_count || 0}
                   </p>
                   <p className="font-light">
-                    Last played: {new Date(game.last_played).getDate()}.
-                    {new Date(game.last_played).getMonth() + 1}.
-                    {new Date(game.last_played).getFullYear()}
+                    Last played:{" "}
+                    {new Date(game.last_played).toLocaleDateString("en-GB")}
                   </p>
                 </div>
               )}

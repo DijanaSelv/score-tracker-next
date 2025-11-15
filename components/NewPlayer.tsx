@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { addPlayer } from "../lib/queries";
 import { useRouter } from "next/navigation";
+import PrimaryButton from "./PrimaryButton";
 
 const NewPlayer = () => {
   const [NewPlayerPopup, setNewPlayerPopup] = useState<boolean>(false);
@@ -44,14 +45,13 @@ const NewPlayer = () => {
 
   return (
     <>
-      <button
-        onMouseDown={() => {
+      <PrimaryButton
+        onClickHandle={() => {
           setNewPlayerPopup((prev) => !prev);
         }}
-        className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class  text-sm  px-2 py-1 rounded-md hover:rounded-none"
       >
-        + Add New Player
-      </button>
+        + New Player
+      </PrimaryButton>
       {NewPlayerPopup && (
         <div
           onMouseDown={closeAndResetForm}
