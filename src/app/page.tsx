@@ -2,10 +2,9 @@ import BoardGamesList from "../../components/BoardGamesList";
 
 export default async function Home() {
   return (
-    <main className="pt-22 lg:pt-32 container mx-auto px-4 lg:px-6">
-      <section>
-        <BoardGamesList />
-      </section>
-    </main>
+    <section className="flex flex-col gap-12 lg:gap-22">
+      {/* <h1 className="lg:text-5xl text-4xl font-zen-dots">Board Games</h1> */}
+      <BoardGamesList />
+    </section>
   );
 }

@@ -4,12 +4,15 @@
   --background: #101010;
   --foreground: #ededed;
   --highlight: #0f766e;
-  --accent: #b8e478;
+  --accent: #7bd3c9;
+  --danger: #ff8848;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
   --font-sans: var(--font-sans);
   --font-electrolize: var(--font-electrolize);
   --font-zen-dots: var(--font-zen-dots);
@@ -51,9 +54,9 @@ body {
   }
 
   .card-neon-hover:hover {
-    box-shadow: calc(var(--mx) * 0.4) calc(var(--my) * 0.4) 40px
+    box-shadow: calc(var(--mx) * 0.3) calc(var(--my) * 0.3) 40px
         rgba(15, 118, 110, 0.2),
-      0 0 40px rgba(15, 118, 110, 0.2);
+      0 0 70px rgba(15, 118, 110, 0.2);
   }
 
   .button-neon-hover:hover {

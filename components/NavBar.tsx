@@ -34,17 +34,19 @@ const NavBar = () => {
 
   const links: Link[] = [
     { text: "Board Games", href: "/", isDropdown: false },
-    { text: "Players", href: "/players/", isDropdown: false },
-    { text: "Sessions Log", href: "/sessions-log/", isDropdown: false },
-    { text: "Archives", href: "/archives/", isDropdown: false },
+    { text: "Players", href: "/players", isDropdown: false },
+    { text: "Sessions Log", href: "/sessions-log", isDropdown: false },
+    { text: "Archives", href: "/archives", isDropdown: false },
   ];
 
   const isCurrentPath = useCallback(
     (href: string): boolean => {
-      return pathname === href || (href !== "/" && pathname.startsWith(href));
+      return pathname === href || (href !== "/" && pathname.includes(href));
     },
     [pathname]
   );
+
+  console.log(pathname);
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -133,7 +135,9 @@ const NavBar = () => {
                   <a
                     href={link.href}
                     className={`flex items-center cursor-pointer transition-class group text-base p-4 hover:opacity-100 button-neon-hover hover:bg-white hover:text-black font-electrolize tracking-wide font-semibold  ${
-                      isCurrentPath(link.href) ? "opacity-100  " : ""
+                      isCurrentPath(link.href)
+                        ? "bg-white text-black relative z-10 "
+                        : ""
                     } `}
                   >
                     <span>{link.text}</span>
