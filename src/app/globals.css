@@ -59,6 +59,11 @@ body {
       0 0 70px rgba(15, 118, 110, 0.2);
   }
 
+  .card-static-hover:hover {
+    box-shadow: 0 0 40px rgba(15, 118, 110, 0.2),
+      0 0 70px rgba(15, 118, 110, 0.2);
+  }
+
   .button-neon-hover:hover {
     box-shadow: 0 0 10px 0 #0f766e inset, 0 0 20px 2px #0f766e;
   }

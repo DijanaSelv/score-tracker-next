@@ -29,36 +29,26 @@ const boardGame = async ({ params }: Props) => {
     sessionIds.length > 0 ? await getMostTimesWon(sessionIds) : null;
 
   return (
-    <div className="container mx-auto px-4 lg:px-6 flex flex-col justify-center pt-16 ">
-      <h1 className="pb-8 font-semibold lg:text-3xl"> {boardGame.name}</h1>
-      <h2 className="lg:text-xl font-semibold pb-4">Sessions</h2>
-      {sessions.length > 0 ? (
-        <div className="flex flex-col gap-3">
-          {sessions.map((session: Session) => (
-            <div
-              key={session.sessionid}
-              className="p-4 border rounded-sm flex flex-col gap-2.5"
-            >
-              <p className="font-medium">
-                {" "}
-                {new Date(session.date)
-                  .toLocaleDateString("en-GB")
-                  .replaceAll("/", ".")}
-              </p>
-              <SessionDetailsCard {...session} />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div>
-          <p className="mb-4">Treba da se deshni edna partija.</p>
-        </div>
-      )}
+    <div className="flex flex-col gap-12 lg:gap-22">
+      <div>
+        <h1 className="pb-8 font-semibold lg:text-4xl md:text-3xl text-2xl">
+          {boardGame.name}
+        </h1>
 
-      <div className="mt-4">
-        <NewSession defaultBoardGameSelected={+boardGame.boardgameid} />
+        {sessions.length > 0 ? (
+          <div className="grid grid-cols-1 min-[450px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {sessions.map((session: Session, i: number) => (
+              <SessionDetailsCard {...session} key={`session-card-${i}`} />
+            ))}
+          </div>
+        ) : (
+          <div>
+            <p className="">Treba da se deshni nekoja partija.</p>
+          </div>
+        )}
       </div>
-      <div className="mt-12">
+
+      <div className="">
         <h2 className="font-semibold lg:text-lg">Statistics:</h2>
         <div className="mt-4 flex flex-row *:pr-6 gap-6 divide-x divide-foreground/10 ">
           <div>
