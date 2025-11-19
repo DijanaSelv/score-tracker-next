@@ -1,5 +1,8 @@
 "use client";
+import { BarChart } from "@mui/x-charts";
 import { useState } from "react";
+import type {} from "@mui/x-charts/themeAugmentation";
+import ChartsSection from "./ChartsSection";
 
 type SessionRow = {
   boardgamename: string;
@@ -41,6 +44,33 @@ const SessionsLogClient = ({
     date: string | null;
   } | null>(null);
 
+  // Custom styling for the chart using sx or direct SVG overrides
+  const chartStyles = {
+    "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
+      stroke: "#ffffff",
+    },
+    "& .MuiChartsAxis-bottom .MuiChartsAxis-tick": {
+      stroke: "#ffffff",
+    },
+    "& .MuiChartsAxis-bottom text": {
+      fill: "#ffffff",
+      fontSize: 12,
+    },
+    "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+      stroke: "#ffffff",
+    },
+    "& .MuiChartsAxis-left .MuiChartsAxis-tick": {
+      stroke: "#ffffff",
+    },
+    "& .MuiChartsAxis-left text": {
+      fill: "#ffffff",
+      fontSize: 12,
+    },
+    "& line[class*='MuiChartsAxis-grid']": {
+      stroke: "rgba(255,255,255,0.2)",
+      strokeDasharray: "4 2",
+    },
+  };
   const uniqueBoardGamesNames = new Set(
     sessionsData.map((item) => item.boardgamename)
   );
@@ -178,132 +208,145 @@ const SessionsLogClient = ({
           </div>
         </div>
       )}
-      <div className="flex flex-row gap-5 divide-x divide-foreground/10 *:pr-5 mt-12 justify-end">
-        <div>
-          <label>Sort by:</label>
-          <select
-            value={sortCondition}
-            className="cursor-pointer"
-            onChange={(e) => setSortCondition(e.currentTarget.value as string)}
-          >
-            <option value="date">date</option>
-            <option value="boardgamename">board game</option>
-            <option value="winner">winner</option>
-          </select>
-        </div>
-        <button
-          onClick={() => setSortDescending((prev) => !prev)}
-          className="cursor-pointer "
-        >
-          <i
-            className={`fa-solid fa-arrow-down transition-class ${
-              sortDescending ? "rotate-0" : "rotate-180"
-            }`}
-            aria-hidden="true"
-            aria-label="descending/ascending button"
-          ></i>
-        </button>
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+        {/* LEFT SIDE< TABLE */}
+        <div className="lg:col-span-7">
+          <div className="flex flex-row gap-5 divide-x divide-foreground/10 *:pr-5 justify-end">
+            <div>
+              <label>Sort by:</label>
+              <select
+                value={sortCondition}
+                className="cursor-pointer"
+                onChange={(e) =>
+                  setSortCondition(e.currentTarget.value as string)
+                }
+              >
+                <option value="date">date</option>
+                <option value="boardgamename">board game</option>
+                <option value="winner">winner</option>
+              </select>
+            </div>
+            <button
+              onClick={() => setSortDescending((prev) => !prev)}
+              className="cursor-pointer "
+            >
+              <i
+                className={`fa-solid fa-arrow-down transition-class ${
+                  sortDescending ? "rotate-0" : "rotate-180"
+                }`}
+                aria-hidden="true"
+                aria-label="descending/ascending button"
+              ></i>
+            </button>
+          </div>
 
-      <div className="mt-12 ">
-        <div className="grid grid-cols-5 bg-foreground/5  py-1.5 font-medium px-2">
-          {/* HEADERS THAT ALSO HAVE FILTERS */}
-          {tableHeaders.map((header, i) => (
-            <div className="flex items-center gap-2" key={`header-${i}`}>
-              <h3>{header.text}</h3>
+          {/* TABLE */}
+          <div className=" ">
+            <div className="grid grid-cols-5 bg-foreground/5  py-1.5 font-medium px-2">
+              {/* HEADERS THAT ALSO HAVE FILTERS */}
+              {tableHeaders.map((header, i) => (
+                <div className="flex items-center gap-2" key={`header-${i}`}>
+                  <h3>{header.text}</h3>
 
-              {header.filterValues && (
-                <>
-                  <button className="cursor-pointer size-4 flex items-center justify-center group transition-class relative gap-0.5">
-                    <i
-                      className="fa-solid fa-filter text-xs group-hover:text-teal-700 transition-class"
-                      aria-hidden="true"
-                      aria-label="filter icon"
-                    ></i>
+                  {header.filterValues && (
+                    <>
+                      <button className="cursor-pointer size-4 flex items-center justify-center group transition-class relative gap-0.5">
+                        <i
+                          className="fa-solid fa-filter text-xs group-hover:text-teal-700 transition-class"
+                          aria-hidden="true"
+                          aria-label="filter icon"
+                        ></i>
 
-                    <div className=" opacity-0 -translate-y-1 pointer-event-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-fit h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-0.5 transition-class  ">
-                      {header.filterValues.map((value, i) => (
-                        <div
-                          key={`${header.filterKey}-filter-button-${i}`}
+                        <div className=" opacity-0 -translate-y-1 pointer-event-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-fit h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-0.5 transition-class  ">
+                          {header.filterValues.map((value, i) => (
+                            <div
+                              key={`${header.filterKey}-filter-button-${i}`}
+                              onClick={() =>
+                                setFilterConditions((prev) => ({
+                                  ...prev,
+                                  [header.filterKey!]: value,
+                                }))
+                              }
+                              className="hover:text-teal-700 transition-class cursor-pointer"
+                            >
+                              {typeof value === "string" &&
+                              !isNaN(Date.parse(value))
+                                ? new Date(value).toLocaleDateString("en-GB")
+                                : value}
+                            </div>
+                          ))}
+                        </div>
+                      </button>
+                      {filterConditions[header.filterKey!] && (
+                        <button
+                          className=" class flex items-center gap-0.5 text-[10px] cursor-pointer hover:text-red-500 transition-class"
+                          key={`header-clear-filter-button-${i}`}
                           onClick={() =>
                             setFilterConditions((prev) => ({
                               ...prev,
-                              [header.filterKey!]: value,
+                              [header.filterKey!]: null,
                             }))
                           }
-                          className="hover:text-teal-700 transition-class cursor-pointer"
                         >
-                          {typeof value === "string" &&
-                          !isNaN(Date.parse(value))
-                            ? new Date(value).toLocaleDateString("en-GB")
-                            : value}
-                        </div>
-                      ))}
-                    </div>
-                  </button>
-                  {filterConditions[header.filterKey!] && (
-                    <button
-                      className=" class flex items-center gap-0.5 text-[10px] cursor-pointer hover:text-red-500 transition-class"
-                      key={`header-clear-filter-button-${i}`}
-                      onClick={() =>
-                        setFilterConditions((prev) => ({
-                          ...prev,
-                          [header.filterKey!]: null,
-                        }))
-                      }
-                    >
-                      <span>
-                        {typeof filterConditions[header.filterKey!] ===
-                          "string" &&
-                        !isNaN(
-                          Date.parse(
-                            filterConditions[header.filterKey!] as string
-                          )
-                        )
-                          ? new Date(
-                              filterConditions[header.filterKey!] as string
-                            ).toLocaleDateString("en-GB")
-                          : filterConditions[header.filterKey!]}
-                      </span>{" "}
-                      <i className="fa-solid fa-xmark text-[9px]"></i>
-                    </button>
+                          <span>
+                            {typeof filterConditions[header.filterKey!] ===
+                              "string" &&
+                            !isNaN(
+                              Date.parse(
+                                filterConditions[header.filterKey!] as string
+                              )
+                            )
+                              ? new Date(
+                                  filterConditions[header.filterKey!] as string
+                                ).toLocaleDateString("en-GB")
+                              : filterConditions[header.filterKey!]}
+                          </span>{" "}
+                          <i className="fa-solid fa-xmark text-[9px]"></i>
+                        </button>
+                      )}
+                    </>
                   )}
-                </>
-              )}
+                </div>
+              ))}
+
+              <div></div>
             </div>
-          ))}
+            {/* THE ROWS */}
+            {finalDataForDisplay.map((row: SessionRow, i: number) => (
+              <div
+                className="grid grid-cols-5 w-full py-1 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3"
+                key={`playerrow-${i}`}
+              >
+                <div>{new Date(row.date).toLocaleDateString("en-GB")}</div>
+                <a className="block" href={`/boardgame/${row.boardgameslug}`}>
+                  {row.boardgamename}
+                </a>
+                <a className="block" href={`/player/${row.winnerslug}`}>
+                  {row.winner}
+                </a>
 
-          <div></div>
-        </div>
-        {/* THE ROWS */}
-        {finalDataForDisplay.map((row: SessionRow, i: number) => (
-          <div
-            className="grid grid-cols-5 w-full py-1 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3"
-            key={`playerrow-${i}`}
-          >
-            <div>{new Date(row.date).toLocaleDateString("en-GB")}</div>
-            <a className="block" href={`/boardgame/${row.boardgameslug}`}>
-              {row.boardgamename}
-            </a>
-            <a className="block" href={`/player/${row.winnerslug}`}>
-              {row.winner}
-            </a>
-
-            <button
-              className="block cursor-pointer"
-              onClick={() =>
-                onClickSession(
-                  row.sessionid,
-                  new Date(row.date).toLocaleDateString("en-GB"),
-                  row.boardgamename,
-                  row.boardgameslug
-                )
-              }
-            >
-              see more
-            </button>
+                <button
+                  className="block cursor-pointer"
+                  onClick={() =>
+                    onClickSession(
+                      row.sessionid,
+                      new Date(row.date).toLocaleDateString("en-GB"),
+                      row.boardgamename,
+                      row.boardgameslug
+                    )
+                  }
+                >
+                  see more
+                </button>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        {/* RIGHT SIDE, STATISTICS */}
+        <div className="lg:col-span-5">
+          <ChartsSection sessionsData={sessionsData} />
+        </div>
       </div>
 
       <div className="flex items-center divide-x divide-foreground/10 *:pr-4 gap-4 mt-12">

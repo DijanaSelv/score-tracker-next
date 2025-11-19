@@ -20,13 +20,13 @@
   --color-highlight: var(--highlight);
 }
 
-@layer components {
+/* @layer components {
   @media (min-width: 1536px) {
     .container {
       max-width: 1300px !important;
     }
   }
-}
+} */
 
 /* @media (prefers-color-scheme: dark) {
   :root {
@@ -71,4 +71,13 @@ body {
 
 .logo-shadow:hover {
   text-shadow: 1px 1px 5px #0f766e, 0 0 1.42em #0f766e, 0 0 0.5em #0f766e;
+}
+
+.MuiChartsAxis-line,
+.MuiChartsAxis-tick {
+  @apply stroke-slate-400!;
+}
+
+.MuiChartsAxis-tickLabel {
+  @apply fill-slate-400!;
 }

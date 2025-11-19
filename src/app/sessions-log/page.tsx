@@ -16,23 +16,15 @@ const SessionLogPage = async ({ params }: Props) => {
   console.log(sessionsData, "sessionsData");
 
   return (
-    <div className="container mx-auto px-4 lg:px-6 flex flex-col justify-center pt-16">
-      {allSessions.length ? (
-        <>
-          <h2 className="lg:text-2xl">Sessions Log</h2>
-
-          {allSessions.length > 1 && allSessions[0].date != null ? (
-            <SessionsLogClient sessionsData={sessionsData} />
-          ) : (
-            <div className="mt-12">
-              {" "}
-              <p> You haven't played anything yet.</p>
-              <NewSession />
-            </div>
-          )}
-        </>
+    <div className="flex flex-col">
+      {allSessions.length > 1 && allSessions[0].date != null ? (
+        <SessionsLogClient sessionsData={sessionsData} />
       ) : (
-        <div>No such player exist.</div>
+        <div className="">
+          {" "}
+          <p> You haven't played anything yet.</p>
+          <NewSession />
+        </div>
       )}
     </div>
   );
