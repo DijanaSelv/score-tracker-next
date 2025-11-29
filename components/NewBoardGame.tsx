@@ -4,6 +4,7 @@ import { addBoardGame } from "../lib/queries";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import PrimaryButton from "./PrimaryButton";
+import PopupModalWrapper from "./PopupModalWrapper";
 
 const NewBoardGame = () => {
   const [newGamePopupOpen, setNewGamePopupOpen] = useState<boolean>(false);
@@ -53,46 +54,34 @@ const NewBoardGame = () => {
       >
         + New Game
       </PrimaryButton>
-
-      {newGamePopupOpen &&
-        createPortal(
-          <div
-            onClick={closeAndResetForm}
-            className={
-              "fixed inset-0 bg-foreground/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-9999"
-            }
+      <PopupModalWrapper
+        closeAndResetForm={closeAndResetForm}
+        isOpen={newGamePopupOpen}
+      >
+        <h2 className="text-lg font-semibold mb-4">Add a new Board Game</h2>
+        <form
+          ref={formRef}
+          className="flex flex-col gap-1 min-w-xs new-game-form"
+          onSubmit={submitBoardGame}
+        >
+          <label htmlFor="name">Name</label>
+          <input
+            required
+            type="text"
+            placeholder="name"
+            id="name"
+            name="name"
+            className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
+          />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <button
+            type="submit"
+            className="mt-2 cursor-pointer border border-slate-400  hover:border-teal-700 transition-class    px-2 py-1.5"
           >
-            <div
-              className="mx-auto my-auto bg-background p-4 modal-content"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h2 className="text-lg font-semibold mb-4">Add New Board Game</h2>
-              <form
-                ref={formRef}
-                className="flex flex-col gap-1 min-w-xs new-game-form"
-                onSubmit={submitBoardGame}
-              >
-                <label htmlFor="name">Name</label>
-                <input
-                  required
-                  type="text"
-                  placeholder="name"
-                  id="name"
-                  name="name"
-                  className="border px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
-                />
-                {error && <p className="text-red-500 text-sm">{error}</p>}
-                <button
-                  type="submit"
-                  className="mt-2 cursor-pointer border  hover:border-teal-700 transition-class    px-2 py-1.5"
-                >
-                  {addingGame ? "Adding..." : "+ Add Board Game"}
-                </button>
-              </form>
-            </div>
-          </div>,
-          document.body
-        )}
+            {addingGame ? "Adding..." : "+ Add Board Game"}
+          </button>
+        </form>
+      </PopupModalWrapper>
     </>
   );
 };

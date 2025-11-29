@@ -4,6 +4,8 @@ import { addSession } from "../lib/queries";
 import { useRouter } from "next/navigation";
 import { useGlobalData } from "@/app/context/GlobalDataContext";
 import PrimaryButton from "./PrimaryButton";
+import { createPortal } from "react-dom";
+import PopupModalWrapper from "./PopupModalWrapper";
 
 const NewSession = ({
   defaultBoardGameSelected,
@@ -123,179 +125,166 @@ const NewSession = ({
         + New Session
       </PrimaryButton>
 
-      {newSessionPopupOpen && (
-        <div
-          onMouseDown={closeAndResetForm}
-          className={
-            "fixed inset-0 bg-foreground/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center"
-          }
+      <PopupModalWrapper
+        isOpen={newSessionPopupOpen}
+        closeAndResetForm={closeAndResetForm}
+      >
+        <h2 className="text-lg font-semibold mb-4">Add New Session</h2>
+        <form
+          ref={formRef}
+          className="flex flex-col gap-4 min-w-lg new-game-form "
+          onSubmit={submitSession}
         >
-          <div
-            className="mx-auto my-auto bg-background p-4 modal-content"
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-lg font-semibold mb-4">Add New Session</h2>
-            <form
-              ref={formRef}
-              className="flex flex-col gap-3 min-w-xs new-game-form"
-              onSubmit={submitSession}
+          <div className="flex flex-col gap-1 ">
+            <label htmlFor="date">Date</label>
+            <input
+              type="date"
+              required
+              id="date"
+              name="date"
+              className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
+            />
+          </div>
+          <div className="flex flex-col gap-1 ">
+            <label htmlFor="boardgame">Board Game</label>
+            <select
+              required
+              id="boardgame"
+              name="boardgame"
+              className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class cursor-pointer"
+              defaultValue={defaultBoardGameSelected}
             >
-              <div className="flex flex-col ">
-                <label htmlFor="date">Date</label>
-                <input
-                  type="date"
-                  required
-                  id="date"
-                  name="date"
-                  className="border px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
-                />
-              </div>
-              <div className="flex flex-col ">
-                <label htmlFor="boardgame">Board Game</label>
-                <select
-                  required
-                  id="boardgame"
-                  name="boardgame"
-                  className="border px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
-                  defaultValue={defaultBoardGameSelected}
+              <option value={undefined}>Choose...</option>
+              {boardGames.map((game) => (
+                <option
+                  value={game.boardgameid}
+                  key={`boardgame-${game.boardgameid}`}
                 >
-                  <option value={undefined}>Choose...</option>
-                  {boardGames.map((game) => (
-                    <option
-                      value={game.boardgameid}
-                      key={`boardgame-${game.boardgameid}`}
-                    >
-                      {game.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className=" pb-4 ">
-                <h3>Кој дешкаше?</h3>
-                <div className="flex flex-col gap-2">
-                  {playerScores.map((item, i) => (
-                    <div
-                      key={`playerdiv-${i}`}
-                      className="flex items-center gap-2"
-                    >
-                      {/* EXISTING PLAYERS from the dropdown */}
-                      {!item.player.isNew && (
-                        <>
-                          <select
-                            id={`playerName-${i}`}
-                            className="outline-none border px-2 py-0.5 flex-1"
-                            onChange={(e) => {
-                              const value =
-                                e.target.value === "new-player"
-                                  ? "new-player"
-                                  : e.target.value;
-                              handlePlayerChange(i, value);
-                            }}
-                            name={`player-${i}`}
-                          >
-                            <option value="">Choose...</option>
-                            {players
-                              .filter(
-                                (player) =>
-                                  /* this removes a player from the dropdown if it was already selected here or on other rows */
-                                  player.playerid === item.player.id ||
-                                  !playerScores.some(
-                                    (entry) =>
-                                      entry.player.id == player.playerid
-                                  )
+                  {game.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className=" flex flex-col gap-1 pb-4 ">
+            <h3>Кој дешкаше?</h3>
+            <div className="flex flex-col gap-2">
+              {playerScores.map((item, i) => (
+                <div key={`playerdiv-${i}`} className="flex items-center gap-2">
+                  {/* EXISTING PLAYERS from the dropdown */}
+                  {!item.player.isNew && (
+                    <>
+                      <select
+                        id={`playerName-${i}`}
+                        className="outline-none border border-slate-400 px-1 py-1 flex-1 h-[30px] cursor-pointer"
+                        onChange={(e) => {
+                          const value =
+                            e.target.value === "new-player"
+                              ? "new-player"
+                              : e.target.value;
+                          handlePlayerChange(i, value);
+                        }}
+                        name={`player-${i}`}
+                      >
+                        <option value="">Choose...</option>
+                        {players
+                          .filter(
+                            (player) =>
+                              /* this removes a player from the dropdown if it was already selected here or on other rows */
+                              player.playerid === item.player.id ||
+                              !playerScores.some(
+                                (entry) => entry.player.id == player.playerid
                               )
-                              .map((player) => (
-                                <option
-                                  value={player.playerid}
-                                  key={`player-${player.playerid}`}
-                                >
-                                  {player.name}
-                                </option>
-                              ))}
-                            <option value="new-player" key="new-player">
-                              New Player
+                          )
+                          .map((player) => (
+                            <option
+                              value={player.playerid}
+                              key={`player-${player.playerid}`}
+                            >
+                              {player.name}
                             </option>
-                          </select>
-                        </>
-                      )}
+                          ))}
+                        <option value="new-player" key="new-player">
+                          New Player
+                        </option>
+                      </select>
+                    </>
+                  )}
 
-                      {/* THIS SHOWS INPUT FOR A NEW PLAYER TO BE ADDED */}
-                      {item.player.isNew && (
-                        <>
-                          <input
-                            id={`playerName-${i}`}
-                            type="text"
-                            value={item.player.name}
-                            className="outline-none border px-2 py-0.5 flex-1"
-                            onChange={(e) =>
-                              updatePlayer(i, {
-                                player: {
-                                  ...item.player,
-                                  name: e.target.value,
-                                },
-                              })
-                            }
-                          />
-                        </>
-                      )}
-
+                  {/* THIS SHOWS INPUT FOR A NEW PLAYER TO BE ADDED */}
+                  {item.player.isNew && (
+                    <>
                       <input
-                        type="number"
-                        className="outline-none flex-1 border px-2 py-0.5"
-                        id={`playerscore-${i}`}
-                        placeholder="Add score..."
-                        value={item.score || 0}
+                        id={`playerName-${i}`}
+                        type="text"
+                        value={item.player.name}
+                        className="outline-none border border-slate-400 px-2 py-0.5  flex-1"
                         onChange={(e) =>
                           updatePlayer(i, {
-                            score: Number(e.target.value) || undefined,
+                            player: {
+                              ...item.player,
+                              name: e.target.value,
+                            },
                           })
                         }
                       />
-                      <button
-                        className=" size-7 border flex items-center justify-center cursor-pointer hover:text-amber-700 hover:border-amber-700 transition-class"
-                        type="button"
-                        key={`delete-player-row-${i}`}
-                        onClick={() => removePlayerRow(Number(i))}
-                      >
-                        {" "}
-                        <i className="fa-solid fa-xmark"></i>
-                      </button>
-                    </div>
-                  ))}
+                    </>
+                  )}
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setPlayerScores((prev) => [
-                        ...prev,
-                        {
-                          player: { id: undefined, isNew: false, name: "" },
-                          score: 0,
-                        },
-                      ])
+                  <input
+                    type="number"
+                    className="outline-none  border border-slate-400 px-2 py-0.5 "
+                    id={`playerscore-${i}`}
+                    placeholder="Add score..."
+                    value={item.score || 0}
+                    onChange={(e) =>
+                      updatePlayer(i, {
+                        score: Number(e.target.value) || undefined,
+                      })
                     }
-                    className="border p-1 cursor-pointer rounded-sm border-slate-400 hover:border-teal-700 hover:rounded-none hover:shadow-sm hover:border-teal-700\20 flex items-baseline gap-1 justify-center"
-                    aria-label="add a player to the session"
+                  />
+                  <button
+                    className="  border h-[30px] px-2 flex items-center border-slate-400 justify-center cursor-pointer hover:text-amber-700 hover:border-amber-700 transition-class"
+                    type="button"
+                    key={`delete-player-row-${i}`}
+                    onClick={() => removePlayerRow(Number(i))}
                   >
-                    <span>Add more</span>
-                    <i
-                      className="fa-solid fa-plus text-xs"
-                      aria-hidden="true"
-                    ></i>
+                    {" "}
+                    <i className="fa-solid fa-xmark"></i>
                   </button>
                 </div>
-              </div>
-              {error && <p className="text-red-500 text-sm">{error}</p>}
+              ))}
+
               <button
-                type="submit"
-                className="mt-2 cursor-pointer border  hover:border-teal-700 transition-class    px-2 py-1.5"
+                type="button"
+                onClick={() =>
+                  setPlayerScores((prev) => [
+                    ...prev,
+                    {
+                      player: { id: undefined, isNew: false, name: "" },
+                      score: 0,
+                    },
+                  ])
+                }
+                className="border p-1 cursor-pointer  border-slate-400 hover:border-teal-700 hover:rounded-none hover:shadow-sm hover:border-teal-700\20 flex items-baseline gap-1 justify-center transition-class text-xs bg-white/8 w-fit ml-auto"
+                aria-label="add a player to the session"
               >
-                {addingSession ? "Adding..." : " Save Session"}
+                <span>add player</span>
+                <i
+                  className="fa-solid fa-plus text-[8px]"
+                  aria-hidden="true"
+                ></i>
               </button>
-            </form>
+            </div>
           </div>
-        </div>
-      )}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <button
+            type="submit"
+            className="mt-2 cursor-pointer border border-slate-400 hover:border-teal-700 transition-class px-2 py-1.5"
+          >
+            {addingSession ? "Adding..." : " Save Session"}
+          </button>
+        </form>
+      </PopupModalWrapper>
     </>
   );
 };

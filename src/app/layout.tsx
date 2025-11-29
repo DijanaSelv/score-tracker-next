@@ -44,23 +44,23 @@ export default async function RootLayout({
       lang="en"
       className={`${fontSans.variable} ${electrolize.variable}  ${zenDots.variable}`}
     >
-      <body className={`${electrolize.className} antialiased`}>
-        <NavBar />
-        <main className="py-22 lg:py-32 container mx-auto px-4 lg:px-6">
-          <GlobalDataProvider boardGames={boardGames} players={players}>
+      <GlobalDataProvider boardGames={boardGames} players={players}>
+        <body className={`${electrolize.className} antialiased`}>
+          <NavBar />
+          <main className="py-22 lg:py-32 container mx-auto px-4 lg:px-6">
             {children}
-          </GlobalDataProvider>
-        </main>
+          </main>
 
-        {/* Font awesome */}
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-          integrity="sha512-..."
-          crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
-        />
-      </body>
+          {/* Font awesome */}
+          <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+            integrity="sha512-..."
+            crossOrigin="anonymous"
+            referrerPolicy="no-referrer"
+          />
+        </body>
+      </GlobalDataProvider>
     </html>
   );
 }
