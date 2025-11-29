@@ -23,6 +23,7 @@ type SessionRow = {
 const ChartsSection = ({ sessionsData }: { sessionsData: SessionRow[] }) => {
   /* sorted games by number of sessions */
 
+  /* Most played games */
   const mostPlayedGames = (() => {
     const countedSessions: Record<string, number> = {};
     sessionsData.forEach((session) => {
@@ -33,7 +34,8 @@ const ChartsSection = ({ sessionsData }: { sessionsData: SessionRow[] }) => {
     const bgnames = Object.keys(countedSessions).sort((a, b) =>
       a.localeCompare(b)
     );
-    const counts = bgnames.map((name) => countedSessions[name]);
+    /* return the first 8 most played games */
+    const counts = bgnames.map((name, i) => i < 8 && countedSessions[name]);
 
     return { bgnames, counts };
   })();

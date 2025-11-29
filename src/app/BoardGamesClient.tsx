@@ -15,13 +15,13 @@ export default function BoardGamesList() {
   const sortedGames = useMemo(() => {
     const sorted = [...boardGames].sort((a, b) => {
       if (sortTerm === "name") {
-        return a.name.localeCompare(b.name);
+        return b.name.localeCompare(a.name);
       } else if (sortTerm === "last_played") {
         return (
-          new Date(b.last_played).getTime() - new Date(a.last_played).getTime()
+          new Date(a.last_played).getTime() - new Date(b.last_played).getTime()
         );
       } else {
-        return b.session_count - a.session_count;
+        return a.session_count - b.session_count;
       }
     });
 
