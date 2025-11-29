@@ -3,6 +3,7 @@ import { BarChart } from "@mui/x-charts";
 import { useState } from "react";
 import type {} from "@mui/x-charts/themeAugmentation";
 import ChartsSection from "./ChartsSection";
+import PopupModalWrapper from "../../../components/PopupModalWrapper";
 
 type SessionRow = {
   boardgamename: string;
@@ -40,7 +41,7 @@ const SessionsLogClient = ({
   const [sessionData, setSessionData] = useState<{
     boardgamename: string | null;
     boardgameslug: string | null;
-    sessions: any[] | null;
+    playerSessions: any[] | null;
     date: string | null;
   } | null>(null);
 
@@ -169,44 +170,42 @@ const SessionsLogClient = ({
     boardgameslug: string
   ) => {
     const res = await fetch(`../api/session/${sessionid}`);
-    const sessions = await res.json();
-    setSessionData({ boardgamename, boardgameslug, date, sessions });
+    const playerSessions = await res.json();
+    setSessionData({ boardgamename, boardgameslug, date, playerSessions });
   };
 
   return (
     <section>
       {/* Session Details Popup */}
       {sessionData && (
-        <div
-          onMouseDown={() => setSessionData(null)}
-          className={
-            "fixed inset-0 bg-foreground/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-999"
-          }
+        <PopupModalWrapper
+          isOpen={!!sessionData}
+          closeAndResetForm={() => setSessionData(null)}
         >
-          <div
-            className="mx-auto my-auto bg-background p-4 modal-content"
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-lg font-semibold mb-4">
-              {sessionData.boardgamename}
-            </h2>
-            <h2 className="text-lg font-semibold mb-4">{sessionData.date}</h2>
-            <div className="min-w-96">
-              <div className="flex flex-col gap-2">
-                {sessionData.sessions?.map((session, i) => (
-                  <div
-                    className="grid grid-cols-3 gap-4"
-                    key={`sessionplayer-${i}`}
+          <h2 className="text-lg font-semibold mb-4">
+            {sessionData.boardgamename}
+          </h2>
+          <h2 className="text-lg font-semibold mb-4">{sessionData.date}</h2>
+          <div className="min-w-96">
+            <div className="flex flex-col gap-2">
+              {sessionData.playerSessions?.map((player, i) => (
+                <div
+                  className="grid grid-cols-3 gap-4"
+                  key={`sessionplayer-${i}`}
+                >
+                  <a
+                    href={player.slug}
+                    className="hover:text-danger transition-class"
                   >
-                    <p>{session.name}</p>
-                    <p>{session.score}</p>
-                    <p>{session.position}</p>
-                  </div>
-                ))}
-              </div>
+                    {player.name}
+                  </a>
+                  <p>{player.score}</p>
+                  <p>{player.position}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        </PopupModalWrapper>
       )}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         {/* LEFT SIDE< TABLE */}
@@ -257,7 +256,7 @@ const SessionsLogClient = ({
                           aria-label="filter icon"
                         ></i>
 
-                        <div className=" opacity-0 -translate-y-1 pointer-event-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-fit h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-0.5 transition-class  ">
+                        <div className=" opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-fit h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-0.5 transition-class  ">
                           {header.filterValues.map((value, i) => (
                             <div
                               key={`${header.filterKey}-filter-button-${i}`}
@@ -318,15 +317,21 @@ const SessionsLogClient = ({
                 key={`playerrow-${i}`}
               >
                 <div>{new Date(row.date).toLocaleDateString("en-GB")}</div>
-                <a className="block" href={`/boardgame/${row.boardgameslug}`}>
+                <a
+                  className="block hover:text-danger transition-class"
+                  href={`/boardgame/${row.boardgameslug}`}
+                >
                   {row.boardgamename}
                 </a>
-                <a className="block" href={`/player/${row.winnerslug}`}>
+                <a
+                  className="block hover:text-danger transition-class"
+                  href={`/player/${row.winnerslug}`}
+                >
                   {row.winner}
                 </a>
 
                 <button
-                  className="block cursor-pointer"
+                  className="block cursor-pointer hover:text-danger transition-class"
                   onClick={() =>
                     onClickSession(
                       row.sessionid,

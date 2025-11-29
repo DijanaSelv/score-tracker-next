@@ -29,7 +29,7 @@ export async function SessionDetailsCard(session: Session) {
             >
               <a
                 href={`/player/${item.slug}`}
-                className="transition-class hover:text-red-500"
+                className="transition-class hover:text-danger"
               >
                 {" "}
                 {item.name}

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import PopupModalWrapper from "../../../../components/PopupModalWrapper";
 
 type PlayerRow = {
   boardgamename: string;
@@ -34,7 +35,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
   const [sessionData, setSessionData] = useState<{
     boardgamename: string | null;
     boardgameslug: string | null;
-    sessions: any[] | null;
+    playerSessions: any[] | null;
     date: string | null;
   } | null>(null);
 
@@ -146,8 +147,8 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     boardgameslug: string
   ) => {
     const res = await fetch(`../api/session/${sessionid}`);
-    const sessions = await res.json();
-    setSessionData({ boardgamename, boardgameslug, date, sessions });
+    const playerSessions = await res.json();
+    setSessionData({ boardgamename, boardgameslug, date, playerSessions });
   };
 
   console.log(sessionData);
@@ -156,36 +157,34 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     <section>
       {/* Session Details Popup */}
       {sessionData && (
-        <div
-          onMouseDown={() => setSessionData(null)}
-          className={
-            "fixed inset-0 bg-foreground/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-999"
-          }
+        <PopupModalWrapper
+          isOpen={!!sessionData}
+          closeAndResetForm={() => setSessionData(null)}
         >
-          <div
-            className="mx-auto my-auto bg-background p-4 modal-content"
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-lg font-semibold mb-4">
-              {sessionData.boardgamename}
-            </h2>
-            <h2 className="text-lg font-semibold mb-4">{sessionData.date}</h2>
-            <div className="min-w-96">
-              <div className="flex flex-col gap-2">
-                {sessionData.sessions?.map((session, i) => (
-                  <div
-                    className="grid grid-cols-3 gap-4"
-                    key={`sessionplayer-${i}`}
+          <h2 className="text-lg font-semibold mb-4">
+            {sessionData.boardgamename}
+          </h2>
+          <h2 className="text-lg font-semibold mb-4">{sessionData.date}</h2>
+          <div className="min-w-96">
+            <div className="flex flex-col gap-2">
+              {sessionData.playerSessions?.map((player, i) => (
+                <div
+                  className="grid grid-cols-3 gap-4"
+                  key={`sessionplayer-${i}`}
+                >
+                  <a
+                    href={player.slug}
+                    className="hover:text-danger transition-class"
                   >
-                    <p>{session.name}</p>
-                    <p>{session.score}</p>
-                    <p>{session.position}</p>
-                  </div>
-                ))}
-              </div>
+                    {player.name}
+                  </a>
+                  <p>{player.score}</p>
+                  <p>{player.position}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        </PopupModalWrapper>
       )}
       <div className="flex flex-row gap-5 divide-x divide-foreground/10 *:pr-5 mt-12 justify-end">
         <div>
@@ -292,7 +291,10 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
             key={`playerrow-${i}`}
           >
             <div>{new Date(row.date).toLocaleDateString("en-GB")}</div>
-            <a className="block" href={`/boardgame/${row.boardgameslug}`}>
+            <a
+              className="block hover:text-danger transition-class"
+              href={`/boardgame/${row.boardgameslug}`}
+            >
               {row.boardgamename}
             </a>
             <div>{row.score}</div>
