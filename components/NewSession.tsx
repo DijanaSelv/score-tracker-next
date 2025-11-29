@@ -165,7 +165,7 @@ const NewSession = ({
               ))}
             </select>
           </div>
-          <div className=" flex flex-col gap-1 pb-4 ">
+          <div className=" flex flex-col gap-1 pb-4 max-h-96 overflow-y-auto ">
             <h3>Кој дешкаше?</h3>
             <div className="flex flex-col gap-2">
               {playerScores.map((item, i) => (
@@ -265,7 +265,7 @@ const NewSession = ({
                     },
                   ])
                 }
-                className="border p-1 cursor-pointer  border-slate-400 hover:border-teal-700 hover:rounded-none hover:shadow-sm hover:border-teal-700\20 flex items-baseline gap-1 justify-center transition-class text-xs bg-white/8 w-fit ml-auto"
+                className="border p-1 cursor-pointer  border-slate-400 hover:rounded-none hover:shadow-sm hover:border-teal-700\20 flex items-baseline gap-1 justify-center transition-class text-xs  opacity-50 hover:opacity-100  w-fit ml-auto"
                 aria-label="add a player to the session"
               >
                 <span>add player</span>

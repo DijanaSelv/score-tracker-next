@@ -32,17 +32,19 @@ const PopupModalWrapper = ({
   return createPortal(
     <div
       onMouseDown={closeAndResetForm}
-      className={`fixed inset-0 bg-foreground/10 backdrop-blur-xs bg-opacity-50 flex items-center justify-center z-9999 transition-class ${
+      className={`fixed inset-0 bg-foreground/10 backdrop-blur-xs bg-opacity-50 flex items-center pt-10 lg:pt-6 justify-center z-9999 transition-class min-h-dvh ${
         isAnimating ? "opacity-100" : "opacity-0"
       }`}
     >
-      <div
-        className={`mx-auto my-auto bg-background p-4 modal-content transition-class ${
-          isAnimating ? "scale-100" : "scale-95"
-        }`}
-        onMouseDown={(e) => e.stopPropagation()}
-      >
-        {children}
+      <div className="mx-auto my-auto max-h-[90vh] p-4 overflow-y-auto bg-background">
+        <div
+          className={`modal-content transition-class ${
+            isAnimating ? "scale-100" : "scale-95"
+          }`}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          {children}
+        </div>
       </div>
     </div>,
     document.body

@@ -81,3 +81,13 @@ body {
 .MuiChartsAxis-tickLabel {
   @apply fill-slate-400!;
 }
+
+/* select options styling */
+option {
+  color: var(--foreground);
+  background-color: #000;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  color-scheme: dark;
+  cursor: pointer;
+}
