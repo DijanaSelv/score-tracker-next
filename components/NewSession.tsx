@@ -132,7 +132,7 @@ const NewSession = ({
         <h2 className="text-lg font-semibold mb-4">Add New Session</h2>
         <form
           ref={formRef}
-          className="flex flex-col gap-4 min-w-lg new-game-form "
+          className="flex flex-col gap-4 lg:min-w-lg new-game-form"
           onSubmit={submitSession}
         >
           <div className="flex flex-col gap-1 ">
@@ -145,7 +145,7 @@ const NewSession = ({
               className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
             />
           </div>
-          <div className="flex flex-col gap-1 ">
+          <div className="flex flex-col gap-1">
             <label htmlFor="boardgame">Board Game</label>
             <select
               required
@@ -169,70 +169,69 @@ const NewSession = ({
             <h3>Кој дешкаше?</h3>
             <div className="flex flex-col gap-2">
               {playerScores.map((item, i) => (
-                <div key={`playerdiv-${i}`} className="flex items-center gap-2">
+                <div
+                  key={`playerdiv-${i}`}
+                  className="flex items-center gap-2 w-full"
+                >
                   {/* EXISTING PLAYERS from the dropdown */}
                   {!item.player.isNew && (
-                    <>
-                      <select
-                        id={`playerName-${i}`}
-                        className="outline-none border border-slate-400 px-1 py-1 flex-1 h-[30px] cursor-pointer"
-                        onChange={(e) => {
-                          const value =
-                            e.target.value === "new-player"
-                              ? "new-player"
-                              : e.target.value;
-                          handlePlayerChange(i, value);
-                        }}
-                        name={`player-${i}`}
-                      >
-                        <option value="">Choose...</option>
-                        {players
-                          .filter(
-                            (player) =>
-                              /* this removes a player from the dropdown if it was already selected here or on other rows */
-                              player.playerid === item.player.id ||
-                              !playerScores.some(
-                                (entry) => entry.player.id == player.playerid
-                              )
-                          )
-                          .map((player) => (
-                            <option
-                              value={player.playerid}
-                              key={`player-${player.playerid}`}
-                            >
-                              {player.name}
-                            </option>
-                          ))}
-                        <option value="new-player" key="new-player">
-                          New Player
-                        </option>
-                      </select>
-                    </>
+                    <select
+                      id={`playerName-${i}`}
+                      className="outline-none border border-slate-400 px-1 py-1 flex-1 h-[30px] cursor-pointer"
+                      onChange={(e) => {
+                        const value =
+                          e.target.value === "new-player"
+                            ? "new-player"
+                            : e.target.value;
+                        handlePlayerChange(i, value);
+                      }}
+                      name={`player-${i}`}
+                    >
+                      <option value="">Choose...</option>
+                      {players
+                        .filter(
+                          (player) =>
+                            /* this removes a player from the dropdown if it was already selected here or on other rows */
+                            player.playerid === item.player.id ||
+                            !playerScores.some(
+                              (entry) => entry.player.id == player.playerid
+                            )
+                        )
+                        .map((player) => (
+                          <option
+                            value={player.playerid}
+                            key={`player-${player.playerid}`}
+                          >
+                            {player.name}
+                          </option>
+                        ))}
+                      <option value="new-player" key="new-player">
+                        New Player
+                      </option>
+                    </select>
                   )}
 
                   {/* THIS SHOWS INPUT FOR A NEW PLAYER TO BE ADDED */}
                   {item.player.isNew && (
-                    <>
-                      <input
-                        id={`playerName-${i}`}
-                        type="text"
-                        value={item.player.name}
-                        className="outline-none border border-slate-400 px-2 py-0.5  flex-1"
-                        onChange={(e) =>
-                          updatePlayer(i, {
-                            player: {
-                              ...item.player,
-                              name: e.target.value,
-                            },
-                          })
-                        }
-                      />
-                    </>
+                    <input
+                      id={`playerName-${i}`}
+                      type="text"
+                      value={item.player.name}
+                      className="outline-none border border-slate-400 px-2 py-0.5 flex-1 shrink min-w-0"
+                      onChange={(e) =>
+                        updatePlayer(i, {
+                          player: {
+                            ...item.player,
+                            name: e.target.value,
+                          },
+                        })
+                      }
+                    />
                   )}
 
                   <input
                     type="number"
-                    className="outline-none  border border-slate-400 px-2 py-0.5 "
+                    className="outline-none max-sm:max-w-14 max-lg:max-w-22 border border-slate-400 px-2 py-0.5  "
                     id={`playerscore-${i}`}
                     placeholder="Add score..."
                     value={item.score || 0}
