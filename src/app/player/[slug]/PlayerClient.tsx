@@ -156,42 +156,46 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
   return (
     <section>
       {/* Session Details Popup */}
-      {sessionData && (
-        <PopupModalWrapper
-          isOpen={!!sessionData}
-          closeAndResetForm={() => setSessionData(null)}
-        >
-          <h2 className="text-lg font-semibold mb-4">
-            {sessionData.boardgamename}
-          </h2>
-          <h2 className="text-lg font-semibold mb-4">{sessionData.date}</h2>
-          <div className="min-w-96">
-            <div className="flex flex-col gap-2">
-              {sessionData.playerSessions?.map((player, i) => (
-                <div
-                  className="grid grid-cols-3 gap-4"
-                  key={`sessionplayer-${i}`}
-                >
-                  <a
-                    href={player.slug}
-                    className="hover:text-danger transition-class"
+
+      <PopupModalWrapper
+        isOpen={!!sessionData}
+        closeAndResetForm={() => setSessionData(null)}
+      >
+        {sessionData && (
+          <>
+            <h2 className="text-lg font-semibold mb-4">
+              {sessionData.boardgamename}
+            </h2>
+            <h2 className="text-lg font-semibold mb-4">{sessionData.date}</h2>
+            <div className="min-w-96">
+              <div className="flex flex-col gap-2">
+                {sessionData.playerSessions?.map((player, i) => (
+                  <div
+                    className="grid grid-cols-3 gap-4"
+                    key={`sessionplayer-${i}`}
                   >
-                    {player.name}
-                  </a>
-                  <p>{player.score}</p>
-                  <p>{player.position}</p>
-                </div>
-              ))}
+                    <a
+                      href={player.slug}
+                      className="hover:text-danger transition-class"
+                    >
+                      {player.name}
+                    </a>
+                    <p>{player.score}</p>
+                    <p>{player.position}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </PopupModalWrapper>
-      )}
+          </>
+        )}
+      </PopupModalWrapper>
+
       <div className="flex flex-row gap-5 divide-x divide-foreground/10 *:pr-5 mt-12 justify-end">
         <div>
           <label>Sort by:</label>
           <select
             value={sortCondition}
-            className="cursor-pointer"
+            className="cursor-pointer outline-none"
             onChange={(e) => setSortCondition(e.currentTarget.value as string)}
           >
             <option value="date">date</option>
@@ -300,7 +304,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
             <div>{row.score}</div>
             <div>{row.position}</div>
             <button
-              className="block cursor-pointer"
+              className="block cursor-pointer hover:text-danger transition-class"
               onClick={() =>
                 onClickSession(
                   row.sessionid,
