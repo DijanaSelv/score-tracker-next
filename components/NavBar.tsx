@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import NewBoardGame from "./NewBoardGame";
 import NewPlayer from "./NewPlayer";
 import NewSession from "./NewSession";
+import Link from "next/link";
 
 interface SubLink {
   text: string;
@@ -25,7 +26,6 @@ const NavBar = () => {
   const [isActive, setIsActive] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const [scrollDirection, setScrollDirection] = useState("down");
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const lastScrollY = useRef(0);
@@ -53,7 +53,6 @@ const NavBar = () => {
     const direction = currentScrollY > lastScrollY.current ? "down" : "up";
     const sticky = currentScrollY > 100;
 
-    setScrollDirection(direction);
     setIsSticky(sticky);
 
     if (!sticky) {
@@ -132,7 +131,7 @@ const NavBar = () => {
             {links.map((link) => (
               <div key={link.text}>
                 {!link.isDropdown ? (
-                  <a
+                  <Link
                     href={link.href}
                     className={`flex items-center cursor-pointer transition-class group text-base p-4 hover:opacity-100 button-neon-hover hover:bg-white hover:text-black font-electrolize tracking-wide font-semibold  ${
                       isCurrentPath(link.href)
@@ -141,7 +140,7 @@ const NavBar = () => {
                     } `}
                   >
                     <span>{link.text}</span>
-                  </a>
+                  </Link>
                 ) : (
                   <div
                     className="group/NavLinkOne mainNavElement"

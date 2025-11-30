@@ -6,7 +6,9 @@ const SessionInfoPopupContent = ({
   sessionData: {
     boardgamename: string | null;
     boardgameslug: string | null;
-    playerSessions: any[] | null;
+    playerSessions:
+      | { slug: string; name: string; position: number; score: number }[]
+      | null;
     date: string | null;
   };
 }) => {

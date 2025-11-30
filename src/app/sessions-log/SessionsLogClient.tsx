@@ -23,7 +23,7 @@ type FilterConditions = {
 
 type headerItem = {
   text: string;
-  filterValues?: any[];
+  filterValues?: (string | number)[];
   filterKey?: keyof FilterConditions;
 };
 
@@ -39,40 +39,16 @@ const SessionsLogClient = ({
     dateFilter: null,
     winnerFilter: null,
   });
+  type PlayerSession = { slug: string; name: string; score: number; position: number };
+
   const [sessionData, setSessionData] = useState<{
     boardgamename: string | null;
     boardgameslug: string | null;
-    playerSessions: any[] | null;
+    playerSessions: PlayerSession[] | null;
     date: string | null;
   } | null>(null);
 
-  // Custom styling for the chart using sx or direct SVG overrides
-  const chartStyles = {
-    "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
-      stroke: "#ffffff",
-    },
-    "& .MuiChartsAxis-bottom .MuiChartsAxis-tick": {
-      stroke: "#ffffff",
-    },
-    "& .MuiChartsAxis-bottom text": {
-      fill: "#ffffff",
-      fontSize: 12,
-    },
-    "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-      stroke: "#ffffff",
-    },
-    "& .MuiChartsAxis-left .MuiChartsAxis-tick": {
-      stroke: "#ffffff",
-    },
-    "& .MuiChartsAxis-left text": {
-      fill: "#ffffff",
-      fontSize: 12,
-    },
-    "& line[class*='MuiChartsAxis-grid']": {
-      stroke: "rgba(255,255,255,0.2)",
-      strokeDasharray: "4 2",
-    },
-  };
+  // chartStyles removed (defined/used in ChartsSection)
   const uniqueBoardGamesNames = new Set(
     sessionsData.map((item) => item.boardgamename)
   );
@@ -139,10 +115,11 @@ const SessionsLogClient = ({
   ];
 
   /* here we calculate statistics on the frontent, compared to boardgame page where we get them from the backend */
-  const findMostOcurringValues = (arr: any[]) => {
+  const findMostOcurringValues = <T extends string | number>(arr: T[]) => {
     const counts: Record<string, number> = {};
     for (const i of arr) {
-      counts[i] = (counts[i] || 0) + 1;
+      const key = String(i);
+      counts[key] = (counts[key] || 0) + 1;
     }
 
     const maxCount = Math.max(...Object.values(counts));
@@ -150,7 +127,7 @@ const SessionsLogClient = ({
     return {
       values: Object.keys(counts)
         .filter((key) => counts[key] === maxCount)
-        .map((key) => key),
+        .map((key) => key) as T[],
       ocurrence: maxCount,
     };
   };
@@ -171,7 +148,7 @@ const SessionsLogClient = ({
     boardgameslug: string
   ) => {
     const res = await fetch(`../api/session/${sessionid}`);
-    const playerSessions = await res.json();
+    const playerSessions = (await res.json()) as PlayerSession[];
     setSessionData({ boardgamename, boardgameslug, date, playerSessions });
   };
 

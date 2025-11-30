@@ -22,7 +22,7 @@ type FilterConditions = {
 
 type headerItem = {
   text: string;
-  filterValues?: any[];
+  filterValues?: (string | number)[];
   filterKey?: keyof FilterConditions;
 };
 
@@ -34,10 +34,12 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     dateFilter: null,
     positionFilter: null,
   });
+  type PlayerSession = { slug: string; name: string; position: number; score: number };
+
   const [sessionData, setSessionData] = useState<{
     boardgamename: string | null;
     boardgameslug: string | null;
-    playerSessions: any[] | null;
+    playerSessions: PlayerSession[] | null;
     date: string | null;
   } | null>(null);
 
@@ -105,16 +107,17 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     },
     {
       text: "position",
-      filterValues: Array.from(uniquePositions),
+      filterValues: Array.from(uniquePositions).filter((v) => v != null) as (string | number)[],
       filterKey: "positionFilter",
     },
   ];
 
   /* here we calculate statistics on the frontent, compared to boardgame page where we get them from the backend */
-  const findMostOcurringValues = (arr: any[]) => {
+  const findMostOcurringValues = <T extends string | number>(arr: T[]) => {
     const counts: Record<string, number> = {};
     for (const i of arr) {
-      counts[i] = (counts[i] || 0) + 1;
+      const key = String(i);
+      counts[key] = (counts[key] || 0) + 1;
     }
 
     const maxCount = Math.max(...Object.values(counts));
@@ -122,7 +125,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     return {
       values: Object.keys(counts)
         .filter((key) => counts[key] === maxCount)
-        .map((key) => key),
+        .map((key) => key) as T[],
       ocurrence: maxCount,
     };
   };
@@ -149,7 +152,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     boardgameslug: string
   ) => {
     const res = await fetch(`../api/session/${sessionid}`);
-    const playerSessions = await res.json();
+    const playerSessions = (await res.json()) as PlayerSession[];
     setSessionData({ boardgamename, boardgameslug, date, playerSessions });
   };
 
@@ -289,7 +292,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
         </div>
         {mostWonGame.values.length > 0 ? (
           <div>
-            <h4 className="pb-1 font-semibold">What you're best at:</h4>
+            <h4 className="pb-1 font-semibold">What you&apos;re best at:</h4>
             <p>{mostWonGame.values.join(", ")}</p>
             <p>
               (won {mostWonGame.ocurrence} time

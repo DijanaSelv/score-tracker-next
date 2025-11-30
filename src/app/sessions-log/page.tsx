@@ -8,9 +8,18 @@ import NewSession from "../../../components/NewSession";
 const SessionLogPage = async ({ params }: Props) => {
   const allSessions = await getAllSessions();
 
-  const sessionsData = allSessions.map((item: any) => ({
+  type AllSessionRow = {
+    date: Date | string | null;
+    boardgamename: string;
+    boardgameslug: string;
+    winner: string;
+    winnerslug: string;
+    sessionid: number;
+  };
+
+  const sessionsData = (allSessions as AllSessionRow[]).map((item) => ({
     ...item,
-    date: item.date.toISOString(),
+    date: item.date instanceof Date ? item.date.toISOString() : String(item.date),
   }));
 
   console.log(sessionsData, "sessionsData");
@@ -22,7 +31,7 @@ const SessionLogPage = async ({ params }: Props) => {
       ) : (
         <div className="">
           {" "}
-          <p> You haven't played anything yet.</p>
+          <p> You haven&apos;t played anything yet.</p>
           <NewSession />
         </div>
       )}

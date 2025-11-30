@@ -2,6 +2,11 @@
 
 import pool from "./db.js";
 
+type PlayerScoreInput = {
+  player: { id?: number; isNew?: boolean; name?: string };
+  score: number;
+};
+
 /* GET STUFF  */
 
 export async function getBoardGames() {
@@ -144,10 +149,10 @@ export async function addBoardGame(name: string) {
 export async function addSession(
   boardgameid: number,
   date: Date,
-  playersandscores: any[]
+  playersandscores: PlayerScoreInput[]
 ) {
   const newPlayers = playersandscores.filter(
-    (playerrow) => playerrow.player.isNew
+    (playerrow) => Boolean(playerrow.player.isNew)
   );
 
   let addedPlayers = [];
