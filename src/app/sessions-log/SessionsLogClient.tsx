@@ -39,7 +39,12 @@ const SessionsLogClient = ({
     dateFilter: null,
     winnerFilter: null,
   });
-  type PlayerSession = { slug: string; name: string; score: number; position: number };
+  type PlayerSession = {
+    slug: string;
+    name: string;
+    score: number;
+    position: number;
+  };
 
   const [sessionData, setSessionData] = useState<{
     boardgamename: string | null;
@@ -48,7 +53,33 @@ const SessionsLogClient = ({
     date: string | null;
   } | null>(null);
 
-  // chartStyles removed (defined/used in ChartsSection)
+  // Custom styling for the chart using sx or direct SVG overrides
+  const chartStyles = {
+    "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
+      stroke: "#ffffff",
+    },
+    "& .MuiChartsAxis-bottom .MuiChartsAxis-tick": {
+      stroke: "#ffffff",
+    },
+    "& .MuiChartsAxis-bottom text": {
+      fill: "#ffffff",
+      fontSize: 12,
+    },
+    "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+      stroke: "#ffffff",
+    },
+    "& .MuiChartsAxis-left .MuiChartsAxis-tick": {
+      stroke: "#ffffff",
+    },
+    "& .MuiChartsAxis-left text": {
+      fill: "#ffffff",
+      fontSize: 12,
+    },
+    "& line[class*='MuiChartsAxis-grid']": {
+      stroke: "rgba(255,255,255,0.2)",
+      strokeDasharray: "4 2",
+    },
+  };
   const uniqueBoardGamesNames = new Set(
     sessionsData.map((item) => item.boardgamename)
   );

@@ -1,9 +1,23 @@
 import { deleteBoardGame } from "@/../lib/queries";
 
+// Next.js route params are strings; accept the standard Request signature
 export async function GET(
   req: Request,
-  { params }: { params: { boardgameid: number } }
+  { params }: { params: { boardgameid: string } }
 ) {
-  const session = await deleteBoardGame(Number(params.boardgameid));
-  return new Response(JSON.stringify(session), { status: 200 });
+  const id = Number(params.boardgameid);
+  if (Number.isNaN(id)) {
+    return new Response(JSON.stringify({ error: "Invalid id" }), {
+      status: 400,
+    });
+  }
+
+  try {
+    await deleteBoardGame(id);
+    return new Response(JSON.stringify({ success: true }), { status: 200 });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: "Delete failed" }), {
+      status: 500,
+    });
+  }
 }
