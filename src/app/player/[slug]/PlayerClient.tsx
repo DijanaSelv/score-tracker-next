@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import PopupModalWrapper from "../../../../components/PopupModalWrapper";
+import SessionInfoPopupContent from "../../../../components/SessionInfoPopupContent";
 
 type PlayerRow = {
   boardgamename: string;
@@ -161,33 +162,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
         isOpen={!!sessionData}
         closeAndResetForm={() => setSessionData(null)}
       >
-        {sessionData && (
-          <>
-            <h2 className="text-lg font-semibold mb-4">
-              {sessionData.boardgamename}
-            </h2>
-            <h2 className="text-lg font-semibold mb-4">{sessionData.date}</h2>
-            <div className="min-w-96">
-              <div className="flex flex-col gap-2">
-                {sessionData.playerSessions?.map((player, i) => (
-                  <div
-                    className="grid grid-cols-3 gap-4"
-                    key={`sessionplayer-${i}`}
-                  >
-                    <a
-                      href={player.slug}
-                      className="hover:text-danger transition-class"
-                    >
-                      {player.name}
-                    </a>
-                    <p>{player.score}</p>
-                    <p>{player.position}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
+        {sessionData && <SessionInfoPopupContent sessionData={sessionData} />}
       </PopupModalWrapper>
 
       <div className="flex flex-row gap-5 divide-x divide-foreground/10 *:pr-5 mt-12 justify-end">

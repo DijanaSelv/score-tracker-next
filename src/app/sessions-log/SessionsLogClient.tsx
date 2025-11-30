@@ -4,6 +4,7 @@ import { useState } from "react";
 import type {} from "@mui/x-charts/themeAugmentation";
 import ChartsSection from "./ChartsSection";
 import PopupModalWrapper from "../../../components/PopupModalWrapper";
+import SessionInfoPopupContent from "../../../components/SessionInfoPopupContent";
 
 type SessionRow = {
   boardgamename: string;
@@ -182,33 +183,7 @@ const SessionsLogClient = ({
         isOpen={!!sessionData}
         closeAndResetForm={() => setSessionData(null)}
       >
-        {sessionData && (
-          <>
-            <h2 className="text-lg font-semibold mb-4">
-              {sessionData.boardgamename}
-            </h2>
-            <h2 className="text-lg font-semibold mb-4">{sessionData.date}</h2>
-            <div className="min-w-96">
-              <div className="flex flex-col gap-2">
-                {sessionData.playerSessions?.map((player, i) => (
-                  <div
-                    className="grid grid-cols-3 gap-4"
-                    key={`sessionplayer-${i}`}
-                  >
-                    <a
-                      href={player.slug}
-                      className="hover:text-danger transition-class"
-                    >
-                      {player.name}
-                    </a>
-                    <p>{player.score}</p>
-                    <p>{player.position}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
+        {sessionData && <SessionInfoPopupContent sessionData={sessionData} />}
       </PopupModalWrapper>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -245,7 +220,7 @@ const SessionsLogClient = ({
 
           {/* TABLE */}
           <div className=" ">
-            <div className="grid grid-cols-5 bg-foreground/5  py-1.5 font-medium px-2">
+            <div className="grid grid-cols-4 bg-foreground/5  py-1.5 font-medium px-2">
               {/* HEADERS THAT ALSO HAVE FILTERS */}
               {tableHeaders.map((header, i) => (
                 <div className="flex items-center gap-2" key={`header-${i}`}>
@@ -317,7 +292,7 @@ const SessionsLogClient = ({
             {/* THE ROWS */}
             {finalDataForDisplay.map((row: SessionRow, i: number) => (
               <div
-                className="grid grid-cols-5 w-full py-1 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3"
+                className="grid grid-cols-4 w-full py-1 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3"
                 key={`playerrow-${i}`}
               >
                 <div>{new Date(row.date).toLocaleDateString("en-GB")}</div>

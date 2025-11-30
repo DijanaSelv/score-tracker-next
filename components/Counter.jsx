@@ -13,7 +13,7 @@ export function Counter({ value }) {
       return;
     }
 
-    const duration = 1500;
+    const duration = 700;
     const stepTime = 20;
     const steps = Math.floor(duration / stepTime);
 
