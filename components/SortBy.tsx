@@ -27,8 +27,9 @@ const SortBy = ({
 
         <div className="absolute w-full z-20 left-0 pt-2 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto transition-class">
           <div className="flex flex-col bg-foreground text-background *:py-1 *:px-2  *:hover:bg-background/10 ">
-            {sortTerms.map((term) => (
+            {sortTerms.map((term, i) => (
               <p
+                key={`sort-option-${i}`}
                 onClick={(e) => setSortTerm(term)}
                 className="transition-class"
               >

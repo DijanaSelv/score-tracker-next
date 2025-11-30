@@ -2,7 +2,6 @@
 import { useRef, useState } from "react";
 import { addBoardGame } from "../lib/queries";
 import { useRouter } from "next/navigation";
-import { createPortal } from "react-dom";
 import PrimaryButton from "./PrimaryButton";
 import PopupModalWrapper from "./PopupModalWrapper";
 

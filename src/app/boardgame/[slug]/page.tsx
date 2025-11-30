@@ -1,4 +1,3 @@
-import NewSession from "@/../components/NewSession";
 import { SessionDetailsCard } from "@/../components/SessionDetailscard";
 
 import type { Session, Props } from "@/../lib/types";

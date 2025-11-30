@@ -234,3 +234,14 @@ export async function addPlayer(name: string) {
     WHERE playerid = ${playerid}`
   );
 }
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~DELETE STUFF */
+
+export async function deleteBoardGame(id: number) {
+  const { rows } = await pool.query(
+    `
+    DELETE FROM boardgame
+    WHERE boardgame.boardgameid = '${id}'
+    `
+  );
+}

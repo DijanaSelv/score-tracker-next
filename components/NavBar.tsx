@@ -36,7 +36,7 @@ const NavBar = () => {
     { text: "Board Games", href: "/", isDropdown: false },
     { text: "Players", href: "/players", isDropdown: false },
     { text: "Sessions Log", href: "/sessions-log", isDropdown: false },
-    { text: "Archives", href: "/archives", isDropdown: false },
+    /* { text: "Archives", href: "/archives", isDropdown: false }, */
   ];
 
   const isCurrentPath = useCallback(

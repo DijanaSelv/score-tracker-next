@@ -29,23 +29,19 @@ export async function SessionDetailsCard(session: Session) {
             >
               <a
                 href={`/player/${item.slug}`}
-                className="transition-class hover:text-danger"
+                className="transition-class hover:text-danger flex items-center gap-2"
               >
                 {" "}
-                {item.name}
+                {item.name}{" "}
+                {item.position == 1 && (
+                  <i className="fa-solid fa-crown text-xs text-amber-400"></i>
+                )}
               </a>
-              <div className="grid grid-cols-4 gap-1">
-                <span className="col-span-1">
-                  {" "}
-                  {item.position == 1 && (
-                    <i className="fa-solid fa-crown text-xs text-amber-400"></i>
-                  )}
-                </span>
-                <p className="col-start-2 col-span-3">
-                  {" "}
-                  <Counter value={item.score} />
-                </p>
-              </div>
+
+              <p>
+                {" "}
+                <Counter value={item.score} />
+              </p>
             </div>
           )
         )}

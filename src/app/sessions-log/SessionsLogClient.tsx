@@ -1,5 +1,4 @@
 "use client";
-import { BarChart } from "@mui/x-charts";
 import { useState } from "react";
 import type {} from "@mui/x-charts/themeAugmentation";
 import ChartsSection from "./ChartsSection";

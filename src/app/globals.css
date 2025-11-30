@@ -67,6 +67,12 @@ body {
   .button-neon-hover:hover {
     box-shadow: 0 0 10px 0 #0f766e inset, 0 0 20px 2px #0f766e;
   }
+  .button-white-hover:hover {
+    box-shadow: 0 0 10px 0 #ffffff80 inset, 0 0 20px 2px #ffffff80;
+  }
+  .button-danger-hover:hover {
+    box-shadow: 0 0 10px 0 #ff884880 inset, 0 0 20px 2px #ff884880;
+  }
 }
 
 .logo-shadow:hover {

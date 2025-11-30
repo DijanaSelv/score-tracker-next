@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { addPlayer } from "../lib/queries";
 import { useRouter } from "next/navigation";
 import PrimaryButton from "./PrimaryButton";
-import { createPortal } from "react-dom";
 import PopupModalWrapper from "./PopupModalWrapper";
 
 const NewPlayer = () => {

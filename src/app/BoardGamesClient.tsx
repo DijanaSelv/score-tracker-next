@@ -3,13 +3,22 @@ import { useMemo, useState } from "react";
 import { useGlobalData } from "@/app/context/GlobalDataContext";
 import { formatDate } from "@/../lib/utils";
 import SortBy from "@/../components/SortBy";
+import PopupModalWrapper from "../../components/PopupModalWrapper";
+import SecondaryButton from "../../components/SecondaryButton";
+import { useRouter } from "next/navigation";
 
 export default function BoardGamesList() {
   const [sortTerm, setSortTerm] = useState<string>("name");
+  const router = useRouter();
 
   const { boardGames } = useGlobalData();
 
   const [sortDescending, setSortDescending] = useState<boolean>(true);
+  const [deleteItemPopup, setDeleteItemPopup] = useState<boolean>(false);
+  const [itemToDelete, setItemToDelete] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
 
   const sortedGames = useMemo(() => {
     const sorted = [...boardGames].sort((a, b) => {
@@ -28,6 +37,13 @@ export default function BoardGamesList() {
   }, [sortTerm, boardGames, sortDescending]);
 
   console.log(sortedGames, "sorted games");
+
+  const deleteBoardGame = async (id: number) => {
+    const res = await fetch(`../api/deleteBoardGame/${id}`);
+    router.refresh();
+    setDeleteItemPopup(false);
+    setItemToDelete(null);
+  };
   return (
     <section>
       <SortBy
@@ -85,10 +101,15 @@ export default function BoardGamesList() {
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
+                      setItemToDelete({
+                        id: game.boardgameid,
+                        name: game.name,
+                      });
+                      setDeleteItemPopup(true);
                     }}
                   >
                     {" "}
-                    <i className="fa-solid fa-xmark pt-1"></i>{" "}
+                    <i className="fa-solid fa-trash pt-1 text-sm"></i>{" "}
                   </button>
                 </div>
               </div>
@@ -115,6 +136,39 @@ export default function BoardGamesList() {
           )
         )}
       </div>
+
+      {/* POPUPS */}
+      {/* DELETE GAME POPUP */}
+      <PopupModalWrapper
+        isOpen={deleteItemPopup}
+        closeAndResetForm={() => setDeleteItemPopup(false)}
+      >
+        {itemToDelete && (
+          <div className="flex flex-col gap-4 lg:gap-6">
+            <h2 className="font-semibold lg:text-2xl md:text-xl text-base">
+              Delete Game
+            </h2>
+            <p className="text-balance pr-5 max-w-lg">
+              Are you sure you want to delete{" "}
+              <span className="font-semibold text-danger">
+                {itemToDelete.name}
+              </span>
+              ?
+            </p>
+            <div className="flex items-center justify-end w-fit ml-auto gap-3">
+              <SecondaryButton
+                onClickHandle={() => deleteBoardGame(itemToDelete.id)}
+                danger={true}
+              >
+                Delete
+              </SecondaryButton>
+              <SecondaryButton onClickHandle={() => setDeleteItemPopup(false)}>
+                Cancel
+              </SecondaryButton>
+            </div>
+          </div>
+        )}
+      </PopupModalWrapper>
     </section>
   );
 }
