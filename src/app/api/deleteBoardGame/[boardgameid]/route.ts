@@ -1,8 +1,9 @@
 import { deleteBoardGame } from "@/../lib/queries";
+import { NextRequest } from "next/server";
 
 // Next.js route params are strings; accept the standard Request signature
 export async function GET(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { boardgameid: string } }
 ) {
   const id = Number(params.boardgameid);
