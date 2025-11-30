@@ -148,7 +148,7 @@ const NavBar = () => {
                     onMouseLeave={handleDropdownLeave}
                   >
                     <button className="transition-all flex w-full cursor-pointer items-center">
-                      <a
+                      <Link
                         href={link.href}
                         className={`flex items-center max-xl:text-sm text-base gap-2 transition-all group opacity-85 hover:opacity-100  ${
                           isCurrentPath(link.href)
@@ -157,7 +157,7 @@ const NavBar = () => {
                         } `}
                       >
                         {link.text}
-                      </a>
+                      </Link>
                       <span className="inline-block">
                         <i
                           className={`fa-regular fa-chevron-down transition-all pl-1.5 text-xs text-heading ${
@@ -211,7 +211,7 @@ const NavBar = () => {
           </div>
           {/* Logo */}
           <div className="flex items-center gap-12">
-            <a
+            <Link
               href="/"
               className="flex shrink-0 items-center gap-2 text-foreground hover:text-white transition-class logo-shadow lg:text-3xl text-xl"
             >
@@ -219,7 +219,7 @@ const NavBar = () => {
               <span className=" tracking-widest block max-xl:hidden font-zen-dots  ">
                 DASH
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* CTA Button */}
@@ -260,7 +260,7 @@ const NavBar = () => {
         >
           <div className="relative z-10">
             <div className="mb-10 flex items-center justify-between">
-              <a
+              <Link
                 href="/"
                 className="flex shrink-0 items-center gap-2 text-foreground hover:text-white transition-class logo-shadow lg:text-3xl text-xl"
               >
@@ -268,7 +268,7 @@ const NavBar = () => {
                 <span className=" tracking-widest block max-xl:hidden font-zen-dots  ">
                   DASH
                 </span>
-              </a>
+              </Link>
               <button
                 onClick={() => {
                   setIsActive(false);
@@ -284,12 +284,12 @@ const NavBar = () => {
               {links.map((link) => (
                 <div key={link.text}>
                   {!link.isDropdown ? (
-                    <a
+                    <Link
                       href={link.href}
                       className=" relative block  font-normal text-white py-3"
                     >
                       <span className="relative z-10">{link.text}</span>
-                    </a>
+                    </Link>
                   ) : (
                     <div className="group/NavLinkOne mainNavElement relative">
                       <button
@@ -301,12 +301,12 @@ const NavBar = () => {
                         className="relative flex w-full flex-col items-start gap-1 "
                       >
                         <div className="flex w-full items-center justify-between">
-                          <a
+                          <Link
                             href={link.href}
                             className=" relative inline-block font-normal text-white"
                           >
                             {link.text}
-                          </a>
+                          </Link>
                           <span
                             className={`transition-all inline-block text-white ${
                               openDropdown === link.text
