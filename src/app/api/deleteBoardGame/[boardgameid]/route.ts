@@ -4,9 +4,9 @@ import { NextRequest } from "next/server";
 // Next.js route params are strings; accept the standard Request signature
 export async function GET(
   req: NextRequest,
-  { params }: { params: { boardgameid: string } }
+  context: { params: Promise<{ boardgameid: string }> }
 ) {
-  const id = Number(params.boardgameid);
+  const { id } = await context.params;
   if (Number.isNaN(id)) {
     return new Response(JSON.stringify({ error: "Invalid id" }), {
       status: 400,

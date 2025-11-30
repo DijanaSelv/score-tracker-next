@@ -1,9 +1,21 @@
 import { getSessionDetails } from "@/../lib/queries";
+import { NextRequest } from "next/server";
 
 export async function GET(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { sessionid: string } }
 ) {
-  const session = await getSessionDetails(Number(params.sessionid));
-  return new Response(JSON.stringify(session), { status: 200 });
+  const id = Number(params.sessionid);
+
+  if (Number.isNaN(id)) {
+    return new Response(JSON.stringify({ error: "Invalid id" }), {
+      status: 400,
+    });
+  }
+
+  const session = await getSessionDetails(id);
+
+  return new Response(JSON.stringify(session), {
+    status: 200,
+  });
 }
