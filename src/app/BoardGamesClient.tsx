@@ -2,15 +2,14 @@
 import { useMemo, useState } from "react";
 import { useGlobalData } from "@/app/context/GlobalDataContext";
 import { formatDate } from "@/../lib/utils";
+import SortBy from "@/../components/SortBy";
 
 export default function BoardGamesList() {
-  const [sortTerm, setSortTerm] = useState<
-    "name" | "last_played" | "session_count"
-  >("name");
+  const [sortTerm, setSortTerm] = useState<string>("name");
 
   const { boardGames } = useGlobalData();
 
-  const [sortDescending, setsortDescending] = useState<boolean>(true);
+  const [sortDescending, setSortDescending] = useState<boolean>(true);
 
   const sortedGames = useMemo(() => {
     const sorted = [...boardGames].sort((a, b) => {
@@ -31,54 +30,14 @@ export default function BoardGamesList() {
   console.log(sortedGames, "sorted games");
   return (
     <section>
-      <div className="flex items-center mb-8 justify-end divide-x divide-slate-400 ">
-        <p className="px-4 max-sm:hidden">sort by:</p>
-        <div className=" px-4 cursor-pointer transition-class outline-none appearance-none relative min-w-28 group">
-          <p className="">
-            {sortTerm == "last_played"
-              ? "date"
-              : sortTerm == "session_count"
-              ? "sessions"
-              : sortTerm}
-          </p>
+      <SortBy
+        sortTerms={["name", "last_played", "session_count"]}
+        setSortTerm={setSortTerm}
+        setSortDescending={setSortDescending}
+        selectedSortTerm={sortTerm}
+        sortDescendingValue={sortDescending}
+      />
 
-          <div className="absolute w-full  z-20 left-0 pt-2 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto transition-class">
-            <div className="flex flex-col bg-foreground text-background *:py-1 *:px-2  *:hover:bg-background/10 ">
-              <p
-                onClick={(e) => setSortTerm("name")}
-                className="transition-class"
-              >
-                name
-              </p>
-              <p
-                onClick={(e) => setSortTerm("last_played")}
-                className="transition-class"
-              >
-                date
-              </p>
-              <p
-                onClick={(e) => setSortTerm("session_count")}
-                className="transition-class"
-              >
-                sessions
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <button
-          onClick={() => setsortDescending((prev) => !prev)}
-          className=" text-sm px-4 cursor-pointer transition-class hover:text-accent"
-          aria-label={`Sort ${sortDescending ? "ascending" : "descending"}`}
-        >
-          <i
-            aria-hidden
-            className={`fa-solid fa-arrow-down transition-class ${
-              sortDescending && "rotate-180"
-            }`}
-          ></i>
-        </button>
-      </div>
       <div className="grid grid-cols-1 min-[450px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
         {sortedGames.map(
           (game: {

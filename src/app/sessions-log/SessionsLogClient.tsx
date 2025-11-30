@@ -5,6 +5,7 @@ import type {} from "@mui/x-charts/themeAugmentation";
 import ChartsSection from "./ChartsSection";
 import PopupModalWrapper from "../../../components/PopupModalWrapper";
 import SessionInfoPopupContent from "../../../components/SessionInfoPopupContent";
+import SortBy from "../../../components/SortBy";
 
 type SessionRow = {
   boardgamename: string;
@@ -189,34 +190,13 @@ const SessionsLogClient = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         {/* LEFT SIDE< TABLE */}
         <div className="lg:col-span-7">
-          <div className="flex flex-row gap-5 divide-x divide-foreground/10 *:pr-5 justify-end">
-            <div>
-              <label>Sort by:</label>
-              <select
-                value={sortCondition}
-                className="cursor-pointer"
-                onChange={(e) =>
-                  setSortCondition(e.currentTarget.value as string)
-                }
-              >
-                <option value="date">date</option>
-                <option value="boardgamename">board game</option>
-                <option value="winner">winner</option>
-              </select>
-            </div>
-            <button
-              onClick={() => setSortDescending((prev) => !prev)}
-              className="cursor-pointer "
-            >
-              <i
-                className={`fa-solid fa-arrow-down transition-class ${
-                  sortDescending ? "rotate-0" : "rotate-180"
-                }`}
-                aria-hidden="true"
-                aria-label="descending/ascending button"
-              ></i>
-            </button>
-          </div>
+          <SortBy
+            sortTerms={["date", "boardgamename", "winner"]}
+            setSortTerm={setSortCondition}
+            setSortDescending={setSortDescending}
+            selectedSortTerm={sortCondition}
+            sortDescendingValue={sortDescending}
+          />
 
           {/* TABLE */}
           <div className=" ">

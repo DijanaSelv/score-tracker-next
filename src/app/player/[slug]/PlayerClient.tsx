@@ -2,6 +2,7 @@
 import { useState } from "react";
 import PopupModalWrapper from "../../../../components/PopupModalWrapper";
 import SessionInfoPopupContent from "../../../../components/SessionInfoPopupContent";
+import SortBy from "../../../../components/SortBy";
 
 type PlayerRow = {
   boardgamename: string;
@@ -165,33 +166,13 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
         {sessionData && <SessionInfoPopupContent sessionData={sessionData} />}
       </PopupModalWrapper>
 
-      <div className="flex flex-row gap-5 divide-x divide-foreground/10 *:pr-5 mt-12 justify-end">
-        <div>
-          <label>Sort by:</label>
-          <select
-            value={sortCondition}
-            className="cursor-pointer outline-none"
-            onChange={(e) => setSortCondition(e.currentTarget.value as string)}
-          >
-            <option value="date">date</option>
-            <option value="boardgamename">board game</option>
-            <option value="score">score</option>
-            <option value="position">position</option>
-          </select>
-        </div>
-        <button
-          onClick={() => setSortDescending((prev) => !prev)}
-          className="cursor-pointer "
-        >
-          <i
-            className={`fa-solid fa-arrow-down transition-class ${
-              sortDescending ? "rotate-0" : "rotate-180"
-            }`}
-            aria-hidden="true"
-            aria-label="descending/ascending button"
-          ></i>
-        </button>
-      </div>
+      <SortBy
+        sortTerms={["date", "boardgamename", "score", "position"]}
+        setSortTerm={setSortCondition}
+        setSortDescending={setSortDescending}
+        selectedSortTerm={sortCondition}
+        sortDescendingValue={sortDescending}
+      />
 
       <div className="mt-12 ">
         <div className="grid grid-cols-5 bg-foreground/5  py-1.5 font-medium px-2">
