@@ -3,17 +3,17 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { sessionid: string } }
+  context: { params: Promise<{ sessionid: string }> }
 ) {
-  const id = Number(params.sessionid);
+  const { sesisonid } = await context.params;
 
-  if (Number.isNaN(id)) {
+  if (Number.isNaN(sesisonid)) {
     return new Response(JSON.stringify({ error: "Invalid id" }), {
       status: 400,
     });
   }
 
-  const session = await getSessionDetails(id);
+  const session = await getSessionDetails(sesisonid);
 
   return new Response(JSON.stringify(session), {
     status: 200,

@@ -6,15 +6,15 @@ export async function GET(
   req: NextRequest,
   context: { params: Promise<{ boardgameid: string }> }
 ) {
-  const { id } = await context.params;
-  if (Number.isNaN(id)) {
+  const { boardgameid } = await context.params;
+  if (Number.isNaN(boardgameid)) {
     return new Response(JSON.stringify({ error: "Invalid id" }), {
       status: 400,
     });
   }
 
   try {
-    await deleteBoardGame(id);
+    await deleteBoardGame(Number(boardgameid));
     return new Response(JSON.stringify({ success: true }), { status: 200 });
   } catch (err) {
     return new Response(JSON.stringify({ error: "Delete failed" }), {
