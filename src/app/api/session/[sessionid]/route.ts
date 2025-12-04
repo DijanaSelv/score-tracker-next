@@ -5,15 +5,15 @@ export async function GET(
   req: NextRequest,
   context: { params: Promise<{ sessionid: string }> }
 ) {
-  const { sesisonid } = await context.params;
+  const { sessionid } = await context.params;
 
-  if (Number.isNaN(sesisonid)) {
+  if (Number.isNaN(sessionid)) {
     return new Response(JSON.stringify({ error: "Invalid id" }), {
       status: 400,
     });
   }
 
-  const session = await getSessionDetails(sesisonid);
+  const session = await getSessionDetails(Number(sessionid));
 
   return new Response(JSON.stringify(session), {
     status: 200,

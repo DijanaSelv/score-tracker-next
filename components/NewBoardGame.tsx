@@ -34,12 +34,18 @@ const NewBoardGame = () => {
       await addBoardGame(name);
       closeAndResetForm();
       router.refresh();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error adding board game:", error);
-      if (error.message.includes("duplicate key")) {
-        setError("A board game with this name already exists.");
+
+      if (error instanceof Error) {
+        if (error.message.includes("duplicate key")) {
+          setError("A board game with this name already exists.");
+        } else {
+          setError("An unexpected error occurred. Please try again.");
+        }
       } else {
-        setError("An unexpected error occurred. Please try again.");
+        // fallback if error is not an Error object
+        setError("An unknown error occurred.");
       }
     }
     setAddingGame(false);

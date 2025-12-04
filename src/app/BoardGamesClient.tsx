@@ -86,7 +86,7 @@ export default function BoardGamesList() {
                 </h3>
 
                 <div className="flex items-start gap-2 lg:opacity-0 group-hover:opacity-100 transition-class">
-                  <button
+                  {/* <button
                     className="cursor-pointer transition-class hover:text-accent"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -95,7 +95,7 @@ export default function BoardGamesList() {
                   >
                     {" "}
                     <i className="fa-solid fa-pencil text-xs "></i>{" "}
-                  </button>
+                  </button> */}
                   <button
                     className="cursor-pointer transition-class hover:text-danger"
                     onClick={(e) => {

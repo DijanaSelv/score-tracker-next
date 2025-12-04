@@ -103,13 +103,9 @@ const NewSession = ({
       await addSession(boardgameid, date, playerScores);
       closeAndResetForm();
       router.refresh();
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error("Error adding board game:", err);
-      const message =
-        err && typeof err === "object" && "message" in err
-          ? String((err as { message?: unknown }).message)
-          : String(err);
-      if (message.includes("duplicate key")) {
+      if (err?.message?.includes("duplicate key")) {
         setError("A board game with this name already exists.");
       } else {
         setError("An unexpected error occurred. Please try again.");
