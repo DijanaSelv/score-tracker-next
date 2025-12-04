@@ -15,7 +15,7 @@ const PlayerPage = async ({ params }: Props) => {
     position: number | null;
     sessionid: number;
     date: Date | string | null;
-    score: number | null;
+    score: number;
     boardgamename: string;
   };
 

@@ -8,7 +8,7 @@ type PlayerRow = {
   boardgamename: string;
   playername: string;
   position: number | null;
-  score: number | null;
+  score: number;
   date: string;
   sessionid: number;
   boardgameslug: string;
