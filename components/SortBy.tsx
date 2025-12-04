@@ -47,7 +47,7 @@ const SortBy = ({
       </div>
 
       <button
-        onClick={() => setSortDescending((prev) => !prev)}
+        onClick={() => setSortDescending(!sortDescendingValue)}
         className=" text-sm px-4 cursor-pointer transition-class hover:text-accent"
         aria-label={`Sort ${sortDescendingValue ? "ascending" : "descending"}`}
       >
