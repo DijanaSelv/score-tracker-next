@@ -19,6 +19,19 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
     ],
+    rules: {
+      // allow 'any' type
+      "@typescript-eslint/no-explicit-any": "off",
+
+      // allow functions without explicit return types
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+
+      // allow non-null assertions
+      "@typescript-eslint/no-non-null-assertion": "off",
+
+      // optionally relax some React-specific warnings
+      "react/prop-types": "off",
+    },
   },
 ];
 
