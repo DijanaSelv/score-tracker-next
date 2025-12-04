@@ -35,7 +35,9 @@ const ChartsSection = ({ sessionsData }: { sessionsData: SessionRow[] }) => {
       a.localeCompare(b)
     );
     /* return the first 8 most played games */
-    const counts = bgnames.map((name, i) => i < 8 && countedSessions[name]);
+    const counts = bgnames.map((name, i) =>
+      i < 8 ? countedSessions[name] : null
+    );
 
     return { bgnames, counts };
   })();
