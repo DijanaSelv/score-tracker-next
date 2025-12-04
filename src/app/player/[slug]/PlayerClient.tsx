@@ -8,7 +8,7 @@ type PlayerRow = {
   boardgamename: string;
   playername: string;
   position: number | null;
-  score: number;
+  score: number | null;
   date: string;
   sessionid: number;
   boardgameslug: string;
@@ -34,7 +34,12 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     dateFilter: null,
     positionFilter: null,
   });
-  type PlayerSession = { slug: string; name: string; position: number; score: number };
+  type PlayerSession = {
+    slug: string;
+    name: string;
+    position: number;
+    score: number;
+  };
 
   const [sessionData, setSessionData] = useState<{
     boardgamename: string | null;
@@ -107,7 +112,10 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     },
     {
       text: "position",
-      filterValues: Array.from(uniquePositions).filter((v) => v != null) as (string | number)[],
+      filterValues: Array.from(uniquePositions).filter((v) => v != null) as (
+        | string
+        | number
+      )[],
       filterKey: "positionFilter",
     },
   ];

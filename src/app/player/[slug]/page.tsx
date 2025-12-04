@@ -11,17 +11,21 @@ const PlayerPage = async ({ params }: Props) => {
 
   type PlayerRowRaw = {
     playername: string;
-    boardgameslug: string | null;
+    boardgameslug: string;
     position: number | null;
     sessionid: number;
     date: Date | string | null;
     score: number | null;
-    boardgamename?: string;
+    boardgamename: string;
   };
 
   const playerClient = (player as PlayerRowRaw[]).map((item) => ({
     ...item,
-    date: item.date ? (item.date instanceof Date ? item.date.toISOString() : String(item.date)) : "",
+    date: item.date
+      ? item.date instanceof Date
+        ? item.date.toISOString()
+        : String(item.date)
+      : "",
   }));
 
   console.log(player, "player");
@@ -31,7 +35,9 @@ const PlayerPage = async ({ params }: Props) => {
       {player.length ? (
         <>
           <h2 className="lg:text-2xl">
-            Check out <span className="font-semibold">{player[0].playername}</span>&apos;s sessions
+            Check out{" "}
+            <span className="font-semibold">{player[0].playername}</span>&apos;s
+            sessions
           </h2>
 
           {player.length > 1 && player[0].date != null ? (
