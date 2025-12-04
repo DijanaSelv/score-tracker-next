@@ -151,15 +151,15 @@ export async function addSession(
   date: Date,
   playersandscores: PlayerScoreInput[]
 ) {
-  const newPlayers = playersandscores.filter(
-    (playerrow) => Boolean(playerrow.player.isNew)
+  const newPlayers = playersandscores.filter((playerrow) =>
+    Boolean(playerrow.player.isNew)
   );
 
   let addedPlayers = [];
 
   /* first we add the new players to the database if any */
   if (newPlayers.length) {
-    const results = await Promise.all(
+    const results: { rows: any[] }[] = await Promise.all(
       newPlayers.map((newPlayer) =>
         pool.query(
           `
