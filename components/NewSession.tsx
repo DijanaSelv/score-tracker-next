@@ -100,7 +100,12 @@ const NewSession = ({
 
     try {
       setAddingSession(true);
-      await addSession(boardgameid, date, playerScores);
+      const normalizedScores = playerScores.map((ps) => ({
+        ...ps,
+        score: ps.score ?? 0, // convert undefined → 0 ONLY for the backend
+      }));
+
+      await addSession(boardgameid, date, normalizedScores);
       closeAndResetForm();
       router.refresh();
     } catch (err: unknown) {
