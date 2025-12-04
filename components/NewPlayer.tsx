@@ -34,11 +34,15 @@ const NewPlayer = () => {
       await addPlayer(name);
       closeAndResetForm();
       router.refresh();
-    } catch (error) {
-      if (error.message.includes("duplicate key")) {
-        setError("A player with this name already exists.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.message.includes("duplicate key")) {
+          setError("A player with this name already exists.");
+        } else {
+          setError("An unexpected error occurred. Please try again.");
+        }
       } else {
-        setError("An unexpected error occurred. Please try again.");
+        setError("An unknown error occurred.");
       }
     }
     setAddingPlayer(false);
