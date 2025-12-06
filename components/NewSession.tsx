@@ -100,10 +100,21 @@ const NewSession = ({
 
     try {
       setAddingSession(true);
-      const normalizedScores = playerScores.map((ps) => ({
-        ...ps,
-        score: ps.score ?? 0, // convert undefined → 0 ONLY for the backend
-      }));
+      const normalizedScores = playerScores.map((ps) => {
+        // Existing players must have an ID
+        if (!ps.player.isNew && ps.player.id === undefined) {
+          throw new Error("Existing player must have an ID");
+        }
+
+        return {
+          score: ps.score ?? 0, // convert undefined → 0
+          player: {
+            id: ps.player.isNew ? 0 : ps.player.id!, // temporary 0 for new players
+            isNew: ps.player.isNew,
+            name: ps.player.name,
+          },
+        };
+      });
 
       await addSession(boardgameid, date, normalizedScores);
       closeAndResetForm();
