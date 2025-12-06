@@ -19,14 +19,15 @@ const SessionLogPage = async ({ params }: Props) => {
 
   const sessionsData = (allSessions as AllSessionRow[]).map((item) => ({
     ...item,
-    date: item.date instanceof Date ? item.date.toISOString() : String(item.date),
+    date:
+      item.date instanceof Date ? item.date.toISOString() : String(item.date),
   }));
 
   console.log(sessionsData, "sessionsData");
 
   return (
     <div className="flex flex-col">
-      {allSessions.length > 1 && allSessions[0].date != null ? (
+      {allSessions.length >= 1 && allSessions[0].date != null ? (
         <SessionsLogClient sessionsData={sessionsData} />
       ) : (
         <div className="">
