@@ -3,7 +3,7 @@
 import pool from "./db.js";
 
 type PlayerScoreInput = {
-  player: { id?: number; isNew?: boolean; name?: string };
+  player: { id: number; isNew?: boolean; name: string };
   score: number;
 };
 
@@ -145,6 +145,28 @@ export async function addBoardGame(name: string) {
   //return rows[0];
 }
 
+/* PLAYER */
+export async function addPlayer(name: string) {
+  const { rows } = await pool.query(
+    `
+    INSERT INTO player (name) VALUES
+    ('${name}')
+    RETURNING *
+    `
+  );
+
+  const playerid = Number(rows[0].playerid);
+
+  const slug = `${rows[0].name.toLowerCase().replace(/\s+/g, "-")}-${playerid}`;
+
+  await pool.query(
+    `UPDATE player SET slug = '${slug}' 
+    WHERE playerid = ${playerid}`
+  );
+
+  return { playerid, name: rows[0].name };
+}
+
 /* SESSION */
 export async function addSession(
   boardgameid: number,
@@ -155,24 +177,9 @@ export async function addSession(
     Boolean(playerrow.player.isNew)
   );
 
-  let addedPlayers = [];
-
-  /* first we add the new players to the database if any */
-  if (newPlayers.length) {
-    const results: { rows: any[] }[] = await Promise.all(
-      newPlayers.map((newPlayer) =>
-        pool.query(
-          `
-        INSERT INTO player (name) VALUES
-        ('${newPlayer.player.name}')
-        RETURNING *
-        `
-        )
-      )
-    );
-    /* we take the added players because we will need their ids */
-    addedPlayers = results.flatMap((res) => res.rows);
-  }
+  const addedPlayers = newPlayers.length
+    ? await Promise.all(newPlayers.map((p) => addPlayer(p.player.name!)))
+    : [];
 
   /* add the session */
   const { rows } = await pool.query(
@@ -188,7 +195,8 @@ export async function addSession(
     if (playerrow.player.isNew) {
       const addedPlayer = addedPlayers.find(
         (p) => p.name == playerrow.player.name
-      );
+      )!;
+
       return {
         ...playerrow,
         player: { id: addedPlayer.playerid, isNew: false },
@@ -217,26 +225,6 @@ export async function addSession(
         `
       )
     )
-  );
-}
-
-/* PLAYER */
-export async function addPlayer(name: string) {
-  const { rows } = await pool.query(
-    `
-    INSERT INTO player (name) VALUES
-    ('${name}')
-    RETURNING *
-    `
-  );
-
-  const playerid = Number(rows[0].playerid);
-
-  const slug = `${rows[0].name.toLowerCase().replace(/\s+/g, "-")}-${playerid}`;
-
-  await pool.query(
-    `UPDATE player SET slug = '${slug}' 
-    WHERE playerid = ${playerid}`
   );
 }
 

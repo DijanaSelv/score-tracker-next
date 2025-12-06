@@ -133,7 +133,7 @@ const SessionsLogClient = ({
       filterKey: "dateFilter",
     },
     {
-      text: "board game",
+      text: "game",
       filterValues: Array.from(uniqueBoardGamesNames),
       filterKey: "boardGameNameFilter",
     },
@@ -196,7 +196,7 @@ const SessionsLogClient = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         {/* LEFT SIDE< TABLE */}
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-8 xl:col-span-7">
           <SortBy
             sortTerms={["date", "boardgamename", "winner"]}
             setSortTerm={setSortCondition}
@@ -207,22 +207,25 @@ const SessionsLogClient = ({
 
           {/* TABLE */}
           <div className=" ">
-            <div className="grid grid-cols-4 bg-foreground/5  py-1.5 font-medium px-2">
+            <div className="grid grid-cols-7 bg-foreground/5 gap-4  py-1.5 font-medium px-2">
               {/* HEADERS THAT ALSO HAVE FILTERS */}
               {tableHeaders.map((header, i) => (
-                <div className="flex items-center gap-2" key={`header-${i}`}>
+                <div
+                  className="flex items-center gap-2 col-span-2 text-sm"
+                  key={`header-${i}`}
+                >
                   <h3>{header.text}</h3>
 
                   {header.filterValues && (
                     <>
                       <button className="cursor-pointer size-4 flex items-center justify-center group transition-class relative gap-0.5">
                         <i
-                          className="fa-solid fa-filter text-xs group-hover:text-teal-700 transition-class"
+                          className="fa-solid fa-filter text-[10px] group-hover:text-teal-700 transition-class "
                           aria-hidden="true"
                           aria-label="filter icon"
                         ></i>
 
-                        <div className=" opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-fit h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-0.5 transition-class  ">
+                        <div className=" opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-22 h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-0.5 transition-class  ">
                           {header.filterValues.map((value, i) => (
                             <div
                               key={`${header.filterKey}-filter-button-${i}`}
@@ -253,7 +256,7 @@ const SessionsLogClient = ({
                             }))
                           }
                         >
-                          <span>
+                          <span className="line-clamp-1">
                             {typeof filterConditions[header.filterKey!] ===
                               "string" &&
                             !isNaN(
@@ -279,18 +282,20 @@ const SessionsLogClient = ({
             {/* THE ROWS */}
             {finalDataForDisplay.map((row: SessionRow, i: number) => (
               <div
-                className="grid grid-cols-4 w-full py-1 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3"
+                className="grid grid-cols-7 w-full py-1.5 lg:py-2 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3 gap-4"
                 key={`playerrow-${i}`}
               >
-                <div>{new Date(row.date).toLocaleDateString("en-GB")}</div>
+                <div className="col-span-2">
+                  {new Date(row.date).toLocaleDateString("en-GB")}
+                </div>
                 <a
-                  className="block hover:text-danger transition-class"
+                  className="block hover:text-danger transition-class col-span-2"
                   href={`/boardgame/${row.boardgameslug}`}
                 >
                   {row.boardgamename}
                 </a>
                 <a
-                  className="block hover:text-danger transition-class"
+                  className="block hover:text-danger transition-class col-span-2"
                   href={`/player/${row.winnerslug}`}
                 >
                   {row.winner}
@@ -315,7 +320,7 @@ const SessionsLogClient = ({
         </div>
 
         {/* RIGHT SIDE, STATISTICS */}
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-4 xl:col-span-5">
           <ChartsSection sessionsData={sessionsData} />
         </div>
       </div>

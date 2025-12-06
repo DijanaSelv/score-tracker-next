@@ -21,7 +21,7 @@ const SessionInfoPopupContent = ({
         <div className="grid grid-cols-6 gap-2">
           <p className="col-span-2">Game:</p>
           <a
-            className="block hover:text-danger transition-class"
+            className="block hover:text-danger transition-class col-span-4"
             href={
               sessionData.boardgameslug
                 ? `/boardgame/${sessionData.boardgameslug}`
