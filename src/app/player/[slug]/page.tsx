@@ -40,7 +40,7 @@ const PlayerPage = async ({ params }: Props) => {
             sessions
           </h2>
 
-          {player.length > 1 && player[0].date != null ? (
+          {player.length >= 1 && player[0].date != null ? (
             <PlayerClient playerData={playerClient} />
           ) : (
             <div className="mt-12">
