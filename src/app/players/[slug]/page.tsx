@@ -31,10 +31,10 @@ const PlayerPage = async ({ params }: Props) => {
   console.log(player, "player");
 
   return (
-    <div className="container mx-auto px-4 lg:px-6 flex flex-col justify-center pt-16">
+    <div className="">
       {player.length ? (
         <>
-          <h2 className="lg:text-2xl">
+          <h2 className="lg:text-2xl md:text-xl text-lg lg:mb-8 mb-4">
             Check out{" "}
             <span className="font-semibold">{player[0].playername}</span>&apos;s
             sessions

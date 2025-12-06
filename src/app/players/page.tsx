@@ -1,5 +1,11 @@
+import PlayersClient from "./PlayersClient";
+
 const Players = () => {
-  return <div>players page</div>;
+  return (
+    <section>
+      <PlayersClient />
+    </section>
+  );
 };
 
 export default Players;

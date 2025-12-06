@@ -103,7 +103,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
       filterKey: "dateFilter",
     },
     {
-      text: "board game",
+      text: "game",
       filterValues: Array.from(uniqueBoardGamesNames),
       filterKey: "boardGameNameFilter",
     },
@@ -177,139 +177,148 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
         {sessionData && <SessionInfoPopupContent sessionData={sessionData} />}
       </PopupModalWrapper>
 
-      <SortBy
-        sortTerms={["date", "boardgamename", "score", "position"]}
-        setSortTerm={setSortCondition}
-        setSortDescending={setSortDescending}
-        selectedSortTerm={sortCondition}
-        sortDescendingValue={sortDescending}
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+        <div className="lg:col-span-8 xl:col-span-7">
+          <SortBy
+            sortTerms={["date", "boardgamename", "score", "position"]}
+            setSortTerm={setSortCondition}
+            setSortDescending={setSortDescending}
+            selectedSortTerm={sortCondition}
+            sortDescendingValue={sortDescending}
+          />
+          <div className="grid grid-cols-9 bg-foreground/5  py-1.5 font-medium px-2 gap-4">
+            {/* HEADERS THAT ALSO HAVE FILTERS */}
+            {tableHeaders.map((header, i) => (
+              <div
+                className="flex items-center gap-2 col-span-2"
+                key={`header-${i}`}
+              >
+                <h3 className="text-sm">{header.text}</h3>
 
-      <div className="mt-12 ">
-        <div className="grid grid-cols-5 bg-foreground/5  py-1.5 font-medium px-2">
-          {/* HEADERS THAT ALSO HAVE FILTERS */}
-          {tableHeaders.map((header, i) => (
-            <div className="flex items-center gap-2" key={`header-${i}`}>
-              <h3>{header.text}</h3>
+                {header.filterValues && (
+                  <>
+                    <button className="cursor-pointer size-4 flex items-center justify-center group transition-class relative gap-0.5">
+                      <i
+                        className="fa-solid fa-filter text-[10px] group-hover:text-teal-700 transition-class"
+                        aria-hidden="true"
+                        aria-label="filter icon"
+                      ></i>
 
-              {header.filterValues && (
-                <>
-                  <button className="cursor-pointer size-4 flex items-center justify-center group transition-class relative gap-0.5">
-                    <i
-                      className="fa-solid fa-filter text-xs group-hover:text-teal-700 transition-class"
-                      aria-hidden="true"
-                      aria-label="filter icon"
-                    ></i>
-
-                    <div className=" opacity-0 -translate-y-1 pointer-event-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-fit h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-0.5 transition-class  ">
-                      {header.filterValues.map((value, i) => (
-                        <div
-                          key={`${header.filterKey}-filter-button-${i}`}
-                          onClick={() =>
-                            setFilterConditions((prev) => ({
-                              ...prev,
-                              [header.filterKey!]: value,
-                            }))
-                          }
-                          className="hover:text-teal-700 transition-class cursor-pointer"
-                        >
-                          {typeof value === "string" &&
-                          !isNaN(Date.parse(value))
-                            ? new Date(value).toLocaleDateString("en-GB")
-                            : value}
-                        </div>
-                      ))}
-                    </div>
-                  </button>
-                  {filterConditions[header.filterKey!] && (
-                    <button
-                      className=" class flex items-center gap-0.5 text-[10px] cursor-pointer hover:text-red-500 transition-class"
-                      key={`header-clear-filter-button-${i}`}
-                      onClick={() =>
-                        setFilterConditions((prev) => ({
-                          ...prev,
-                          [header.filterKey!]: null,
-                        }))
-                      }
-                    >
-                      <span>
-                        {typeof filterConditions[header.filterKey!] ===
-                          "string" &&
-                        !isNaN(
-                          Date.parse(
-                            filterConditions[header.filterKey!] as string
-                          )
-                        )
-                          ? new Date(
-                              filterConditions[header.filterKey!] as string
-                            ).toLocaleDateString("en-GB")
-                          : filterConditions[header.filterKey!]}
-                      </span>{" "}
-                      <i className="fa-solid fa-xmark text-[9px]"></i>
+                      <div className=" opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-22 h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-0.5 transition-class  ">
+                        {header.filterValues.map((value, i) => (
+                          <div
+                            key={`${header.filterKey}-filter-button-${i}`}
+                            onClick={() =>
+                              setFilterConditions((prev) => ({
+                                ...prev,
+                                [header.filterKey!]: value,
+                              }))
+                            }
+                            className="hover:text-teal-700 transition-class cursor-pointer"
+                          >
+                            {typeof value === "string" &&
+                            !isNaN(Date.parse(value))
+                              ? new Date(value).toLocaleDateString("en-GB")
+                              : value}
+                          </div>
+                        ))}
+                      </div>
                     </button>
-                  )}
-                </>
-              )}
+                    {filterConditions[header.filterKey!] && (
+                      <button
+                        className=" class flex items-center gap-0.5 text-[10px] cursor-pointer hover:text-red-500 transition-class"
+                        key={`header-clear-filter-button-${i}`}
+                        onClick={() =>
+                          setFilterConditions((prev) => ({
+                            ...prev,
+                            [header.filterKey!]: null,
+                          }))
+                        }
+                      >
+                        <span className="line-clamp-1">
+                          {typeof filterConditions[header.filterKey!] ===
+                            "string" &&
+                          !isNaN(
+                            Date.parse(
+                              filterConditions[header.filterKey!] as string
+                            )
+                          )
+                            ? new Date(
+                                filterConditions[header.filterKey!] as string
+                              ).toLocaleDateString("en-GB")
+                            : filterConditions[header.filterKey!]}
+                        </span>{" "}
+                        <i className="fa-solid fa-xmark text-[9px]"></i>
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            ))}
+
+            <div></div>
+          </div>
+          {/* THE ROWS */}
+          {finalDataForDisplay.map((row: PlayerRow, i: number) => (
+            <div
+              className="grid grid-cols-9 gap-4 w-full py-1.5 lg:py-2 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3"
+              key={`playerrow-${i}`}
+            >
+              <div className="col-span-2">
+                {new Date(row.date).toLocaleDateString("en-GB")}
+              </div>
+              <a
+                className="block hover:text-danger transition-class col-span-2"
+                href={`/boardgame/${row.boardgameslug}`}
+              >
+                {row.boardgamename}
+              </a>
+              <div className="col-span-2">{row.score}</div>
+              <div className="col-span-2">{row.position}</div>
+              <button
+                className="block cursor-pointer hover:text-danger transition-class"
+                onClick={() =>
+                  onClickSession(
+                    row.sessionid,
+                    new Date(row.date).toLocaleDateString("en-GB"),
+                    row.boardgamename,
+                    row.boardgameslug
+                  )
+                }
+              >
+                see more
+              </button>
             </div>
           ))}
-
-          <div></div>
         </div>
-        {/* THE ROWS */}
-        {finalDataForDisplay.map((row: PlayerRow, i: number) => (
-          <div
-            className="grid grid-cols-5 w-full py-1 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3"
-            key={`playerrow-${i}`}
-          >
-            <div>{new Date(row.date).toLocaleDateString("en-GB")}</div>
-            <a
-              className="block hover:text-danger transition-class"
-              href={`/boardgame/${row.boardgameslug}`}
-            >
-              {row.boardgamename}
-            </a>
-            <div>{row.score}</div>
-            <div>{row.position}</div>
-            <button
-              className="block cursor-pointer hover:text-danger transition-class"
-              onClick={() =>
-                onClickSession(
-                  row.sessionid,
-                  new Date(row.date).toLocaleDateString("en-GB"),
-                  row.boardgamename,
-                  row.boardgameslug
-                )
-              }
-            >
-              see more
-            </button>
+        <div className="lg:col-span-4 xl:col-span-5">
+          <div className="flex flex-row justify-between  divide-x divide-foreground/10 *:px-4 gap-4 ">
+            <div className="w-full flex flex-col ">
+              <h4 className="pb-1 font-semibold">
+                Most played game{mostOccuringGames.values.length > 1 && "s"}:{" "}
+              </h4>
+              <p>{mostOccuringGames.values.join(", ")}</p>
+              <p className="text-sm">
+                (played {mostOccuringGames.ocurrence} time
+                {mostOccuringGames.ocurrence > 1 && "s"})
+              </p>
+            </div>
+            {mostWonGame.values.length > 0 ? (
+              <div className="w-full flex flex-col ">
+                <h4 className="pb-1 font-semibold">
+                  What you&apos;re best at:
+                </h4>
+                <p>{mostWonGame.values.join(", ")}</p>
+                <p>
+                  (won {mostWonGame.ocurrence} time
+                  {mostWonGame.ocurrence > 1 && "s"})
+                </p>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
-        ))}
-      </div>
-
-      <div className="flex items-center divide-x divide-foreground/10 *:pr-4 gap-4 mt-12">
-        <div>
-          <h4 className="pb-1 font-semibold">
-            Most played game{mostOccuringGames.values.length > 1 && "s"}:{" "}
-          </h4>
-          <p>{mostOccuringGames.values.join(", ")}</p>
-          <p className="text-sm">
-            (played {mostOccuringGames.ocurrence} time
-            {mostOccuringGames.ocurrence > 1 && "s"})
-          </p>
         </div>
-        {mostWonGame.values.length > 0 ? (
-          <div>
-            <h4 className="pb-1 font-semibold">What you&apos;re best at:</h4>
-            <p>{mostWonGame.values.join(", ")}</p>
-            <p>
-              (won {mostWonGame.ocurrence} time
-              {mostWonGame.ocurrence > 1 && "s"})
-            </p>
-          </div>
-        ) : (
-          ""
-        )}
       </div>
     </section>
   );
