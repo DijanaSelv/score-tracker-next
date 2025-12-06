@@ -31,7 +31,7 @@ const ExplorePlayers = () => {
             <div className="grid grid-cols-2 gap-0.5">
               {players.map((player) => (
                 <a
-                  href={`/player/${player.slug}`}
+                  href={`/players/${player.slug}`}
                   key={`player-${player.slug}`}
                   className="block hover:text-teal-700 transition-class cursor-pointer"
                 >

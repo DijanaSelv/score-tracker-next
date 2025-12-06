@@ -28,7 +28,7 @@ export async function SessionDetailsCard(session: Session) {
               className="grid grid-cols-2 gap-2"
             >
               <a
-                href={`/player/${item.slug}`}
+                href={`/players/${item.slug}`}
                 className="transition-class hover:text-danger flex items-center gap-2"
               >
                 {" "}

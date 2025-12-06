@@ -296,7 +296,7 @@ const SessionsLogClient = ({
                 </a>
                 <a
                   className="block hover:text-danger transition-class col-span-2"
-                  href={`/player/${row.winnerslug}`}
+                  href={`/players/${row.winnerslug}`}
                 >
                   {row.winner}
                 </a>
