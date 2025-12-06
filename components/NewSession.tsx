@@ -156,7 +156,7 @@ const NewSession = ({
           onSubmit={submitSession}
         >
           <div className="flex flex-col gap-1 ">
-            <label htmlFor="date">Date</label>
+            <label htmlFor="date">date</label>
             <input
               type="date"
               required
@@ -166,7 +166,7 @@ const NewSession = ({
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label htmlFor="boardgame">Board Game</label>
+            <label htmlFor="boardgame">game</label>
             <select
               required
               id="boardgame"
@@ -186,7 +186,7 @@ const NewSession = ({
             </select>
           </div>
           <div className=" flex flex-col gap-1 pb-4 max-h-96 overflow-y-auto ">
-            <h3>Кој дешкаше?</h3>
+            <h3>players and Scores</h3>
             <div className="flex flex-col gap-2">
               {playerScores.map((item, i) => (
                 <div
@@ -212,7 +212,7 @@ const NewSession = ({
                         .filter(
                           (player) =>
                             /* this removes a player from the dropdown if it was already selected here or on other rows */
-                            player.playerid === item.player.id ||
+                            player.playerid == item.player.id ||
                             !playerScores.some(
                               (entry) => entry.player.id == player.playerid
                             )
