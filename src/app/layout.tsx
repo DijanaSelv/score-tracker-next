@@ -29,6 +29,8 @@ export const metadata: Metadata = {
     "Track scores and keep statistics for your favorite board games with ease.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
