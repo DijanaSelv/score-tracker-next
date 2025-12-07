@@ -238,3 +238,21 @@ export async function deleteBoardGame(id: number) {
     `
   );
 }
+
+export async function deleteSession(id: number) {
+  const { rows } = await pool.query(
+    `
+    DELETE FROM session
+    WHERE session.sessionid = '${id}'
+    `
+  );
+}
+
+export async function deletePlayer(id: number) {
+  const { rows } = await pool.query(
+    `
+    DELETE FROM player
+    WHERE player.playerid = '${id}'
+    `
+  );
+}

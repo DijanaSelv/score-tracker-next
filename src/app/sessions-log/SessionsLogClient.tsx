@@ -5,6 +5,9 @@ import ChartsSection from "./ChartsSection";
 import PopupModalWrapper from "../../../components/PopupModalWrapper";
 import SessionInfoPopupContent from "../../../components/SessionInfoPopupContent";
 import SortBy from "../../../components/SortBy";
+import { useRouter } from "next/navigation";
+import SecondaryButton from "../../../components/SecondaryButton";
+import { formatDate } from "../../../lib/utils";
 
 type SessionRow = {
   boardgamename: string;
@@ -45,6 +48,7 @@ const SessionsLogClient = ({
     score: number;
     position: number;
   };
+  const router = useRouter();
 
   const [sessionData, setSessionData] = useState<{
     boardgamename: string | null;
@@ -52,6 +56,19 @@ const SessionsLogClient = ({
     playerSessions: PlayerSession[] | null;
     date: string | null;
   } | null>(null);
+
+  const [deleteItemPopup, setDeleteItemPopup] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{
+    id: number;
+    date: string | Date;
+  } | null>(null);
+
+  const deleteSessionHandler = async (id: number) => {
+    await fetch(`/api/deleteSession/${id}`);
+    router.refresh();
+    setDeleteItemPopup(false);
+    setItemToDelete(null);
+  };
 
   // Custom styling for the chart using sx or direct SVG overrides
   const chartStyles = {
@@ -282,7 +299,7 @@ const SessionsLogClient = ({
             {/* THE ROWS */}
             {finalDataForDisplay.map((row: SessionRow, i: number) => (
               <div
-                className="grid grid-cols-7 w-full py-1.5 lg:py-2 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3 gap-4"
+                className="grid grid-cols-7 w-full py-1.5 lg:py-2 border-y border-collapse hover:border-teal-700/20 hover:shadow-teal-700/10 hover:shadow-sm border-foreground/5 px-2 transition-class hover:bg-teal-700/3 gap-4 group"
                 key={`playerrow-${i}`}
               >
                 <div className="col-span-2">
@@ -301,19 +318,36 @@ const SessionsLogClient = ({
                   {row.winner}
                 </a>
 
-                <button
-                  className="block cursor-pointer hover:text-danger transition-class"
-                  onClick={() =>
-                    onClickSession(
-                      row.sessionid,
-                      new Date(row.date).toLocaleDateString("en-GB"),
-                      row.boardgamename,
-                      row.boardgameslug
-                    )
-                  }
-                >
-                  see more
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    className="block cursor-pointer hover:text-danger transition-class text-sm"
+                    onClick={() =>
+                      onClickSession(
+                        row.sessionid,
+                        new Date(row.date).toLocaleDateString("en-GB"),
+                        row.boardgamename,
+                        row.boardgameslug
+                      )
+                    }
+                  >
+                    see more
+                  </button>
+
+                  <button
+                    className="opacity-0 group-hover:opacity-100 transition-class cursor-pointer text-foreground/60 hover:text-danger"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setItemToDelete({
+                        id: row.sessionid,
+                        date: new Date(row.date),
+                      });
+                      setDeleteItemPopup(true);
+                    }}
+                  >
+                    <i className="fa-solid fa-trash text-xs "></i>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -349,6 +383,38 @@ const SessionsLogClient = ({
           ""
         )}
       </div>
+
+      {/* Delete Session popup */}
+      <PopupModalWrapper
+        isOpen={deleteItemPopup}
+        closeAndResetForm={() => setDeleteItemPopup(false)}
+      >
+        {itemToDelete && (
+          <div className="flex flex-col gap-4 lg:gap-6">
+            <h2 className="font-semibold lg:text-2xl md:text-xl text-base">
+              Delete Session
+            </h2>
+            <p className="text-balance pr-5 max-w-lg">
+              Are you sure you want to delete the session on{" "}
+              <span className="font-semibold text-danger">
+                {formatDate(itemToDelete.date)}
+              </span>
+              ?
+            </p>
+            <div className="flex items-center justify-end w-fit ml-auto gap-3">
+              <SecondaryButton
+                onClickHandle={() => deleteSessionHandler(itemToDelete.id)}
+                danger={true}
+              >
+                Delete
+              </SecondaryButton>
+              <SecondaryButton onClickHandle={() => setDeleteItemPopup(false)}>
+                Cancel
+              </SecondaryButton>
+            </div>
+          </div>
+        )}
+      </PopupModalWrapper>
     </section>
   );
 };
