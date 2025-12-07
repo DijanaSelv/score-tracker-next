@@ -31,9 +31,11 @@ const PlayersClient = () => {
           {players.length ? (
             <div className="flex flex-col w-full  divide-y divide-slate-400 ">
               {players.map((player) => (
-                <div className="group flex items-center justify-between w-full">
+                <div
+                  className="group flex items-center justify-between w-full"
+                  key={`players/${player.slug}`}
+                >
                   <a
-                    key={`players/${player.slug}`}
                     href={`players/${player.slug}`}
                     className="hover:text-danger transition-class lg:text-lg text-base py-1 lg:py-2 pl-3 lg:pl-4 block grow "
                   >
