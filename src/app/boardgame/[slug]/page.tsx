@@ -1,4 +1,4 @@
-import SessionDetailsCard from "@/../components/SessionDetailscard";
+import SessionDetailsCard from "@/../components/SessionDetailsCard";
 
 import type { Session, Props } from "@/../lib/types";
 import {
