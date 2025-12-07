@@ -136,7 +136,7 @@ export async function getMostTimesWon(sessionIds: number[]) {
 /* BOARD GAME */
 
 export async function addBoardGame(name: string) {
-  const slug = name.toLowerCase().replace(/\s+/g, "-");
+  const slug = name.toLowerCase().replace(/[\s']/g, "-");
   const { rows } = await pool.query(
     `INSERT INTO boardgame (name, slug) VALUES 
     ('${name}', '${slug}')`
