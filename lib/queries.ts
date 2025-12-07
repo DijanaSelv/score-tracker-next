@@ -138,10 +138,9 @@ export async function getMostTimesWon(sessionIds: number[]) {
 export async function addBoardGame(name: string) {
   const slug = name.toLowerCase().replace(/[\s']/g, "-");
   const { rows } = await pool.query(
-    `INSERT INTO boardgame (name, slug) VALUES 
-    ('${name}', '${slug}')`
+    `INSERT INTO boardgame (name, slug) VALUES ($1, $2) RETURNING *`,
+    [name, slug]
   );
-
   //return rows[0];
 }
 
