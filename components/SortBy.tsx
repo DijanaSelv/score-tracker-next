@@ -53,7 +53,7 @@ const SortBy = ({
       >
         <i
           aria-hidden
-          className={`fa-solid fa-arrow-down transition-class ${
+          className={`fa-solid fa-arrow-up transition-class ${
             sortDescendingValue && "rotate-180"
           }`}
         ></i>

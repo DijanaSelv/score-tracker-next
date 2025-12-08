@@ -1,4 +1,5 @@
 import SessionDetailsCard from "@/../components/SessionDetailsCard";
+import ChartsSection from "./ChartsSection";
 
 import type { Session, Props } from "@/../lib/types";
 import {
@@ -28,65 +29,27 @@ const boardGame = async ({ params }: Props) => {
     sessionIds.length > 0 ? await getMostTimesWon(sessionIds) : null;
 
   return (
-    <div className="flex flex-col gap-12 lg:gap-22">
-      <div>
-        <h1 className="pb-8 font-semibold lg:text-4xl md:text-3xl text-2xl">
-          {boardGame.name}
-        </h1>
+    <div className="flex flex-col gap-6 lg:gap-8">
+      <h1 className=" font-semibold lg:text-4xl md:text-3xl text-2xl">
+        {boardGame.name}
+      </h1>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+        <div className="lg:col-span-8 xl:col-span-7 flex flex-col gap-6 lg:gap-8">
+          {sessions.length > 0 ? (
+            <div className="grid grid-cols-1 min-[450px]:grid-cols-2 md:grid-cols-3  gap-3">
+              {sessions.map((session: Session, i: number) => (
+                <SessionDetailsCard {...session} key={`session-card-${i}`} />
+              ))}
+            </div>
+          ) : (
+            <div>
+              <p className="">Treba da se deshni nekoja partija.</p>
+            </div>
+          )}
+        </div>
 
-        {sessions.length > 0 ? (
-          <div className="grid grid-cols-1 min-[450px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {sessions.map((session: Session, i: number) => (
-              <SessionDetailsCard {...session} key={`session-card-${i}`} />
-            ))}
-          </div>
-        ) : (
-          <div>
-            <p className="">Treba da se deshni nekoja partija.</p>
-          </div>
-        )}
-      </div>
-
-      <div className="">
-        <h2 className="font-semibold lg:text-lg">Statistics:</h2>
-        <div className="mt-4 flex flex-row *:pr-6 gap-6 divide-x divide-foreground/10 ">
-          <div>
-            <h3>The Bestest Score so far: </h3>
-            {highScore ? (
-              <div className="flex items-center gap-3">
-                <p>{highScore.score}</p>
-                <p>
-                  ( by <span className="font-semibold">{highScore.name}</span>)
-                </p>
-              </div>
-            ) : (
-              <div>
-                {" "}
-                I mean kako mozhi da ima high score ako ja nemate igrano igrata.{" "}
-              </div>
-            )}
-          </div>
-          <div>
-            <h3>Most frequent player: </h3>
-            {mostFrequentPlayers ? (
-              <div className="flex items-center gap-3">
-                <p>{mostFrequentPlayers.name}</p>
-              </div>
-            ) : (
-              <div> I mean nikoj ne se trudi. </div>
-            )}
-          </div>
-          <div>
-            <h3>Most times won: </h3>
-            {mostTimesWon ? (
-              <div className="flex items-center gap-3">
-                <p>{mostTimesWon.name}</p>
-                <p>games won: {mostTimesWon["games_won"]}</p>
-              </div>
-            ) : (
-              <div> I mean nikoj nema pobedeno. </div>
-            )}
-          </div>
+        <div className="lg:col-span-4 xl:col-span-5 flex flex-col gap-6 lg:gap-8">
+          <ChartsSection />
         </div>
       </div>
     </div>

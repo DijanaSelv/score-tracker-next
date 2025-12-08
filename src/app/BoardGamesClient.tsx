@@ -13,7 +13,7 @@ export default function BoardGamesList() {
 
   const { boardGames } = useGlobalData();
 
-  const [sortDescending, setSortDescending] = useState<boolean>(true);
+  const [sortDescending, setSortDescending] = useState<boolean>(false);
   const [deleteItemPopup, setDeleteItemPopup] = useState<boolean>(false);
   const [itemToDelete, setItemToDelete] = useState<{
     id: number;

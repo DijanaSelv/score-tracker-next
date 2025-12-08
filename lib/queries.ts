@@ -131,6 +131,25 @@ export async function getMostTimesWon(sessionIds: number[]) {
 
   return rows[0] || null;
 }
+
+export async function getPlayersStatistics() {
+  const { rows } = await pool.query(
+    `
+    SELECT 
+      p.name, 
+      COUNT (*) AS times_played,
+      COUNT (*) FILTER (WHERE sp.position = 1) AS times_won
+    FROM player p
+    JOIN sessionplayer sp ON sp.playerid = p.playerid
+    GROUP BY p.name
+    ORDER BY times_won DESC
+    LIMIT 5
+    `
+  );
+
+  console.log(rows[0], "players statistics rows from the query");
+  return rows;
+}
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ADD STUFF */
 
 /* BOARD GAME */

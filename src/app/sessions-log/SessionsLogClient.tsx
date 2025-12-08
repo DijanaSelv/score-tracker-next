@@ -70,33 +70,6 @@ const SessionsLogClient = ({
     setItemToDelete(null);
   };
 
-  // Custom styling for the chart using sx or direct SVG overrides
-  const chartStyles = {
-    "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
-      stroke: "#ffffff",
-    },
-    "& .MuiChartsAxis-bottom .MuiChartsAxis-tick": {
-      stroke: "#ffffff",
-    },
-    "& .MuiChartsAxis-bottom text": {
-      fill: "#ffffff",
-      fontSize: 12,
-    },
-    "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-      stroke: "#ffffff",
-    },
-    "& .MuiChartsAxis-left .MuiChartsAxis-tick": {
-      stroke: "#ffffff",
-    },
-    "& .MuiChartsAxis-left text": {
-      fill: "#ffffff",
-      fontSize: 12,
-    },
-    "& line[class*='MuiChartsAxis-grid']": {
-      stroke: "rgba(255,255,255,0.2)",
-      strokeDasharray: "4 2",
-    },
-  };
   const uniqueBoardGamesNames = new Set(
     sessionsData.map((item) => item.boardgamename)
   );
@@ -163,7 +136,7 @@ const SessionsLogClient = ({
   ];
 
   /* here we calculate statistics on the frontent, compared to boardgame page where we get them from the backend */
-  const findMostOcurringValues = <T extends string | number>(arr: T[]) => {
+  /*   const findMostOcurringValues = <T extends string | number>(arr: T[]) => {
     const counts: Record<string, number> = {};
     for (const i of arr) {
       const key = String(i);
@@ -186,7 +159,7 @@ const SessionsLogClient = ({
 
   const playerThatWonMost = findMostOcurringValues(
     sessionsData.map((item) => item.winner)
-  );
+  ); */
 
   /* See more button to open the session modal */
   const onClickSession = async (
@@ -223,7 +196,7 @@ const SessionsLogClient = ({
           />
 
           {/* TABLE */}
-          <div className=" ">
+          <div className="lg:max-h-[700px] overflow-y-auto min-h-96">
             <div className="grid grid-cols-7 bg-foreground/5 gap-4  py-1.5 font-medium px-2">
               {/* HEADERS THAT ALSO HAVE FILTERS */}
               {tableHeaders.map((header, i) => (
@@ -242,7 +215,7 @@ const SessionsLogClient = ({
                           aria-label="filter icon"
                         ></i>
 
-                        <div className=" opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-22 h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-0.5 transition-class  ">
+                        <div className=" opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto absolute w-32 h-fit p-1.5 px-2 text-xs border top-full inset-0 bg-background shadow-md border-foreground/40 flex flex-col gap-1 transition-class  max-h-44 overflow-y-auto">
                           {header.filterValues.map((value, i) => (
                             <div
                               key={`${header.filterKey}-filter-button-${i}`}
@@ -252,7 +225,7 @@ const SessionsLogClient = ({
                                   [header.filterKey!]: value,
                                 }))
                               }
-                              className="hover:text-teal-700 transition-class cursor-pointer"
+                              className="hover:text-teal-700 transition-class cursor-pointer text-start"
                             >
                               {typeof value === "string" &&
                               !isNaN(Date.parse(value))
@@ -357,31 +330,6 @@ const SessionsLogClient = ({
         <div className="lg:col-span-4 xl:col-span-5">
           <ChartsSection sessionsData={sessionsData} />
         </div>
-      </div>
-
-      <div className="flex items-center divide-x divide-foreground/10 *:pr-4 gap-4 mt-12">
-        <div>
-          <h4 className="pb-1 font-semibold">
-            Most played game{mostOccuringGames.values.length > 1 && "s"}:{" "}
-          </h4>
-          <p>{mostOccuringGames.values.join(", ")}</p>
-          <p className="text-sm">
-            (played {mostOccuringGames.ocurrence} time
-            {mostOccuringGames.ocurrence > 1 && "s"})
-          </p>
-        </div>
-        {playerThatWonMost.values.length > 0 ? (
-          <div>
-            <h4 className="pb-1 font-semibold">G.O.A.T:</h4>
-            <p>{playerThatWonMost.values.join(", ")}</p>
-            <p>
-              (won {playerThatWonMost.ocurrence} time
-              {playerThatWonMost.ocurrence > 1 && "s"})
-            </p>
-          </div>
-        ) : (
-          ""
-        )}
       </div>
 
       {/* Delete Session popup */}
