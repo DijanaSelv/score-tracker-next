@@ -12,6 +12,7 @@ type PlayerRow = {
   date: string;
   sessionid: number;
   boardgameslug: string;
+  nopoints: boolean;
 };
 
 type FilterConditions = {
@@ -39,6 +40,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     name: string;
     position: number;
     score: number;
+    nopoints: boolean;
   };
 
   const [sessionData, setSessionData] = useState<{
@@ -46,6 +48,7 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     boardgameslug: string | null;
     playerSessions: PlayerSession[] | null;
     date: string | null;
+    nopoints: boolean;
   } | null>(null);
 
   const uniqueBoardGamesNames = new Set(
@@ -157,11 +160,18 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
     sessionid: number,
     date: string,
     boardgamename: string,
-    boardgameslug: string
+    boardgameslug: string,
+    nopoints: boolean
   ) => {
     const res = await fetch(`../api/session/${sessionid}`);
     const playerSessions = (await res.json()) as PlayerSession[];
-    setSessionData({ boardgamename, boardgameslug, date, playerSessions });
+    setSessionData({
+      boardgamename,
+      boardgameslug,
+      date,
+      playerSessions,
+      nopoints,
+    });
   };
 
   console.log(sessionData);
@@ -273,16 +283,27 @@ const PlayerClient = ({ playerData }: { playerData: PlayerRow[] }) => {
               >
                 {row.boardgamename}
               </a>
-              <div className="col-span-2">{row.score}</div>
-              <div className="col-span-2">{row.position}</div>
+              <div className="col-span-2">
+                {!row.nopoints ? row.score : <span>/</span>}
+              </div>
+              <div className="col-span-2">
+                {!row.nopoints ? (
+                  row.position
+                ) : row.score ? (
+                  <i className="fa-solid fa-crown text-xs text-amber-400"></i>
+                ) : (
+                  <i className="fa-solid fa-skull text-xs text-danger"></i>
+                )}
+              </div>
               <button
-                className="block cursor-pointer hover:text-danger transition-class"
+                className="block cursor-pointer hover:text-danger transition-class text-sm"
                 onClick={() =>
                   onClickSession(
                     row.sessionid,
                     new Date(row.date).toLocaleDateString("en-GB"),
                     row.boardgamename,
-                    row.boardgameslug
+                    row.boardgameslug,
+                    row.nopoints
                   )
                 }
               >

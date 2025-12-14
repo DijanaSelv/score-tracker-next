@@ -10,6 +10,7 @@ const SessionInfoPopupContent = ({
       | { slug: string; name: string; position: number; score: number }[]
       | null;
     date: string | null;
+    nopoints: boolean;
   };
 }) => {
   return (
@@ -41,8 +42,12 @@ const SessionInfoPopupContent = ({
       <div className="min-w-96">
         <div className="grid grid-cols-3 gap-4 mb-2 pb-1 border-b border-slate-400 font-medium text-sm">
           <p className="">players</p>
-          <p className="">points</p>
-          <p className="">position</p>
+          {!sessionData.nopoints ? (
+            <p className="">points</p>
+          ) : (
+            <p className="">result</p>
+          )}
+          {!sessionData.nopoints && <p className="">position</p>}
         </div>
         <div className="flex flex-col gap-2">
           {sessionData.playerSessions?.map((player, i) => (
@@ -52,12 +57,24 @@ const SessionInfoPopupContent = ({
                 className="hover:text-danger transition-class flex items-center gap-2"
               >
                 {player.name}
-                {player.position == 1 && (
+                {player.position == 1 && !sessionData.nopoints && (
                   <i className="fa-solid fa-crown text-yellow-600 text-xs"></i>
                 )}
               </a>
-              <Counter value={player.score} />
-              <p>{player.position} </p>
+              {!sessionData.nopoints ? (
+                <>
+                  <Counter value={player.score} />
+                  <p>{player.position} </p>
+                </>
+              ) : (
+                <>
+                  {player.score ? (
+                    <i className="fa-solid fa-crown text-xs text-amber-400"></i>
+                  ) : (
+                    <i className="fa-solid fa-skull text-xs text-danger"></i>
+                  )}{" "}
+                </>
+              )}
             </div>
           ))}
         </div>

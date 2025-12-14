@@ -4,6 +4,7 @@ import { addBoardGame } from "../lib/queries";
 import { useRouter } from "next/navigation";
 import PrimaryButton from "./PrimaryButton";
 import PopupModalWrapper from "./PopupModalWrapper";
+import { Checkbox } from "@mui/material";
 
 const NewBoardGame = () => {
   const [newGamePopupOpen, setNewGamePopupOpen] = useState<boolean>(false);
@@ -23,6 +24,7 @@ const NewBoardGame = () => {
 
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
+    const noPoints = formData.get("nopoints") != null;
 
     if (!name) {
       setError("You must type a name.");
@@ -31,7 +33,7 @@ const NewBoardGame = () => {
 
     try {
       setAddingGame(true);
-      await addBoardGame(name);
+      await addBoardGame(name, noPoints);
       closeAndResetForm();
       router.refresh();
     } catch (error: unknown) {
@@ -66,18 +68,32 @@ const NewBoardGame = () => {
         <h2 className="text-lg font-semibold mb-4">Add a new Board Game</h2>
         <form
           ref={formRef}
-          className="flex flex-col gap-1 min-w-xs new-game-form"
+          className="flex flex-col gap-4 min-w-xs new-game-form"
           onSubmit={submitBoardGame}
         >
-          <label htmlFor="name">Name</label>
-          <input
-            required
-            type="text"
-            placeholder="name"
-            id="name"
-            name="name"
-            className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
-          />
+          <div className="flex flex-col gap-1">
+            <label htmlFor="name">Name</label>
+            <input
+              required
+              type="text"
+              placeholder="name"
+              id="name"
+              name="name"
+              className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
+            />
+          </div>
+          <div className="flex flex-row items-center justify-between w-full cursor-pointer">
+            <label htmlFor="nopoints" className="cursor-pointer">
+              Won or lost only (no points)
+            </label>
+            <input
+              type="checkbox"
+              id="nopoints"
+              name="nopoints"
+              value="true"
+              className="border border-slate-400 px-2 py-1.5 size-4! outline-none focus:border-teal-700 transition-class"
+            />
+          </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"

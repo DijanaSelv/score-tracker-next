@@ -38,7 +38,11 @@ const boardGame = async ({ params }: Props) => {
           {sessions.length > 0 ? (
             <div className="grid grid-cols-1 min-[450px]:grid-cols-2 md:grid-cols-3  gap-3">
               {sessions.map((session: Session, i: number) => (
-                <SessionDetailsCard {...session} key={`session-card-${i}`} />
+                <SessionDetailsCard
+                  session={session}
+                  key={`session-card-${i}`}
+                  noPointsBoardGame={boardGame.nopoints}
+                />
               ))}
             </div>
           ) : (

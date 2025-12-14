@@ -34,11 +34,30 @@ export async function getPlayers() {
 export async function getAllSessions() {
   const { rows } = await pool.query(
     `
-    SELECT s.date, bg.name as boardgamename, bg.slug as boardgameslug, p.name as winner, p.slug as winnerslug, s.sessionid as sessionid
+    SELECT s.date, bg.name as boardgamename, bg.slug as boardgameslug, bg.nopoints as nopoints, 
+    COALESCE(
+      json_agg(
+        json_build_object(
+          'name', p.name,
+          'slug', p.slug
+        )
+      ) FILTER (
+        WHERE sp.score > 0 
+          AND sp.position = (
+            SELECT MIN(position)
+            FROM sessionplayer
+            WHERE sessionid = s.sessionid
+              AND score > 0
+          )
+      ), '[]'
+    ) AS winners, 
+       s.sessionid as sessionid
     FROM session s
     JOIN boardgame bg on bg.boardgameid = s.boardgameid
     JOIN sessionplayer sp on sp.sessionid = s.sessionid
-    JOIN  player p on p.playerid = sp.playerid and sp.position = 1
+    JOIN  player p on p.playerid = sp.playerid 
+    GROUP BY s.sessionid, s.date, bg.name, bg.slug, bg.nopoints
+    ORDER BY s.date DESC
     `
   );
 
@@ -55,7 +74,7 @@ export async function getBoardGameBySlug(slug: string) {
 export async function getPlayerDataBySlug(slug: string) {
   const { rows } = await pool.query(
     `
-    SELECT p.name as playername, bg.slug as boardgameslug , sp.position, s.sessionid, s.date, sp.score, bg.name as boardgamename
+    SELECT p.name as playername, bg.slug as boardgameslug , sp.position, s.sessionid, s.date, sp.score, bg.name as boardgamename, bg.nopoints
     FROM player p
     LEFT JOIN sessionplayer sp on sp.playerid = p.playerid
     LEFT JOIN session s on s.sessionid = sp.sessionid
@@ -138,7 +157,7 @@ export async function getPlayersStatistics() {
     SELECT 
       p.name, 
       COUNT (*) AS times_played,
-      COUNT (*) FILTER (WHERE sp.position = 1) AS times_won
+      COUNT (*) FILTER (WHERE sp.position = 1 AND sp.score > 0) AS times_won
     FROM player p
     JOIN sessionplayer sp ON sp.playerid = p.playerid
     GROUP BY p.name
@@ -154,11 +173,11 @@ export async function getPlayersStatistics() {
 
 /* BOARD GAME */
 
-export async function addBoardGame(name: string) {
+export async function addBoardGame(name: string, noPoints: boolean) {
   const slug = name.toLowerCase().replace(/[\s']/g, "-");
   const { rows } = await pool.query(
-    `INSERT INTO boardgame (name, slug) VALUES ($1, $2) RETURNING *`,
-    [name, slug]
+    `INSERT INTO boardgame (name, slug, nopoints) VALUES ($1, $2, $3) RETURNING *`,
+    [name, slug, noPoints]
   );
   //return rows[0];
 }
@@ -224,25 +243,27 @@ export async function addSession(
     }
   });
 
-  const sortedPLlayerScoresWithPositions = allPlayerScores
-    .sort((a, b) => b.score - a.score)
-    .map((playerScore, i) => ({
-      id: playerScore.player.id,
-      score: playerScore.score,
-      position: i + 1,
-    }));
-
   /* add the player scores */
-
-  await Promise.all(
-    sortedPLlayerScoresWithPositions.map((sessionplayer) =>
-      pool.query(
-        `
-        INSERT INTO sessionplayer (sessionid, playerid, score, position) VALUES
-        ('${sessionid}', '${sessionplayer.id}', '${sessionplayer.score}', ${sessionplayer.position})
-        `
-      )
-    )
+  await pool.query(
+    `
+  INSERT INTO sessionplayer (sessionid, playerid, score, position)
+  SELECT
+    $1 AS sessionid,
+    playerid,
+    score,
+    DENSE_RANK() OVER (ORDER BY score DESC) AS position
+  FROM (
+    SELECT
+      unnest($2::int[]) AS playerid,
+      unnest($3::int[]) AS score
+  ) s
+   ORDER BY score DESC, playerid
+  `,
+    [
+      sessionid,
+      allPlayerScores.map((p) => p.player.id),
+      allPlayerScores.map((p) => p.score),
+    ]
   );
 }
 

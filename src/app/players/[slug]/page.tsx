@@ -17,6 +17,7 @@ const PlayerPage = async ({ params }: Props) => {
     date: Date | string | null;
     score: number;
     boardgamename: string;
+    nopoints: boolean;
   };
 
   const playerClient = (player as PlayerRowRaw[]).map((item) => ({

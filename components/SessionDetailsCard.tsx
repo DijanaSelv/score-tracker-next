@@ -8,7 +8,13 @@ import SecondaryButton from "./SecondaryButton";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const SessionDetailsCard = (session: Session) => {
+const SessionDetailsCard = ({
+  session,
+  noPointsBoardGame,
+}: {
+  session: Session;
+  noPointsBoardGame: boolean;
+}) => {
   const router = useRouter();
 
   const [deleteItemPopup, setDeleteItemPopup] = useState(false);
@@ -76,13 +82,23 @@ const SessionDetailsCard = (session: Session) => {
               className="transition-class hover:text-danger flex items-center gap-2"
             >
               {item.name}
-              {item.position == 1 && (
+              {!noPointsBoardGame && item.position == 1 && (
                 <i className="fa-solid fa-crown text-xs text-amber-400"></i>
               )}
             </a>
 
             <p>
-              <Counter value={item.score} />
+              {noPointsBoardGame ? (
+                <>
+                  {item.score ? (
+                    <i className="fa-solid fa-crown text-xs text-amber-400"></i>
+                  ) : (
+                    <i className="fa-solid fa-skull text-xs text-danger"></i>
+                  )}
+                </>
+              ) : (
+                <Counter value={item.score} />
+              )}
             </p>
           </div>
         ))}

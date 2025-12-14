@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import type {} from "@mui/x-charts/themeAugmentation";
 import ChartsSection from "./ChartsSection";
 import PopupModalWrapper from "../../../components/PopupModalWrapper";
 import SessionInfoPopupContent from "../../../components/SessionInfoPopupContent";
@@ -14,8 +13,8 @@ type SessionRow = {
   boardgameslug: string;
   date: string;
   sessionid: number;
-  winner: string;
-  winnerslug: string;
+  winners: { name: string; slug: string }[] | [];
+  nopoints: boolean;
 };
 
 type FilterConditions = {
@@ -55,6 +54,7 @@ const SessionsLogClient = ({
     boardgameslug: string | null;
     playerSessions: PlayerSession[] | null;
     date: string | null;
+    nopoints: boolean;
   } | null>(null);
 
   const [deleteItemPopup, setDeleteItemPopup] = useState(false);
@@ -73,7 +73,9 @@ const SessionsLogClient = ({
   const uniqueBoardGamesNames = new Set(
     sessionsData.map((item) => item.boardgamename)
   );
-  const uniqueWinners = new Set(sessionsData.map((item) => item.winner));
+  const uniqueWinners = new Set(
+    sessionsData.map((item) => item.winners?.map((w) => w.name)).flat()
+  );
   const uniqueDates = new Set(sessionsData.map((item) => item.date));
 
   const sortedSessionsData = [...sessionsData].sort((a, b) => {
@@ -81,7 +83,9 @@ const SessionsLogClient = ({
       case "boardgamename":
         return a.boardgamename.localeCompare(b.boardgamename);
       case "winner":
-        return a.winner.localeCompare(b.winner);
+        return (a.winners?.[0]?.name ?? "").localeCompare(
+          b.winners?.[0]?.name ?? ""
+        );
       case "date":
         return new Date(b.date).getTime() - new Date(a.date).getTime();
       default:
@@ -106,8 +110,11 @@ const SessionsLogClient = ({
       );
     }
     if (filterConditions.winnerFilter) {
-      filterData = filterData.filter(
-        (row) => row.winner == filterConditions.winnerFilter
+      filterData = filterData.filter((row) =>
+        row.winners?.some(
+          (winner: { name: string; slug: string }) =>
+            winner.name == filterConditions.winnerFilter
+        )
       );
     }
 
@@ -166,11 +173,18 @@ const SessionsLogClient = ({
     sessionid: number,
     date: string,
     boardgamename: string,
-    boardgameslug: string
+    boardgameslug: string,
+    nopoints: boolean
   ) => {
     const res = await fetch(`../api/session/${sessionid}`);
     const playerSessions = (await res.json()) as PlayerSession[];
-    setSessionData({ boardgamename, boardgameslug, date, playerSessions });
+    setSessionData({
+      boardgamename,
+      boardgameslug,
+      date,
+      playerSessions,
+      nopoints,
+    });
   };
 
   return (
@@ -284,12 +298,19 @@ const SessionsLogClient = ({
                 >
                   {row.boardgamename}
                 </a>
-                <a
-                  className="block hover:text-danger transition-class col-span-2"
-                  href={`/players/${row.winnerslug}`}
-                >
-                  {row.winner}
-                </a>
+                <div className=" col-span-2 flex items-center gap-1">
+                  {row.winners &&
+                    (row.winners || []).map((winner, i) => (
+                      <a
+                        key={`row-winner-${i}-${winner.slug}`}
+                        className=" hover:text-danger transition-class block"
+                        href={`/players/${winner.slug}`}
+                      >
+                        {winner.name}
+                        {i < row.winners.length - 1 ? "," : ""}
+                      </a>
+                    ))}
+                </div>
 
                 <div className="flex items-center gap-3">
                   <button
@@ -299,7 +320,8 @@ const SessionsLogClient = ({
                         row.sessionid,
                         new Date(row.date).toLocaleDateString("en-GB"),
                         row.boardgamename,
-                        row.boardgameslug
+                        row.boardgameslug,
+                        row.nopoints
                       )
                     }
                   >

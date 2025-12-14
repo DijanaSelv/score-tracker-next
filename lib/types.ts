@@ -10,6 +10,7 @@ export type BoardGame = {
   slug: string;
   session_count: number;
   last_played: Date;
+  nopoints: boolean;
 };
 
 export type Session = {
@@ -25,8 +26,8 @@ export type Props = {
 export type SessionRow = {
   boardgamename: string;
   boardgameslug: string;
-  date: string;
+  date: Date | string | null;
   sessionid: number;
-  winner: string;
-  winnerslug: string;
+  winners: { name: string; slug: string }[] | [];
+  nopoints: boolean;
 };

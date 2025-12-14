@@ -1,7 +1,6 @@
 "use server";
 import type { Props } from "@/../lib/types";
 import SessionsLogClient from "./SessionsLogClient";
-
 import { getAllSessions } from "@/../lib/queries";
 import NewSession from "../../../components/NewSession";
 
@@ -12,8 +11,8 @@ const SessionLogPage = async ({ params }: Props) => {
     date: Date | string | null;
     boardgamename: string;
     boardgameslug: string;
-    winner: string;
-    winnerslug: string;
+    nopoints: boolean;
+    winners: { name: string; slug: string }[] | [];
     sessionid: number;
   };
 

@@ -17,6 +17,7 @@ const NewSession = ({
 
   const [newSessionPopupOpen, setNewSessionPopupOpen] =
     useState<boolean>(false);
+  const [noScoreBoardGame, setNoScoreBoardGame] = useState<boolean>(false);
 
   /* UX states */
   const [error, setError] = useState<string | null>(null);
@@ -173,6 +174,13 @@ const NewSession = ({
               name="boardgame"
               className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class cursor-pointer"
               defaultValue={defaultBoardGameSelected}
+              onChange={(e) =>
+                setNoScoreBoardGame(
+                  boardGames.find(
+                    (bg) => bg.boardgameid == Number(e.target.value)
+                  )?.nopoints ?? false
+                )
+              }
             >
               <option value={undefined}>Choose...</option>
               {boardGames.map((game) => (
@@ -186,7 +194,7 @@ const NewSession = ({
             </select>
           </div>
           <div className=" flex flex-col gap-1 pb-4 max-h-96 overflow-y-auto ">
-            <h3>players and Scores</h3>
+            <h3>players and {noScoreBoardGame ? "winners" : "scores"}</h3>
             <div className="flex flex-col gap-2">
               {playerScores.map((item, i) => (
                 <div
@@ -248,19 +256,34 @@ const NewSession = ({
                       }
                     />
                   )}
+                  {noScoreBoardGame ? (
+                    <div className="flex items-center gap-4 px-4  justify-center">
+                      <input
+                        type="checkbox"
+                        id={`playerscore-${i}`}
+                        className="border border-slate-400 px-2 py-1.5 size-7! outline-none focus:border-teal-700 transition-class"
+                        onChange={(e) =>
+                          updatePlayer(i, {
+                            score: e.target.checked ? 1 : 0,
+                          })
+                        }
+                      />
+                    </div>
+                  ) : (
+                    <input
+                      type="number"
+                      className="outline-none max-sm:max-w-14 max-lg:max-w-22 border border-slate-400 px-2 py-0.5  "
+                      id={`playerscore-${i}`}
+                      placeholder="Add score..."
+                      value={item.score || 0}
+                      onChange={(e) =>
+                        updatePlayer(i, {
+                          score: Number(e.target.value) || undefined,
+                        })
+                      }
+                    />
+                  )}
 
-                  <input
-                    type="number"
-                    className="outline-none max-sm:max-w-14 max-lg:max-w-22 border border-slate-400 px-2 py-0.5  "
-                    id={`playerscore-${i}`}
-                    placeholder="Add score..."
-                    value={item.score || 0}
-                    onChange={(e) =>
-                      updatePlayer(i, {
-                        score: Number(e.target.value) || undefined,
-                      })
-                    }
-                  />
                   <button
                     className="  border h-[30px] px-2 flex items-center border-slate-400 justify-center cursor-pointer hover:text-amber-700 hover:border-amber-700 transition-class"
                     type="button"

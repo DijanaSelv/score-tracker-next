@@ -59,7 +59,7 @@ const ChartsSection = ({ sessionsData }: { sessionsData: SessionRow[] }) => {
           series={[{ data: mostPlayedGames.counts, barLabel: "value" }]}
           height={300}
         />
-        <h4 className="text-center">Highest Scores Per Player</h4>
+        <h4 className="text-center">Most Played Games</h4>
       </div>
 
       {/* Player Stats Pie Chart */}
