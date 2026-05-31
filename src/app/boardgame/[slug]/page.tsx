@@ -47,7 +47,7 @@ const boardGame = async ({ params }: Props) => {
             </div>
           ) : (
             <div>
-              <p className="">Treba da se deshni nekoja partija.</p>
+              <p>Treba da se deshni nekoja partija.</p>
             </div>
           )}
         </div>
