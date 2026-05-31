@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 
 export function middleware(request: Request) {
+  /* FOR THE DEMO APP I WONT BE ASKING FOR A PASS */
+  if (process.env.DEMO_MODE === "true") {
+    return NextResponse.next();
+  }
+
   const auth = request.headers.get("authorization");
 
   /* const username = "me"; */
