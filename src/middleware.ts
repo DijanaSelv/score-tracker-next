@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export function middleware(request: Request) {
   const auth = request.headers.get("authorization");
 
-  const username = "me";
+  /* const username = "me"; */
   const password = process.env.APP_PASSWORD;
 
   //we check if browser sent authorization header, if not we tell the browser to ask for credentials
@@ -25,10 +25,10 @@ export function middleware(request: Request) {
 
   //after user puts credentials they are decoded
   const decoded = atob(encoded);
-  const [user, pass] = decoded.split(":");
+  const [, pass] = decoded.split(":");
 
   //we check if they are valid
-  if (user !== username || pass !== password) {
+  if (pass !== password) {
     return new NextResponse("Unauthorized", {
       status: 401,
       headers: { "WWW-Authenticate": 'Basic realm="Secure Area"' },
