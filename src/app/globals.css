@@ -6,6 +6,7 @@
   --highlight: #0f766e;
   --accent: #7bd3c9;
   --danger: #ff8848;
+  --soft-dark: #18191c;
 }
 
 @theme inline {
@@ -18,6 +19,7 @@
   --font-zen-dots: var(--font-zen-dots);
   --color-accent: var(--accent);
   --color-highlight: var(--highlight);
+  --color-soft-dark: var(--soft-dark);
 }
 
 /* @layer components {
@@ -50,33 +52,45 @@ body {
     position: relative;
     --mx: 0px;
     --my: 0px;
-    transition: border-color 0.3s ease, border-radius 0.3s ease;
+    transition:
+      border-color 0.3s ease,
+      border-radius 0.3s ease;
   }
 
   .card-neon-hover:hover {
-    box-shadow: calc(var(--mx) * 0.3) calc(var(--my) * 0.3) 40px
-        rgba(15, 118, 110, 0.2),
+    box-shadow:
+      calc(var(--mx) * 0.3) calc(var(--my) * 0.3) 40px rgba(15, 118, 110, 0.2),
       0 0 70px rgba(15, 118, 110, 0.2);
   }
 
   .card-static-hover:hover {
-    box-shadow: 0 0 40px rgba(15, 118, 110, 0.2),
+    box-shadow:
+      0 0 40px rgba(15, 118, 110, 0.2),
       0 0 70px rgba(15, 118, 110, 0.2);
   }
 
   .button-neon-hover:hover {
-    box-shadow: 0 0 10px 0 #0f766e inset, 0 0 20px 2px #0f766e;
+    box-shadow:
+      0 0 10px 0 #0f766e inset,
+      0 0 20px 2px #0f766e;
   }
   .button-white-hover:hover {
-    box-shadow: 0 0 10px 0 #ffffff80 inset, 0 0 20px 2px #ffffff80;
+    box-shadow:
+      0 0 10px 0 #ffffff80 inset,
+      0 0 20px 2px #ffffff80;
   }
   .button-danger-hover:hover {
-    box-shadow: 0 0 10px 0 #ff884880 inset, 0 0 20px 2px #ff884880;
+    box-shadow:
+      0 0 10px 0 #ff884880 inset,
+      0 0 20px 2px #ff884880;
   }
 }
 
 .logo-shadow:hover {
-  text-shadow: 1px 1px 5px #0f766e, 0 0 1.42em #0f766e, 0 0 0.5em #0f766e;
+  text-shadow:
+    1px 1px 5px #0f766e,
+    0 0 1.42em #0f766e,
+    0 0 0.5em #0f766e;
 }
 
 .MuiChartsAxis-line,

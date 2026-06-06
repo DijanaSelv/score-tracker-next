@@ -12,17 +12,17 @@ const SortBy = ({
   setSortDescending: (value: boolean) => void;
 }) => {
   return (
-    <div className="flex items-center mb-8 justify-end divide-x divide-slate-400 ">
+    <div className="flex items-center justify-end divide-x divide-slate-500 border border-slate-500 rounded-sm p-1">
       <p className="px-4 max-sm:hidden">sort by:</p>
       <div className=" px-4 cursor-pointer transition-class outline-none appearance-none relative min-w-32 group">
         <p className="">
           {selectedSortTerm == "last_played"
             ? "date"
             : selectedSortTerm == "session_count"
-            ? "sessions"
-            : selectedSortTerm == "boardgamename"
-            ? "board game"
-            : selectedSortTerm}
+              ? "sessions"
+              : selectedSortTerm == "boardgamename"
+                ? "board game"
+                : selectedSortTerm}
         </p>
 
         <div className="absolute w-full z-20 left-0 pt-2 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto transition-class">
@@ -36,10 +36,10 @@ const SortBy = ({
                 {term == "session_count"
                   ? "sessions"
                   : term == "last_played"
-                  ? "date"
-                  : term == "boardgamename"
-                  ? "board game"
-                  : term}
+                    ? "date"
+                    : term == "boardgamename"
+                      ? "board game"
+                      : term}
               </p>
             ))}
           </div>

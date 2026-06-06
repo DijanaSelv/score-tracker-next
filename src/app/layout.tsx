@@ -49,7 +49,7 @@ export default async function RootLayout({
       <GlobalDataProvider boardGames={boardGames} players={players}>
         <body className={`${electrolize.className} antialiased`}>
           <NavBar />
-          <main className="py-22 lg:py-32 container mx-auto px-4 lg:px-6">
+          <main className="py-16 md:py-22 lg:py-32 container mx-auto px-4 lg:px-6">
             {children}
           </main>
 

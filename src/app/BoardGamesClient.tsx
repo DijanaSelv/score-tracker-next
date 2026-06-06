@@ -14,6 +14,7 @@ export default function BoardGamesList() {
   const { boardGames } = useGlobalData();
 
   const [sortDescending, setSortDescending] = useState<boolean>(false);
+  const [mobileGridView, setMobileGridView] = useState<boolean>(false);
   const [deleteItemPopup, setDeleteItemPopup] = useState<boolean>(false);
   const [itemToDelete, setItemToDelete] = useState<{
     id: number;
@@ -46,15 +47,23 @@ export default function BoardGamesList() {
   };
   return (
     <section>
-      <SortBy
-        sortTerms={["name", "last_played", "session_count"]}
-        setSortTerm={setSortTerm}
-        setSortDescending={setSortDescending}
-        selectedSortTerm={sortTerm}
-        sortDescendingValue={sortDescending}
-      />
+      <div className="flex flex-row gap-2 justify-between md:justify-end w-full md:mb-8 mb-6">
+        <div
+          className={`rounded-sm border  size-8 flex items-center justify-center md:hidden ${mobileGridView ? "border-slate-400" : "border-accent text-accent"}`}
+          onClick={() => setMobileGridView((prev) => !mobileGridView)}
+        >
+          <i className="fa-solid fa-arrows-up-down text-sm"></i>
+        </div>
+        <SortBy
+          sortTerms={["name", "last_played", "session_count"]}
+          setSortTerm={setSortTerm}
+          setSortDescending={setSortDescending}
+          selectedSortTerm={sortTerm}
+          sortDescendingValue={sortDescending}
+        />
+      </div>
 
-      <div className="grid grid-cols-1 min-[450px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 min-[450px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
         {sortedGames.map(
           (game: {
             boardgameid: number;
@@ -66,7 +75,7 @@ export default function BoardGamesList() {
             <a
               href={`/boardgame/${game.slug}`}
               key={game.boardgameid}
-              className="flex flex-col justify-between border border-slate-400 p-4 hover:border-teal-700 rounded-sm hover:rounded-none hover:shadow-md card-neon-hover bg-background group"
+              className="flex flex-col justify-between border border-slate-500 p-2.5 sm:p-3 md:p-4 hover:border-teal-700 rounded-sm hover:rounded-none hover:shadow-md card-neon-hover  group bg-soft-dark"
               onMouseMove={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const x = e.clientX - rect.left - rect.width / 2;
@@ -80,8 +89,8 @@ export default function BoardGamesList() {
                 e.currentTarget.style.setProperty("--my", `0px`);
               }}
             >
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="leading-[100%] font-semibold tracking-wide lg:text-2xl md:text-xl text-lg pb-2 group-hover:text-accent transition-class lg:min-h-16">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="leading-[100%] lg:font-semibold tracking-wide lg:text-2xl md:text-xl sm:text-lg text-base  group-hover:text-accent transition-class lg:min-h-16">
                   {game.name}
                 </h3>
 
@@ -109,12 +118,14 @@ export default function BoardGamesList() {
                     }}
                   >
                     {" "}
-                    <i className="fa-solid fa-trash pt-1 text-sm"></i>{" "}
+                    <i className="fa-solid fa-trash pt-1 text-xs md:text-sm"></i>{" "}
                   </button>
                 </div>
               </div>
 
-              <div className="border-t border-slate-400 w-full flex flex-col lg:flex-row max-lg:divide-y  lg:divide-x divide-slate-400 mt-8 group-hover:mt-2 transition-class">
+              <div
+                className={`border-t border-slate-500 w-full flex flex-col lg:flex-row max-lg:divide-y lg:divide-x divide-slate-500 mt-8 group-hover:mt-2 transition-class ${mobileGridView ? "" : "max-md:hidden"}`}
+              >
                 <div className="lg:px-4 flex flex-row justify-between lg:flex-col lg:justify-end lg:items-center max-lg:py-2 lg:pt-4 max-lg:gap-4">
                   <p className="xl:text-2xl lg:text-xl text-lg  leading-[100%]">
                     {game.session_count || 0}
@@ -133,7 +144,7 @@ export default function BoardGamesList() {
                 </div>
               </div>
             </a>
-          )
+          ),
         )}
       </div>
 
