@@ -43,7 +43,7 @@ const NavBar = () => {
     (href: string): boolean => {
       return pathname === href || (href !== "/" && pathname.includes(href));
     },
-    [pathname]
+    [pathname],
   );
 
   console.log(pathname);
@@ -120,14 +120,14 @@ const NavBar = () => {
 
   return (
     <header
-      className={`fixed top-0 z-1000 w-full group/menu transition-all bg-background border-b border-foregorund max-lg:shadow-md max-lg:shadow-highlight/40 ${
+      className={`fixed top-0 z-1000 w-full group/menu transition-all bg-background border-b border-stroke max-lg:shadow-md max-lg:shadow-highlight/40 ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       } `}
     >
       <div className={`container mx-auto px-4 lg:px-6 relative`}>
         <div className="flex w-full items-center justify-between py-2 sm:py-3 lg:py-0 ">
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center justify-center w-fit divide-x border-x divide-foreground border-foreground">
+          <div className="hidden lg:flex items-center justify-center w-fit divide-x border-x divide-stroke border-stroke">
             {links.map((link) => (
               <div key={link.text}>
                 {!link.isDropdown ? (
@@ -223,7 +223,7 @@ const NavBar = () => {
           </div>
 
           {/* CTA Button */}
-          <div className="hidden lg:flex items-center justify-center divide-x border-x divide-foreground border-foreground">
+          <div className="hidden lg:flex items-center justify-center divide-x border-x divide-stroke border-stroke">
             <NewBoardGame />
             <NewPlayer />
             <NewSession />
@@ -254,7 +254,7 @@ const NavBar = () => {
         }}
       >
         <div
-          className={`border-foreground relative flex h-full min-h-dvh w-full max-w-xs shadow-highlight shadow-xl flex-col justify-between gap-10 overflow-x-hidden overflow-y-auto border-r p-4 transition-all duration-700 ease-in-out bg-background ${
+          className={`border-stroke relative flex h-full min-h-dvh w-full max-w-xs shadow-highlight shadow-xl flex-col justify-between gap-10 overflow-x-hidden overflow-y-auto border-r p-4 transition-all duration-700 ease-in-out bg-background ${
             isActive ? "translate-x-0 delay-100" : "-translate-x-full"
           }`}
         >
@@ -280,7 +280,7 @@ const NavBar = () => {
               </button>
             </div>
 
-            <div className="flex flex-col capitalize divide-y divide-foreground/50">
+            <div className="flex flex-col capitalize divide-y divide-stroke/50">
               {links.map((link) => (
                 <div key={link.text}>
                   {!link.isDropdown ? (
@@ -295,7 +295,7 @@ const NavBar = () => {
                       <button
                         onClick={() => {
                           setOpenDropdown(
-                            openDropdown === link.text ? null : link.text
+                            openDropdown === link.text ? null : link.text,
                           );
                         }}
                         className="relative flex w-full flex-col items-start gap-1 "
@@ -345,7 +345,7 @@ const NavBar = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 border-t border-foreground/40 pt-4  divide-foreground/40 divide-y *:pb-3 ">
+          <div className="flex flex-col gap-3 border-t border-stroke/40 pt-4  divide-stroke/40 divide-y *:pb-3 ">
             <NewBoardGame />
             <NewPlayer />
             <NewSession />

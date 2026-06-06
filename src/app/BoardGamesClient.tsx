@@ -47,9 +47,9 @@ export default function BoardGamesList() {
   };
   return (
     <section>
-      <div className="flex flex-row gap-2 justify-between md:justify-end w-full md:mb-8 mb-6">
+      <div className="flex flex-row items-stretch gap-2 justify-between md:justify-end w-full md:mb-8 mb-6">
         <div
-          className={`rounded-sm border  size-8 flex items-center justify-center md:hidden ${MobileExpandedView ? "border-slate-400" : "border-accent text-accent"}`}
+          className={`rounded-sm border  w-8 flex items-center justify-center md:hidden ${MobileExpandedView ? "border-slate-400" : "border-accent text-accent"}`}
           onClick={() => setMobileExpandedView((prev) => !MobileExpandedView)}
         >
           <i className="fa-solid fa-arrows-up-down text-sm"></i>
@@ -75,7 +75,7 @@ export default function BoardGamesList() {
             <a
               href={`/boardgame/${game.slug}`}
               key={game.boardgameid}
-              className="flex flex-col justify-between border border-slate-500 p-2.5 sm:p-3 md:p-4 hover:border-teal-700 rounded-sm hover:rounded-none hover:shadow-md card-neon-hover  group bg-soft-dark"
+              className="flex flex-col justify-between border border-stroke p-2.5 sm:p-3 md:p-4 hover:border-teal-700 rounded-sm hover:rounded-none hover:shadow-md card-neon-hover  group bg-soft-dark"
               onMouseMove={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const x = e.clientX - rect.left - rect.width / 2;
@@ -124,7 +124,7 @@ export default function BoardGamesList() {
               </div>
 
               <div
-                className={`border-t border-slate-500 w-full flex flex-col lg:flex-row max-lg:divide-y lg:divide-x divide-slate-500 mt-8 group-hover:mt-2 transition-class ${MobileExpandedView ? "" : "max-md:hidden"}`}
+                className={`border-t border-stroke w-full flex flex-col lg:flex-row max-lg:divide-y lg:divide-x divide-slate-500 mt-8 group-hover:mt-2 transition-class ${MobileExpandedView ? "" : "max-md:hidden"}`}
               >
                 <div className="lg:px-4 flex flex-row justify-between lg:flex-col lg:justify-end lg:items-center max-lg:py-2 lg:pt-4 max-lg:gap-4">
                   <p className="xl:text-2xl lg:text-xl text-lg  leading-[100%]">

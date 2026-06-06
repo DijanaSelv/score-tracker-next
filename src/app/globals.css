@@ -7,6 +7,7 @@
   --accent: #7bd3c9;
   --danger: #ff8848;
   --soft-dark: #18191c;
+  --stroke: #9ca3af;
 }
 
 @theme inline {
@@ -20,6 +21,7 @@
   --color-accent: var(--accent);
   --color-highlight: var(--highlight);
   --color-soft-dark: var(--soft-dark);
+  --color-stroke: var(--stroke);
 }
 
 /* @layer components {
