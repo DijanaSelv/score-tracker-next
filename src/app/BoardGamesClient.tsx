@@ -89,8 +89,8 @@ export default function BoardGamesList() {
                 e.currentTarget.style.setProperty("--my", `0px`);
               }}
             >
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="leading-[100%] lg:font-semibold tracking-wide lg:text-2xl md:text-xl sm:text-lg text-base  group-hover:text-accent transition-class lg:min-h-16">
+              <div className="flex items-start lg:pb-2 justify-between gap-3">
+                <h3 className=" lg:font-semibold tracking-wide lg:text-2xl md:text-xl sm:text-lg text-base  group-hover:text-accent transition-class lg:min-h-16">
                   {game.name}
                 </h3>
 
