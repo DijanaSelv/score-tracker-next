@@ -14,7 +14,7 @@ export default function BoardGamesList() {
   const { boardGames } = useGlobalData();
 
   const [sortDescending, setSortDescending] = useState<boolean>(false);
-  const [mobileGridView, setMobileGridView] = useState<boolean>(false);
+  const [MobileExpandedView, setMobileExpandedView] = useState<boolean>(false);
   const [deleteItemPopup, setDeleteItemPopup] = useState<boolean>(false);
   const [itemToDelete, setItemToDelete] = useState<{
     id: number;
@@ -49,8 +49,8 @@ export default function BoardGamesList() {
     <section>
       <div className="flex flex-row gap-2 justify-between md:justify-end w-full md:mb-8 mb-6">
         <div
-          className={`rounded-sm border  size-8 flex items-center justify-center md:hidden ${mobileGridView ? "border-slate-400" : "border-accent text-accent"}`}
-          onClick={() => setMobileGridView((prev) => !mobileGridView)}
+          className={`rounded-sm border  size-8 flex items-center justify-center md:hidden ${MobileExpandedView ? "border-slate-400" : "border-accent text-accent"}`}
+          onClick={() => setMobileExpandedView((prev) => !MobileExpandedView)}
         >
           <i className="fa-solid fa-arrows-up-down text-sm"></i>
         </div>
@@ -124,7 +124,7 @@ export default function BoardGamesList() {
               </div>
 
               <div
-                className={`border-t border-slate-500 w-full flex flex-col lg:flex-row max-lg:divide-y lg:divide-x divide-slate-500 mt-8 group-hover:mt-2 transition-class ${mobileGridView ? "" : "max-md:hidden"}`}
+                className={`border-t border-slate-500 w-full flex flex-col lg:flex-row max-lg:divide-y lg:divide-x divide-slate-500 mt-8 group-hover:mt-2 transition-class ${MobileExpandedView ? "" : "max-md:hidden"}`}
               >
                 <div className="lg:px-4 flex flex-row justify-between lg:flex-col lg:justify-end lg:items-center max-lg:py-2 lg:pt-4 max-lg:gap-4">
                   <p className="xl:text-2xl lg:text-xl text-lg  leading-[100%]">
