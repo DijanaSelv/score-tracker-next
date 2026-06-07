@@ -53,7 +53,7 @@ export default function BoardGamesList() {
 
   return (
     <section>
-      <div className="flex flex-row items-stretch gap-2 justify-between md:justify-end w-full md:mb-8 mb-6">
+      <div className="flex flex-row items-stretch gap-2 justify-between md:justify-end w-full md:mb-8 mb-6 max-md:flex-wrap">
         <div
           className={`rounded-sm border  w-8 flex items-center justify-center md:hidden ${MobileExpandedView ? "border-accent text-accent" : "border-slate-400 "}`}
           onClick={() => setMobileExpandedView((prev) => !MobileExpandedView)}
@@ -63,36 +63,40 @@ export default function BoardGamesList() {
 
         <label
           htmlFor="search-input"
-          className="border border-stroke rounded-sm outline-none px-2 py-1 flex items-center justify-between gap-4"
+          className="border border-stroke rounded-sm outline-none px-2 py-1 flex items-center justify-between md:gap-3 gap-2 lg:gap-4 max-lg:flex-1 max-md:order-last max-md:basis-full max-md:w-full lg:min-w-80"
         >
-          <i className="fa-solid fa-magnifying-glass opacity-75"></i>
-          <input
-            name="search-input"
-            id="search-input"
-            className="outline-none border-none"
-            onKeyDown={(e) => {
-              if (e.key == "Escape") {
-                setSearchTerm("");
-              }
-            }}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          ></input>
+          <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
+            <i className="fa-solid fa-magnifying-glass opacity-75"></i>
+            <input
+              name="search-input"
+              id="search-input"
+              className="outline-none border-none "
+              onKeyDown={(e) => {
+                if (e.key == "Escape") {
+                  setSearchTerm("");
+                }
+              }}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            ></input>
+          </div>
           <button
-            className={` transition-class text-xs hover:text-danger ${searchTerm == "" ? "opacity-0" : "opacity-75 cursor-pointer  hover:opacity-100"}`}
+            className={`transition-class text-xs hover:text-danger ${searchTerm == "" ? "opacity-0" : "opacity-75 cursor-pointer  hover:opacity-100"}`}
             onClick={() => setSearchTerm("")}
           >
             <i className="fa-solid fa-x "></i>
           </button>
         </label>
 
-        <SortBy
-          sortTerms={["name", "last_played", "session_count"]}
-          setSortTerm={setSortTerm}
-          setSortDescending={setSortDescending}
-          selectedSortTerm={sortTerm}
-          sortDescendingValue={sortDescending}
-        />
+        <div className="">
+          <SortBy
+            sortTerms={["name", "last_played", "session_count"]}
+            setSortTerm={setSortTerm}
+            setSortDescending={setSortDescending}
+            selectedSortTerm={sortTerm}
+            sortDescendingValue={sortDescending}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 min-[450px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">

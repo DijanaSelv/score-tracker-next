@@ -34,7 +34,7 @@ const SortBy = ({
   }, []);
 
   return (
-    <div className="flex items-center justify-end divide-x divide-stroke border border-stroke rounded-sm p-1">
+    <div className="flex items-center justify-end divide-x divide-stroke border border-stroke rounded-sm p-1 ">
       <p className="px-4 max-lg:hidden">sort by:</p>
       <div
         className=" px-4 cursor-pointer transition-class outline-none appearance-none relative min-w-32 group"
