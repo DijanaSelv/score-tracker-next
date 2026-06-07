@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useGlobalData } from "@/app/context/GlobalDataContext";
 import { formatDate } from "@/../lib/utils";
 import SortBy from "@/../components/SortBy";
@@ -21,7 +21,9 @@ export default function BoardGamesList() {
     name: string;
   } | null>(null);
 
-  const sortedGames = useMemo(() => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const displayedGames = useMemo(() => {
     const sorted = [...boardGames].sort((a, b) => {
       if (sortTerm === "name") {
         return b.name.localeCompare(a.name);
@@ -34,10 +36,13 @@ export default function BoardGamesList() {
       }
     });
 
-    return sortDescending ? sorted : sorted.reverse();
-  }, [sortTerm, boardGames, sortDescending]);
+    const ordered = sortDescending ? sorted : sorted.reverse();
 
-  console.log(sortedGames, "sorted games");
+    if (!searchTerm) return ordered;
+    return ordered.filter((game) =>
+      game.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+  }, [sortTerm, boardGames, sortDescending, searchTerm]);
 
   const deleteBoardGame = async (id: number) => {
     const res = await fetch(`../api/deleteBoardGame/${id}`);
@@ -45,15 +50,42 @@ export default function BoardGamesList() {
     setDeleteItemPopup(false);
     setItemToDelete(null);
   };
+
   return (
     <section>
       <div className="flex flex-row items-stretch gap-2 justify-between md:justify-end w-full md:mb-8 mb-6">
         <div
-          className={`rounded-sm border  w-8 flex items-center justify-center md:hidden ${MobileExpandedView ? "border-slate-400" : "border-accent text-accent"}`}
+          className={`rounded-sm border  w-8 flex items-center justify-center md:hidden ${MobileExpandedView ? "border-accent text-accent" : "border-slate-400 "}`}
           onClick={() => setMobileExpandedView((prev) => !MobileExpandedView)}
         >
           <i className="fa-solid fa-arrows-up-down text-sm"></i>
         </div>
+
+        <label
+          htmlFor="search-input"
+          className="border border-stroke rounded-sm outline-none px-2 py-1 flex items-center justify-between gap-4"
+        >
+          <i className="fa-solid fa-magnifying-glass opacity-75"></i>
+          <input
+            name="search-input"
+            id="search-input"
+            className="outline-none border-none"
+            onKeyDown={(e) => {
+              if (e.key == "Escape") {
+                setSearchTerm("");
+              }
+            }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          ></input>
+          <button
+            className={` transition-class text-xs hover:text-danger ${searchTerm == "" ? "opacity-0" : "opacity-75 cursor-pointer  hover:opacity-100"}`}
+            onClick={() => setSearchTerm("")}
+          >
+            <i className="fa-solid fa-x "></i>
+          </button>
+        </label>
+
         <SortBy
           sortTerms={["name", "last_played", "session_count"]}
           setSortTerm={setSortTerm}
@@ -64,7 +96,7 @@ export default function BoardGamesList() {
       </div>
 
       <div className="grid grid-cols-1 min-[450px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
-        {sortedGames.map(
+        {displayedGames.map(
           (game: {
             boardgameid: number;
             name: string;
@@ -90,7 +122,7 @@ export default function BoardGamesList() {
               }}
             >
               <div className="flex items-start lg:pb-2 justify-between gap-3">
-                <h3 className=" lg:font-semibold tracking-wide lg:text-2xl md:text-xl sm:text-lg text-base  group-hover:text-accent transition-class lg:min-h-16">
+                <h3 className=" lg:font-semibold tracking-wide xl:text-2xl md:text-xl sm:text-lg text-base  group-hover:text-accent transition-class lg:min-h-16">
                   {game.name}
                 </h3>
 
@@ -127,7 +159,7 @@ export default function BoardGamesList() {
                 className={`border-t border-stroke w-full flex flex-col lg:flex-row max-lg:divide-y lg:divide-x divide-slate-500 mt-8 group-hover:mt-2 transition-class ${MobileExpandedView ? "" : "max-md:hidden"}`}
               >
                 <div className="lg:px-4 flex flex-row justify-between lg:flex-col lg:justify-end lg:items-center max-lg:py-2 lg:pt-4 max-lg:gap-4">
-                  <p className="xl:text-2xl lg:text-xl text-lg  leading-[100%]">
+                  <p className=" text-sm sm:text=base md:text-lg xl:text-xl leading-[100%]">
                     {game.session_count || 0}
                   </p>
                   <p className="transition-class lg:opacity-0 group-hover:opacity-100 text-xs lg:max-h-0 group-hover:max-h-4 ">
@@ -135,7 +167,7 @@ export default function BoardGamesList() {
                   </p>
                 </div>
                 <div className="flex-1 lg:px-4 justify-between flex lg:flex-col lg:justify-end flex-row max-lg:pt-2 max-lg:gap-4">
-                  <p className="xl:text-2xl lg:text-xl  text-base  leading-[100%]">
+                  <p className="text-sm sm:text=base md:text-lg xl:text-xl leading-[100%]">
                     {game.last_played ? formatDate(game.last_played) : "-"}
                   </p>
                   <span className=" transition-class lg:opacity-0 group-hover:opacity-100 text-xs lg:max-h-0 group-hover:max-h-4  ">
