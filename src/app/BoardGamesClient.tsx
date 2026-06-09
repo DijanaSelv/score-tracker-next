@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState } from "react";
 import { useGlobalData } from "@/app/context/GlobalDataContext";
 import { formatDate } from "@/../lib/utils";
 import SortBy from "@/../components/SortBy";
@@ -163,7 +163,7 @@ export default function BoardGamesList() {
                 className={`border-t border-stroke w-full flex flex-col lg:flex-row max-lg:divide-y lg:divide-x divide-slate-500 mt-8 group-hover:mt-2 transition-class ${MobileExpandedView ? "" : "max-md:hidden"}`}
               >
                 <div className="lg:px-4 flex flex-row justify-between lg:flex-col lg:justify-end lg:items-center max-lg:py-2 lg:pt-4 max-lg:gap-4">
-                  <p className=" text-sm sm:text=base md:text-lg xl:text-xl leading-[100%]">
+                  <p className=" text-sm sm:text=base md:text-lg leading-[100%]">
                     {game.session_count || 0}
                   </p>
                   <p className="transition-class lg:opacity-0 group-hover:opacity-100 text-xs lg:max-h-0 group-hover:max-h-4 ">
@@ -171,7 +171,7 @@ export default function BoardGamesList() {
                   </p>
                 </div>
                 <div className="flex-1 lg:px-4 justify-between flex lg:flex-col lg:justify-end flex-row max-lg:pt-2 max-lg:gap-4">
-                  <p className="text-sm sm:text=base md:text-lg xl:text-xl leading-[100%]">
+                  <p className="text-sm sm:text=base md:text-lg leading-[100%]">
                     {game.last_played ? formatDate(game.last_played) : "-"}
                   </p>
                   <span className=" transition-class lg:opacity-0 group-hover:opacity-100 text-xs lg:max-h-0 group-hover:max-h-4  ">

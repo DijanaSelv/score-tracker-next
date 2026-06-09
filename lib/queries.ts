@@ -15,7 +15,7 @@ export async function getBoardGames() {
     FROM boardgame bg 
     LEFT JOIN session s ON bg.boardgameid = s.boardgameid
     GROUP BY bg.boardgameid
-    ORDER BY boardgameid`
+    ORDER BY boardgameid`,
   );
   return rows;
 }
@@ -23,11 +23,16 @@ export async function getBoardGames() {
 export async function getPlayers() {
   const { rows } = await pool.query(
     `
-    SELECT * 
-    FROM player
-    ORDER BY name
-    `
+    SELECT pl.*, COUNT (s.sessionid) AS session_count, MAX(s.date) AS last_played
+    FROM player pl
+    LEFT JOIN sessionplayer sp ON pl.playerid = sp.playerid
+    LEFT JOIN session s ON sp.sessionid = s.sessionid
+    GROUP BY pl.playerid
+    ORDER BY pl.name
+    `,
   );
+
+  console.log(rows);
   return rows;
 }
 
@@ -58,7 +63,7 @@ export async function getAllSessions() {
     JOIN  player p on p.playerid = sp.playerid 
     GROUP BY s.sessionid, s.date, bg.name, bg.slug, bg.nopoints
     ORDER BY s.date DESC
-    `
+    `,
   );
 
   return rows;
@@ -81,7 +86,7 @@ export async function getPlayerDataBySlug(slug: string) {
     LEFT JOIN boardgame bg on bg.boardgameid = s.boardgameid
     WHERE p.slug = '${slug}'
     ORDER BY s.date DESC
-    `
+    `,
   );
   return rows;
 }
@@ -89,7 +94,7 @@ export async function getPlayerDataBySlug(slug: string) {
 export async function getSessions(boardGameId: number) {
   const { rows } = await pool.query(
     "SELECT * FROM session where boardgameid = $1 ORDER BY date DESC",
-    [boardGameId]
+    [boardGameId],
   );
   return rows;
 }
@@ -100,7 +105,7 @@ export async function getSessionDetails(sessionId: number) {
      FROM SessionPlayer sp 
      JOIN Player p on sp.playerid = p.playerid
      WHERE sp.sessionid = ${sessionId}
-     ORDER BY sp.position`
+     ORDER BY sp.position`,
   );
   return rows;
 }
@@ -114,7 +119,7 @@ export async function getBoardGameHighScore(sessionIds: number[]) {
     WHERE sp.sessionid IN (${sessionIds.join(",")})
     ORDER BY sp.score DESC
     LIMIT 1 
-    `
+    `,
   );
   return rows[0] || null;
 }
@@ -129,7 +134,7 @@ export async function getMostFrequentPlayers(sessionIds: number[]) {
     GROUP BY p.name
     ORDER BY games_played DESC
     LIMIT 1 
-    `
+    `,
   );
 
   return rows[0] || null;
@@ -145,7 +150,7 @@ export async function getMostTimesWon(sessionIds: number[]) {
     GROUP BY p.name
     ORDER BY games_won DESC
     LIMIT 1
-    `
+    `,
   );
 
   return rows[0] || null;
@@ -163,7 +168,7 @@ export async function getPlayersStatistics() {
     GROUP BY p.name
     ORDER BY times_won DESC
     LIMIT 5
-    `
+    `,
   );
 
   console.log(rows[0], "players statistics rows from the query");
@@ -177,7 +182,7 @@ export async function addBoardGame(name: string, noPoints: boolean) {
   const slug = name.toLowerCase().replace(/[\s']/g, "-");
   const { rows } = await pool.query(
     `INSERT INTO boardgame (name, slug, nopoints) VALUES ($1, $2, $3) RETURNING *`,
-    [name, slug, noPoints]
+    [name, slug, noPoints],
   );
   //return rows[0];
 }
@@ -189,7 +194,7 @@ export async function addPlayer(name: string) {
     INSERT INTO player (name) VALUES
     ('${name}')
     RETURNING *
-    `
+    `,
   );
 
   const playerid = Number(rows[0].playerid);
@@ -198,7 +203,7 @@ export async function addPlayer(name: string) {
 
   await pool.query(
     `UPDATE player SET slug = '${slug}' 
-    WHERE playerid = ${playerid}`
+    WHERE playerid = ${playerid}`,
   );
 
   return { playerid, name: rows[0].name };
@@ -208,10 +213,10 @@ export async function addPlayer(name: string) {
 export async function addSession(
   boardgameid: number,
   date: Date,
-  playersandscores: PlayerScoreInput[]
+  playersandscores: PlayerScoreInput[],
 ) {
   const newPlayers = playersandscores.filter((playerrow) =>
-    Boolean(playerrow.player.isNew)
+    Boolean(playerrow.player.isNew),
   );
 
   const addedPlayers = newPlayers.length
@@ -223,7 +228,7 @@ export async function addSession(
     `INSERT INTO session (boardgameid, date) VALUES
     ('${boardgameid}', '${date.toISOString()}')
     RETURNING sessionid
-    `
+    `,
   );
 
   /* we complete the playerscore with the ids of the newly added players */
@@ -231,7 +236,7 @@ export async function addSession(
   const allPlayerScores = playersandscores.map((playerrow) => {
     if (playerrow.player.isNew) {
       const addedPlayer = addedPlayers.find(
-        (p) => p.name == playerrow.player.name
+        (p) => p.name == playerrow.player.name,
       )!;
 
       return {
@@ -263,7 +268,7 @@ export async function addSession(
       sessionid,
       allPlayerScores.map((p) => p.player.id),
       allPlayerScores.map((p) => p.score),
-    ]
+    ],
   );
 }
 
@@ -274,7 +279,7 @@ export async function deleteBoardGame(id: number) {
     `
     DELETE FROM boardgame
     WHERE boardgame.boardgameid = '${id}'
-    `
+    `,
   );
 }
 
@@ -283,7 +288,7 @@ export async function deleteSession(id: number) {
     `
     DELETE FROM session
     WHERE session.sessionid = '${id}'
-    `
+    `,
   );
 }
 
@@ -292,6 +297,6 @@ export async function deletePlayer(id: number) {
     `
     DELETE FROM player
     WHERE player.playerid = '${id}'
-    `
+    `,
   );
 }
