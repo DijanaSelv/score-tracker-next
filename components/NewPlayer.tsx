@@ -65,7 +65,7 @@ const NewPlayer = () => {
         <h2 className="text-lg font-semibold mb-4">Add a new Player</h2>
         <form
           ref={formRef}
-          className="flex flex-col gap-1 min-w-xs new-game-form"
+          className="flex flex-col gap-1 min-w-xs"
           onSubmit={submitPlayer}
         >
           <label htmlFor="name">Name</label>

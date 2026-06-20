@@ -68,7 +68,7 @@ const NewBoardGame = () => {
         <h2 className="text-lg font-semibold mb-4">Add a new Board Game</h2>
         <form
           ref={formRef}
-          className="flex flex-col gap-4 min-w-xs new-game-form"
+          className="flex flex-col gap-4 min-w-xs"
           onSubmit={submitBoardGame}
         >
           <div className="flex flex-col gap-1">

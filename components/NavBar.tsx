@@ -46,8 +46,6 @@ const NavBar = () => {
     [pathname],
   );
 
-  console.log(pathname);
-
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
     const direction = currentScrollY > lastScrollY.current ? "down" : "up";

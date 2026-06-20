@@ -3,6 +3,7 @@ import { Electrolize, Zen_Dots, Sansation } from "next/font/google";
 import "./globals.css";
 import { getBoardGames, getPlayers } from "@/../lib/queries";
 import NavBar from "../../components/NavBar";
+import SideBar from "../../components/SideBar";
 
 import GlobalDataProvider from "@/app/providers/GlobalDataProvider";
 
@@ -49,6 +50,7 @@ export default async function RootLayout({
       <GlobalDataProvider boardGames={boardGames} players={players}>
         <body className={`${electrolize.className} antialiased`}>
           <NavBar />
+          <SideBar />
           <main className="py-16 md:py-22 lg:py-32 container mx-auto px-4 lg:px-6">
             {children}
           </main>

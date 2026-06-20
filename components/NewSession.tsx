@@ -46,12 +46,12 @@ const NewSession = ({
   // Pass the changes and update the player in playerScores
   const updatePlayer = (
     index: number,
-    changes: Partial<(typeof playerScores)[0]>
+    changes: Partial<(typeof playerScores)[0]>,
   ) => {
     setPlayerScores((prev) =>
       prev.map((playerRow, i) =>
-        i === index ? { ...playerRow, ...changes } : playerRow
-      )
+        i === index ? { ...playerRow, ...changes } : playerRow,
+      ),
     );
   };
 
@@ -153,7 +153,7 @@ const NewSession = ({
         <h2 className="text-lg font-semibold mb-4">Add New Session</h2>
         <form
           ref={formRef}
-          className="flex flex-col gap-4 lg:min-w-lg new-game-form"
+          className="flex flex-col gap-4 lg:min-w-lg"
           onSubmit={submitSession}
         >
           <div className="flex flex-col gap-1 ">
@@ -177,8 +177,8 @@ const NewSession = ({
               onChange={(e) =>
                 setNoScoreBoardGame(
                   boardGames.find(
-                    (bg) => bg.boardgameid == Number(e.target.value)
-                  )?.nopoints ?? false
+                    (bg) => bg.boardgameid == Number(e.target.value),
+                  )?.nopoints ?? false,
                 )
               }
             >
@@ -222,8 +222,8 @@ const NewSession = ({
                             /* this removes a player from the dropdown if it was already selected here or on other rows */
                             player.playerid == item.player.id ||
                             !playerScores.some(
-                              (entry) => entry.player.id == player.playerid
-                            )
+                              (entry) => entry.player.id == player.playerid,
+                            ),
                         )
                         .map((player) => (
                           <option
