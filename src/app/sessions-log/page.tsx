@@ -2,7 +2,7 @@
 import type { Props } from "@/../lib/types";
 import SessionsLogClient from "./SessionsLogClient";
 import { getAllSessions } from "@/../lib/queries";
-import NewSession from "../../../components/NewSession";
+import NewSession from "../../../components/NewSessionModal";
 
 const SessionLogPage = async ({ params }: Props) => {
   const allSessions = await getAllSessions();

@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
-import NewBoardGame from "./NewBoardGame";
-import NewPlayer from "./NewPlayer";
-import NewSession from "./NewSession";
+import NewBoardGame from "./NewBoardGameModal";
+import NewPlayer from "./NewPlayerModal";
+import NewSession from "./NewSessionModal";
 import Link from "next/link";
+import PrimaryButton from "./PrimaryButton";
 
 interface SubLink {
   text: string;
@@ -222,6 +223,13 @@ const NavBar = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center justify-center divide-x border-x divide-stroke border-stroke">
+            <PrimaryButton
+              onClickHandle={() => {
+                console.log("ello");
+              }}
+            >
+              + New Session
+            </PrimaryButton>
             <NewBoardGame />
             <NewPlayer />
             <NewSession />
