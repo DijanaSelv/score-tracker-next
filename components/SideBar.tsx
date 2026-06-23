@@ -4,12 +4,9 @@ import SessionForm from "./SessionForm";
 import GameForm from "./GameForm";
 import { useSidebarContext } from "@/app/context/SideBarContext";
 
-const SideBar = ({
-  defaultBoardGameSelected,
-}: {
-  defaultBoardGameSelected?: number | undefined;
-}) => {
+const SideBar = () => {
   const { sidebar, closeSidebar, setMode } = useSidebarContext();
+  console.log(sidebar.payload);
 
   return (
     <div

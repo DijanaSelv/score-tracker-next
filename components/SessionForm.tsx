@@ -1,24 +1,30 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { addSession } from "../lib/queries";
-import { useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useGlobalData } from "@/app/context/GlobalDataContext";
 
-const SessionForm = ({
-  defaultBoardGameSelected,
-}: {
-  defaultBoardGameSelected?: number | undefined;
-}) => {
+const SessionForm = () => {
   const router = useRouter();
   const sessionFormRef = useRef<HTMLFormElement>(null);
   const { players, boardGames } = useGlobalData();
+  const { slug } = useParams();
 
   const [noScoreBoardGame, setNoScoreBoardGame] = useState<boolean>(false);
+  const [selectedGameId, setSelectedGameId] = useState<number | "">("");
 
   /* UX states */
   const [error, setError] = useState<string | null>(null);
   const [addingSession, setAddingSession] = useState<boolean>(false);
 
+  /* if we're on a boardgame page, then that board game should be preselected */
+  useEffect(() => {
+    const game = boardGames.find((g) => g.slug === slug);
+
+    if (game?.boardgameid) {
+      setSelectedGameId(game.boardgameid);
+    }
+  }, [boardGames, slug]);
   /* Players and scores in player rows  */
 
   type PlayerInfo = {
@@ -154,13 +160,15 @@ const SessionForm = ({
           id="boardgame"
           name="boardgame"
           className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class cursor-pointer"
-          defaultValue={defaultBoardGameSelected}
-          onChange={(e) =>
+          value={selectedGameId}
+          onChange={(e) => {
+            const value = Number(e.target.value);
+            setSelectedGameId(value);
             setNoScoreBoardGame(
               boardGames.find((bg) => bg.boardgameid == Number(e.target.value))
                 ?.nopoints ?? false,
-            )
-          }
+            );
+          }}
         >
           <option value={undefined}>Choose...</option>
           {boardGames.map((game) => (

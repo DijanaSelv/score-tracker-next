@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { SidebarContext } from "../context/SideBarContext";
-import { SidebarState, SidebarMode } from "../../../lib/types";
+import { SidebarState, SidebarMode, Payload } from "../../../lib/types";
 
 type SidebarContextProviderProps = {
   children: React.ReactNode;
@@ -16,10 +16,7 @@ export default function SidebarContextProvider({
     payload: undefined,
   });
 
-  const openSidebar = (
-    mode: SidebarMode | "add-session",
-    payload?: unknown,
-  ) => {
+  const openSidebar = (mode: SidebarMode, payload?: Payload) => {
     setSidebar({
       isOpen: true,
       mode,

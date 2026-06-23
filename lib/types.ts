@@ -42,15 +42,18 @@ export type SidebarMode =
   | "add-session"
   | "edit-session";
 
+export type Payload = {
+  selectedBoardGame?: number;
+};
 export type SidebarState = {
   isOpen: boolean;
   mode: SidebarMode | null;
-  payload?: unknown;
+  payload?: Payload | undefined;
 };
 
 export type SidebarContextType = {
   sidebar: SidebarState;
-  openSidebar: (mode: SidebarMode, payload?: unknown) => void;
+  openSidebar: (mode: SidebarMode, payload?: Payload) => void;
   closeSidebar: () => void;
   setMode: (mode: SidebarMode) => void;
 };
