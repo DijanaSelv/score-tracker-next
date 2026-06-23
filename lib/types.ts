@@ -33,3 +33,24 @@ export type SessionRow = {
   winners: { name: string; slug: string }[] | [];
   nopoints: boolean;
 };
+
+export type SidebarMode =
+  | "add-game"
+  | "edit-game"
+  | "add-player"
+  | "edit-player"
+  | "add-session"
+  | "edit-session";
+
+export type SidebarState = {
+  isOpen: boolean;
+  mode: SidebarMode | null;
+  payload?: unknown;
+};
+
+export type SidebarContextType = {
+  sidebar: SidebarState;
+  openSidebar: (mode: SidebarMode, payload?: unknown) => void;
+  closeSidebar: () => void;
+  setMode: (mode: SidebarMode) => void;
+};

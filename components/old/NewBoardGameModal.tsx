@@ -1,10 +1,9 @@
 "use client";
 import { useRef, useState } from "react";
-import { addBoardGame } from "../lib/queries";
+import { addBoardGame } from "../../lib/queries";
 import { useRouter } from "next/navigation";
-import PrimaryButton from "./PrimaryButton";
-import PopupModalWrapper from "./PopupModalWrapper";
-import { Checkbox } from "@mui/material";
+import PrimaryButton from "../PrimaryButton";
+import PopupModalWrapper from "../PopupModalWrapper";
 
 const NewBoardGame = () => {
   const [newGamePopupOpen, setNewGamePopupOpen] = useState<boolean>(false);

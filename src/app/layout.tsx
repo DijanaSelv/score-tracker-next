@@ -6,6 +6,7 @@ import NavBar from "../../components/NavBar";
 import SideBar from "../../components/SideBar";
 
 import GlobalDataProvider from "@/app/providers/GlobalDataProvider";
+import SidebarContextProvider from "@/app/providers/SidebarContextProvider";
 
 const electrolize = Electrolize({
   variable: "--font-electrolize",
@@ -48,22 +49,24 @@ export default async function RootLayout({
       className={`${fontSans.variable} ${electrolize.variable}  ${zenDots.variable}`}
     >
       <GlobalDataProvider boardGames={boardGames} players={players}>
-        <body className={`${electrolize.className} antialiased`}>
-          <NavBar />
-          <SideBar />
-          <main className="py-16 md:py-22 lg:py-32 container mx-auto px-4 lg:px-6">
-            {children}
-          </main>
+        <SidebarContextProvider>
+          <body className={`${electrolize.className} antialiased`}>
+            <NavBar />
+            <SideBar />
+            <main className="py-16 md:py-22 lg:py-32 container mx-auto px-4 lg:px-6">
+              {children}
+            </main>
 
-          {/* Font awesome */}
-          <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-            integrity="sha512-..."
-            crossOrigin="anonymous"
-            referrerPolicy="no-referrer"
-          />
-        </body>
+            {/* Font awesome */}
+            <link
+              rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+              integrity="sha512-..."
+              crossOrigin="anonymous"
+              referrerPolicy="no-referrer"
+            />
+          </body>
+        </SidebarContextProvider>
       </GlobalDataProvider>
     </html>
   );

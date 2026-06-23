@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { addPlayer } from "../lib/queries";
+import { addPlayer } from "../../lib/queries";
 import { useRouter } from "next/navigation";
-import PrimaryButton from "./PrimaryButton";
-import PopupModalWrapper from "./PopupModalWrapper";
+import PrimaryButton from "../PrimaryButton";
+import PopupModalWrapper from "../PopupModalWrapper";
 
 const NewPlayer = () => {
   const [NewPlayerPopup, setNewPlayerPopup] = useState<boolean>(false);

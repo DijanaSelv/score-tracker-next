@@ -2,11 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
-import NewBoardGame from "./NewBoardGameModal";
-import NewPlayer from "./NewPlayerModal";
-import NewSession from "./NewSessionModal";
 import Link from "next/link";
 import PrimaryButton from "./PrimaryButton";
+import { useSidebarContext } from "@/app/context/SideBarContext";
 
 interface SubLink {
   text: string;
@@ -32,6 +30,8 @@ const NavBar = () => {
   const lastScrollY = useRef(0);
   const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
   const leaveTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const { openSidebar } = useSidebarContext();
 
   const links: Link[] = [
     { text: "Board Games", href: "/", isDropdown: false },
@@ -225,14 +225,25 @@ const NavBar = () => {
           <div className="hidden lg:flex items-center justify-center divide-x border-x divide-stroke border-stroke">
             <PrimaryButton
               onClickHandle={() => {
-                console.log("ello");
+                openSidebar("add-game");
+              }}
+            >
+              + New Game
+            </PrimaryButton>
+            <PrimaryButton
+              onClickHandle={() => {
+                openSidebar("add-player");
+              }}
+            >
+              + New Player
+            </PrimaryButton>
+            <PrimaryButton
+              onClickHandle={() => {
+                openSidebar("add-session");
               }}
             >
               + New Session
             </PrimaryButton>
-            <NewBoardGame />
-            <NewPlayer />
-            <NewSession />
           </div>
 
           {/* Mobile Menu Button */}
@@ -351,11 +362,7 @@ const NavBar = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 border-t border-stroke/40 pt-4  divide-stroke/40 divide-y *:pb-3 ">
-            <NewBoardGame />
-            <NewPlayer />
-            <NewSession />
-          </div>
+          <div className="flex flex-col gap-3 border-t border-stroke/40 pt-4  divide-stroke/40 divide-y *:pb-3 "></div>
         </div>
       </div>
     </header>
