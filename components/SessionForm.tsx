@@ -159,7 +159,7 @@ const SessionForm = () => {
           required
           id="boardgame"
           name="boardgame"
-          className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class cursor-pointer"
+          className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 cursor-pointer"
           value={selectedGameId}
           onChange={(e) => {
             const value = Number(e.target.value);
@@ -193,7 +193,7 @@ const SessionForm = () => {
               {!item.player.isNew && (
                 <select
                   id={`playerName-${i}`}
-                  className={`outline-none border border-slate-400 px-1 py-1 flex-1 h-[30px] cursor-pointer  ${noScoreBoardGame ? "col-span-8" : "col-span-6"}`}
+                  className={`outline-none border border-slate-400 px-1 py-1 flex-1 cursor-pointer  ${noScoreBoardGame ? "col-span-8" : "col-span-6"}`}
                   onChange={(e) => {
                     const value =
                       e.target.value === "new-player"
