@@ -140,10 +140,10 @@ const SessionForm = () => {
   return (
     <form
       ref={sessionFormRef}
-      className="flex flex-col gap-4 "
+      className="flex flex-col gap-4"
       onSubmit={submitSession}
     >
-      <div className="flex flex-col gap-1 ">
+      <div className="flex flex-col gap-1">
         <label htmlFor="date">date</label>
         <input
           type="date"
@@ -181,19 +181,19 @@ const SessionForm = () => {
           ))}
         </select>
       </div>
-      <div className=" flex flex-col gap-1 pb-4 max-h-96 overflow-y-auto ">
+      <div className="flex flex-col gap-1 pb-4 max-h-96 overflow-y-auto">
         <h3>players and {noScoreBoardGame ? "winners" : "scores"}</h3>
         <div className="flex flex-col gap-2">
           {playerScores.map((item, i) => (
             <div
               key={`playerdiv-${i}`}
-              className="flex items-center gap-2 w-full"
+              className="grid grid-cols-10 gap-1.5 sm:gap-2 w-full items-stretch"
             >
               {/* EXISTING PLAYERS from the dropdown */}
               {!item.player.isNew && (
                 <select
                   id={`playerName-${i}`}
-                  className="outline-none border border-slate-400 px-1 py-1 flex-1 h-[30px] cursor-pointer"
+                  className={`outline-none border border-slate-400 px-1 py-1 flex-1 h-[30px] cursor-pointer  ${noScoreBoardGame ? "col-span-8" : "col-span-6"}`}
                   onChange={(e) => {
                     const value =
                       e.target.value === "new-player"
@@ -233,7 +233,7 @@ const SessionForm = () => {
                   id={`playerName-${i}`}
                   type="text"
                   value={item.player.name}
-                  className="outline-none border border-slate-400 px-2 py-0.5 flex-1 shrink min-w-0"
+                  className={`outline-none border border-slate-400 px-2 py-0.5 ${noScoreBoardGame ? "col-span-8" : "col-span-6"}`}
                   onChange={(e) =>
                     updatePlayer(i, {
                       player: {
@@ -245,22 +245,28 @@ const SessionForm = () => {
                 />
               )}
               {noScoreBoardGame ? (
-                <div className="flex items-center gap-4 px-4  justify-center">
-                  <input
-                    type="checkbox"
-                    id={`playerscore-${i}`}
-                    className="border border-slate-400 px-2 py-1.5 size-7! outline-none focus:border-teal-700 transition-class"
-                    onChange={(e) =>
-                      updatePlayer(i, {
-                        score: e.target.checked ? 1 : 0,
-                      })
-                    }
-                  />
+                <div className="flex items-center gap-4  justify-center">
+                  <label className="h-full w-auto aspect-square mx-auto">
+                    <input
+                      type="checkbox"
+                      id={`playerscore-${i}`}
+                      className="peer appearance-none hidden"
+                      onChange={(e) =>
+                        updatePlayer(i, {
+                          score: e.target.checked ? 1 : 0,
+                        })
+                      }
+                    />
+                    <div className="smx-auto aspect-square h-full border border-stroke peer-focus:border-teal-700  peer-checked:text-accent text-transparent cursor-pointer transition-class flex items-center justify-center">
+                      {" "}
+                      <i className="fa-solid fa-check"></i>{" "}
+                    </div>
+                  </label>
                 </div>
               ) : (
                 <input
                   type="number"
-                  className="outline-none max-sm:max-w-14 max-lg:max-w-22 border border-slate-400 px-2 py-0.5  "
+                  className="outline-none col-span-3 border border-slate-400 px-2 py-0.5  "
                   id={`playerscore-${i}`}
                   placeholder="Add score..."
                   value={item.score || 0}
@@ -273,7 +279,7 @@ const SessionForm = () => {
               )}
 
               <button
-                className="  border h-[30px] px-2 flex items-center border-slate-400 justify-center cursor-pointer hover:text-amber-700 hover:border-amber-700 transition-class"
+                className="border w-full h-full  flex items-center border-slate-400 justify-center cursor-pointer hover:text-amber-700 hover:border-amber-700 transition-class text-sm sm:text-base"
                 type="button"
                 key={`delete-player-row-${i}`}
                 onClick={() => removePlayerRow(Number(i))}
@@ -306,7 +312,7 @@ const SessionForm = () => {
       {error && <p className="text-red-500 text-sm">{error}</p>}
       <button
         type="submit"
-        className="mt-2 cursor-pointer border border-slate-400 hover:border-teal-700 transition-class px-2 py-1.5"
+        className=" cursor-pointer border border-slate-400 hover:border-teal-700 transition-class px-2 py-1.5"
       >
         {addingSession ? "Adding..." : " Save Session"}
       </button>

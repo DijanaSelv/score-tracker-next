@@ -51,7 +51,7 @@ const GameForm = () => {
   return (
     <form
       ref={gameFormRef}
-      className="flex flex-col gap-4 min-w-xs"
+      className="flex flex-col gap-4 w-full"
       onSubmit={submitBoardGame}
     >
       <div className="flex flex-col gap-1">
@@ -62,10 +62,10 @@ const GameForm = () => {
           placeholder="name"
           id="name"
           name="name"
-          className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
+          className=" border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
         />
       </div>
-      <div className="flex flex-row items-center justify-between w-full cursor-pointer">
+      <div className="flex flex-row items-center justify-between cursor-pointer">
         <label htmlFor="nopoints" className="cursor-pointer">
           Won or lost only (no points)
         </label>
@@ -80,7 +80,7 @@ const GameForm = () => {
       {error && <p className="text-red-500 text-sm">{error}</p>}
       <button
         type="submit"
-        className="mt-2 cursor-pointer border border-slate-400  hover:border-teal-700 transition-class    px-2 py-1.5"
+        className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class    px-2 py-1.5"
       >
         {addingGame ? "Adding..." : "+ Add Board Game"}
       </button>
