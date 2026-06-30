@@ -6,12 +6,14 @@ import SortBy from "@/../components/SortBy";
 import PopupModalWrapper from "../../components/PopupModalWrapper";
 import SecondaryButton from "../../components/SecondaryButton";
 import { useRouter } from "next/navigation";
+import { useSidebarContext } from "@/app/context/SideBarContext";
 
 export default function BoardGamesList() {
   const [sortTerm, setSortTerm] = useState<string>("name");
   const router = useRouter();
 
   const { boardGames } = useGlobalData();
+  const { openSidebar } = useSidebarContext();
 
   const [sortDescending, setSortDescending] = useState<boolean>(false);
   const [MobileExpandedView, setMobileExpandedView] = useState<boolean>(false);
@@ -107,6 +109,7 @@ export default function BoardGamesList() {
             slug: string;
             session_count: number;
             last_played: Date;
+            nopoints: boolean;
           }) => (
             <a
               href={`/boardgame/${game.slug}`}
@@ -131,16 +134,17 @@ export default function BoardGamesList() {
                 </h3>
 
                 <div className="flex items-start gap-2 lg:opacity-0 group-hover:opacity-100 transition-class">
-                  {/* <button
+                  <button
                     className="cursor-pointer transition-class hover:text-accent"
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
+                      openSidebar("edit-game", { game });
                     }}
                   >
                     {" "}
                     <i className="fa-solid fa-pencil text-xs "></i>{" "}
-                  </button> */}
+                  </button>
                   <button
                     className="cursor-pointer transition-class hover:text-danger"
                     onClick={(e) => {

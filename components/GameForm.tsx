@@ -1,25 +1,43 @@
 "use client";
-import { useRef, useState } from "react";
-import { addBoardGame } from "../lib/queries";
+import { useEffect, useRef, useState } from "react";
+import { addBoardGame, updateBoardGame } from "../lib/queries";
 import { useRouter } from "next/navigation";
+import { useSidebarContext } from "@/app/context/SideBarContext";
+import { useGlobalData } from "@/app/context/GlobalDataContext";
 
 const GameForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [addingGame, setAddingGame] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
+  const [noPoints, setNoPoints] = useState<boolean>(false);
+
   const gameFormRef = useRef<HTMLFormElement>(null);
+
   const router = useRouter();
+
+  const { sidebar, closeSidebar } = useSidebarContext();
+  const { boardGames } = useGlobalData();
 
   const closeAndResetForm = () => {
     gameFormRef.current?.reset();
     setError(null);
   };
 
+  useEffect(() => {
+    if (
+      sidebar.mode === "edit-game" &&
+      sidebar.payload &&
+      sidebar.payload.game
+    ) {
+      const game = sidebar.payload.game;
+
+      setName(game.name);
+      setNoPoints(game.nopoints);
+    }
+  }, [sidebar.mode, sidebar.payload]);
+
   const submitBoardGame = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
-    const noPoints = formData.get("nopoints") != null;
 
     if (!name) {
       setError("You must type a name.");
@@ -48,6 +66,21 @@ const GameForm = () => {
     setAddingGame(false);
   };
 
+  const updateCurrentGame = () => {
+    try {
+      setAddingGame(true);
+      updateBoardGame(name, noPoints, sidebar.payload!.game!.boardgameid);
+      closeAndResetForm();
+      closeSidebar();
+      router.refresh();
+    } catch (error: unknown) {
+      setError("Couldn't update board game");
+      console.log(error);
+    }
+
+    setAddingGame(false);
+  };
+
   return (
     <form
       ref={gameFormRef}
@@ -55,9 +88,16 @@ const GameForm = () => {
       onSubmit={submitBoardGame}
     >
       <div className="flex flex-col gap-1">
-        <label htmlFor="name">Board Game Name</label>
+        {sidebar.mode == "add-game" ? (
+          <label htmlFor="name">Board Game Name</label>
+        ) : (
+          <label htmlFor="name">Edit Game </label>
+        )}
+
         <input
           required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           type="text"
           placeholder="name"
           id="name"
@@ -71,19 +111,34 @@ const GameForm = () => {
         </label>
         <input
           type="checkbox"
+          checked={noPoints}
           id="nopoints"
           name="nopoints"
-          value="true"
-          className="border border-slate-400 px-2 py-1.5 size-4! outline-none focus:border-teal-700 transition-class"
+          onChange={() => setNoPoints((prev) => !prev)}
+          className="border border-slate-400 px-2 py-1.5 size-4! outline-none focus:border-teal-700 transition-class cursor-pointer"
         />
       </div>
       {error && <p className="text-red-500 text-sm">{error}</p>}
-      <button
-        type="submit"
-        className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class    px-2 py-1.5"
-      >
-        {addingGame ? "Adding..." : "+ Add Board Game"}
-      </button>
+      {sidebar.mode == "add-game" ? (
+        <button
+          type="submit"
+          className="cursor-pointer border border-slate-400  hover:border-teal-700 transition-class    px-2 py-1.5"
+        >
+          {addingGame ? "Adding..." : "+ Add Board Game"}
+        </button>
+      ) : (
+        <button
+          type="button"
+          disabled={
+            sidebar.payload?.game?.name == name &&
+            sidebar.payload?.game?.nopoints == noPoints
+          }
+          className=" enabled:cursor-pointer border border-slate-400 enabled:hover:border-teal-700 transition-class disabled:opacity-50 px-2 py-1.5"
+          onClick={() => updateCurrentGame()}
+        >
+          Save Changes
+        </button>
+      )}
     </form>
   );
 };

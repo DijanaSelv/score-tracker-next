@@ -187,6 +187,20 @@ export async function addBoardGame(name: string, noPoints: boolean) {
   //return rows[0];
 }
 
+export async function updateBoardGame(
+  name: string,
+  noPoints: boolean,
+  id: number,
+) {
+  const { rows } = await pool.query(
+    `
+    UPDATE boardgame SET name = '${name}', nopoints = '${noPoints}'
+    WHERE boardgameid = '${id}'
+    `,
+  );
+  //return rows[0];
+}
+
 /* PLAYER */
 export async function addPlayer(name: string) {
   const { rows } = await pool.query(
