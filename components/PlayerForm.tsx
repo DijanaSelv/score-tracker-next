@@ -1,8 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { addPlayer } from "../lib/queries";
+import { addPlayer, updatePlayer } from "../lib/queries";
+import { useSidebarContext } from "@/app/context/SideBarContext";
+import { useGlobalData } from "@/app/context/GlobalDataContext";
 
 const PlayerForm = () => {
   const [error, setError] = useState<string | null>(null);
@@ -11,11 +13,22 @@ const PlayerForm = () => {
   const [playerData, setPlayerData] = useState<string[]>([""]);
   const playerFormRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
+  const { sidebar, closeSidebar } = useSidebarContext();
+  const { players } = useGlobalData();
+
+  useEffect(() => {
+    if (
+      sidebar.mode === "edit-player" &&
+      sidebar.payload &&
+      sidebar.payload.player
+    ) {
+      setPlayerData([sidebar.payload.player.name]);
+    }
+  }, [sidebar.mode, sidebar.payload, players]);
 
   const removePlayerRow = (rowIndex: number) => {
     setPlayerData((prev) => {
       const newPlayers = prev.toSpliced(rowIndex, 1);
-      console.log(newPlayers);
       return newPlayers;
     });
   };
@@ -26,7 +39,7 @@ const PlayerForm = () => {
     setError(null);
   };
 
-  const submitPlayer = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitPlayers = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
@@ -54,19 +67,38 @@ const PlayerForm = () => {
     }
     setAddingPlayer(false);
   };
+
+  const updateCurrentPlayer = () => {
+    try {
+      setAddingPlayer(true);
+      updatePlayer(playerData[0], sidebar.payload!.player!.playerid);
+      closeAndResetForm();
+      closeSidebar();
+      router.refresh();
+    } catch (error: unknown) {
+      setError("Couldn't update player");
+    }
+
+    setAddingPlayer(false);
+  };
+
   return (
     <form
       ref={playerFormRef}
       className="flex flex-col gap-4 w-full"
-      onSubmit={submitPlayer}
+      onSubmit={submitPlayers}
     >
       <div className="flex flex-col gap-1">
-        <label className="">Add Players</label>
+        {sidebar.mode == "add-player" ? (
+          <label className="">Add Players</label>
+        ) : (
+          <label className="">Edit Player</label>
+        )}
+
         {playerData.map((item, i) => (
           <div
             className="flex flex-row gap-2 items-stretch pb-2"
             key={`newplayerdiv-${i}`}
-            onClick={() => console.log(i)}
           >
             <input
               type="text"
@@ -99,24 +131,37 @@ const PlayerForm = () => {
         ))}
       </div>
 
-      <button
-        type="button"
-        onClick={() => setPlayerData((prev) => [...prev, ""])}
-        className="border p-1 cursor-pointer  border-slate-400 hover:rounded-none hover:shadow-sm hover:border-teal-700\20 flex items-baseline gap-1 justify-center transition-class text-xs  opacity-50 hover:opacity-100  w-fit ml-auto"
-        aria-label="add a player to the session"
-      >
-        <span>add player</span>
-        <i className="fa-solid fa-plus text-[8px]" aria-hidden="true"></i>
-      </button>
+      {sidebar.mode == "add-player" && (
+        <button
+          type="button"
+          onClick={() => setPlayerData((prev) => [...prev, ""])}
+          className="border p-1 cursor-pointer  border-slate-400 hover:rounded-none hover:shadow-sm hover:border-teal-700\20 flex items-baseline gap-1 justify-center transition-class text-xs  opacity-50 hover:opacity-100  w-fit ml-auto"
+          aria-label="add a player to the session"
+        >
+          <span>add player</span>
+          <i className="fa-solid fa-plus text-[8px]" aria-hidden="true"></i>
+        </button>
+      )}
       {error && <p className="text-red-500 text-sm">{error}</p>}
-      <button
-        type="submit"
-        className=" cursor-pointer border border-slate-400 hover:border-teal-700 transition-class    px-2 py-1.5"
-      >
-        {addingPlayer
-          ? "Adding..."
-          : `+ Add Player${playerData.length > 1 ? "s" : ""}`}
-      </button>
+      {sidebar.mode == "add-player" ? (
+        <button
+          type="submit"
+          className=" cursor-pointer border border-slate-400 hover:border-teal-700 transition-class    px-2 py-1.5"
+        >
+          {addingPlayer
+            ? "Adding..."
+            : `+ Add Player${playerData.length > 1 ? "s" : ""}`}
+        </button>
+      ) : (
+        <button
+          type="button"
+          disabled={sidebar.payload?.player?.name == playerData[0]}
+          className=" enabled:cursor-pointer border border-slate-400 enabled:hover:border-teal-700 transition-class disabled:opacity-50 px-2 py-1.5"
+          onClick={() => updateCurrentPlayer()}
+        >
+          Save Changes
+        </button>
+      )}
     </form>
   );
 };

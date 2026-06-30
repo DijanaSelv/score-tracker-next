@@ -54,7 +54,9 @@ export type SidebarMode =
   | "edit-session";
 
 export type Payload = {
-  selectedBoardGame?: number;
+  player?: Player;
+  session?: Session;
+  game?: BoardGame;
 };
 export type SidebarState = {
   isOpen: boolean;

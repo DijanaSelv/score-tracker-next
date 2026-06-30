@@ -7,6 +7,7 @@ import PopupModalWrapper from "../../../components/PopupModalWrapper";
 import SecondaryButton from "../../../components/SecondaryButton";
 import { useRouter } from "next/navigation";
 import SortBy from "../../../components/SortBy";
+import { useSidebarContext } from "@/app/context/SideBarContext";
 
 const PlayersClient = () => {
   const [deleteItemPopup, setDeleteItemPopup] = useState(false);
@@ -20,6 +21,7 @@ const PlayersClient = () => {
   const [sortTerm, setSortTerm] = useState<string>("session_count");
 
   const router = useRouter();
+  const { openSidebar } = useSidebarContext();
 
   const { players } = useGlobalData();
 
@@ -125,16 +127,17 @@ const PlayersClient = () => {
                 </h3>
 
                 <div className="flex items-start gap-2 lg:opacity-0 group-hover:opacity-100 transition-class">
-                  {/* <button
-                                    className="cursor-pointer transition-class hover:text-accent"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      e.preventDefault();
-                                    }}
-                                  >
-                                    {" "}
-                                    <i className="fa-solid fa-pencil text-xs "></i>{" "}
-                                  </button> */}
+                  <button
+                    className="cursor-pointer transition-class hover:text-accent"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      openSidebar("edit-player", { player });
+                    }}
+                  >
+                    {" "}
+                    <i className="fa-solid fa-pencil text-xs "></i>{" "}
+                  </button>
                   <button
                     className="cursor-pointer transition-class hover:text-danger"
                     onClick={(e) => {

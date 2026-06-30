@@ -209,6 +209,17 @@ export async function addPlayer(name: string) {
   return { playerid, name: rows[0].name };
 }
 
+export async function updatePlayer(name: string, id: number) {
+  const { rows } = await pool.query(
+    `
+    UPDATE player SET name = '${name}'
+    WHERE playerid = '${id}'
+    `,
+  );
+
+  //return rows[0];
+}
+
 /* SESSION */
 export async function addSession(
   boardgameid: number,

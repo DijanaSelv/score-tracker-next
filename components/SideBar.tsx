@@ -57,7 +57,9 @@ const SideBar = () => {
       <div className="flex flex-col gap-3 pt-4  divide-stroke/40 divide-y *:pb-3 ">
         {sidebar.mode == "add-game" && <GameForm />}
 
-        {sidebar.mode == "add-player" && <PlayerForm />}
+        {(sidebar.mode == "add-player" || sidebar.mode == "edit-player") && (
+          <PlayerForm />
+        )}
 
         {sidebar.mode == "add-session" && <SessionForm />}
       </div>
