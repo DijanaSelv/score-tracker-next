@@ -6,6 +6,17 @@ export type Player = {
   last_played: Date;
 };
 
+export type PlayerInfo = {
+  id: number | undefined;
+  name: string;
+  isNew: boolean;
+};
+
+export type PlayerScore = {
+  player: PlayerInfo;
+  score: number | undefined;
+};
+
 export type BoardGame = {
   boardgameid: number;
   name: string;

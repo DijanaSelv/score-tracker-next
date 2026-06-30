@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { addSession } from "../lib/queries";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useGlobalData } from "@/app/context/GlobalDataContext";
+import { PlayerScore } from "../lib/types";
 
 const SessionForm = () => {
   const router = useRouter();
@@ -26,17 +27,6 @@ const SessionForm = () => {
     }
   }, [boardGames, slug]);
   /* Players and scores in player rows  */
-
-  type PlayerInfo = {
-    id: number | undefined;
-    name: string;
-    isNew: boolean;
-  };
-
-  type PlayerScore = {
-    player: PlayerInfo;
-    score: number | undefined;
-  };
 
   const [playerScores, setPlayerScores] = useState<PlayerScore[]>([
     {
