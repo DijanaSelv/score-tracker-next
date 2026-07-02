@@ -7,10 +7,12 @@ import SortBy from "../../../components/SortBy";
 import { useRouter } from "next/navigation";
 import SecondaryButton from "../../../components/SecondaryButton";
 import { formatDate } from "../../../lib/utils";
+import { useSidebarContext } from "@/app/context/SideBarContext";
 
 type SessionRow = {
   boardgamename: string;
   boardgameslug: string;
+  boardgameid: number;
   date: string;
   sessionid: number;
   winners: { name: string; slug: string }[] | [];
@@ -46,12 +48,15 @@ const SessionsLogClient = ({
     name: string;
     score: number;
     position: number;
+    playerid: number;
   };
   const router = useRouter();
+  const { openSidebar } = useSidebarContext();
 
   const [sessionData, setSessionData] = useState<{
     boardgamename: string | null;
     boardgameslug: string | null;
+    boardgameid: number | null;
     playerSessions: PlayerSession[] | null;
     date: string | null;
     nopoints: boolean;
@@ -71,10 +76,10 @@ const SessionsLogClient = ({
   };
 
   const uniqueBoardGamesNames = new Set(
-    sessionsData.map((item) => item.boardgamename)
+    sessionsData.map((item) => item.boardgamename),
   );
   const uniqueWinners = new Set(
-    sessionsData.map((item) => item.winners?.map((w) => w.name)).flat()
+    sessionsData.map((item) => item.winners?.map((w) => w.name)).flat(),
   );
   const uniqueDates = new Set(sessionsData.map((item) => item.date));
 
@@ -84,7 +89,7 @@ const SessionsLogClient = ({
         return a.boardgamename.localeCompare(b.boardgamename);
       case "winner":
         return (a.winners?.[0]?.name ?? "").localeCompare(
-          b.winners?.[0]?.name ?? ""
+          b.winners?.[0]?.name ?? "",
         );
       case "date":
         return new Date(b.date).getTime() - new Date(a.date).getTime();
@@ -101,20 +106,20 @@ const SessionsLogClient = ({
     let filterData = orderedData;
     if (filterConditions.boardGameNameFilter) {
       filterData = filterData.filter(
-        (row) => row.boardgamename == filterConditions.boardGameNameFilter
+        (row) => row.boardgamename == filterConditions.boardGameNameFilter,
       );
     }
     if (filterConditions.dateFilter) {
       filterData = filterData.filter(
-        (row) => row.date == filterConditions.dateFilter
+        (row) => row.date == filterConditions.dateFilter,
       );
     }
     if (filterConditions.winnerFilter) {
       filterData = filterData.filter((row) =>
         row.winners?.some(
           (winner: { name: string; slug: string }) =>
-            winner.name == filterConditions.winnerFilter
-        )
+            winner.name == filterConditions.winnerFilter,
+        ),
       );
     }
 
@@ -173,17 +178,39 @@ const SessionsLogClient = ({
     sessionid: number,
     date: string,
     boardgamename: string,
+    boardgameid: number,
     boardgameslug: string,
-    nopoints: boolean
+    nopoints: boolean,
   ) => {
     const res = await fetch(`../api/session/${sessionid}`);
     const playerSessions = (await res.json()) as PlayerSession[];
     setSessionData({
       boardgamename,
+      boardgameid,
       boardgameslug,
       date,
       playerSessions,
       nopoints,
+    });
+  };
+
+  /* we're getting the data and formatting it so that it works with the data the form expects */
+
+  const openSidebarToEditSession = async (session: SessionRow) => {
+    const res = await fetch(`../api/session/${session.sessionid}`);
+    const playerSessions = (await res.json()) as PlayerSession[];
+
+    const playersinfo = playerSessions.map((item) => ({
+      player: { id: item.playerid, isNew: false, name: item.name },
+      score: item.score,
+    }));
+    openSidebar("edit-session", {
+      session: {
+        sessionid: session.sessionid,
+        boardgameid: session.boardgameid,
+        date: session.date,
+        playersandscores: playersinfo,
+      },
     });
   };
 
@@ -265,11 +292,11 @@ const SessionsLogClient = ({
                               "string" &&
                             !isNaN(
                               Date.parse(
-                                filterConditions[header.filterKey!] as string
-                              )
+                                filterConditions[header.filterKey!] as string,
+                              ),
                             )
                               ? new Date(
-                                  filterConditions[header.filterKey!] as string
+                                  filterConditions[header.filterKey!] as string,
                                 ).toLocaleDateString("en-GB")
                               : filterConditions[header.filterKey!]}
                           </span>{" "}
@@ -320,12 +347,24 @@ const SessionsLogClient = ({
                         row.sessionid,
                         new Date(row.date).toLocaleDateString("en-GB"),
                         row.boardgamename,
+                        row.boardgameid,
                         row.boardgameslug,
-                        row.nopoints
+                        row.nopoints,
                       )
                     }
                   >
                     see more
+                  </button>
+
+                  <button
+                    className="opacity-0 group-hover:opacity-100 transition-class cursor-pointer text-foreground/60 hover:text-accent"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      openSidebarToEditSession(finalDataForDisplay[i]);
+                    }}
+                  >
+                    <i className="fa-solid fa-pencil text-xs "></i>
                   </button>
 
                   <button

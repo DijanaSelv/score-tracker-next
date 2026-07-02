@@ -23,6 +23,8 @@ const PlayerForm = () => {
       sidebar.payload.player
     ) {
       setPlayerData([sidebar.payload.player.name]);
+    } else {
+      setPlayerData([""]);
     }
   }, [sidebar.mode, sidebar.payload, players]);
 

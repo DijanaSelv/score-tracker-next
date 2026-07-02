@@ -33,6 +33,9 @@ const GameForm = () => {
 
       setName(game.name);
       setNoPoints(game.nopoints);
+    } else {
+      setName("");
+      setNoPoints(false);
     }
   }, [sidebar.mode, sidebar.payload]);
 

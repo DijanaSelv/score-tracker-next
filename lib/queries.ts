@@ -2,10 +2,7 @@
 
 import pool from "./db.js";
 
-type PlayerScoreInput = {
-  player: { id: number; isNew?: boolean; name: string };
-  score: number;
-};
+import { PlayerScore } from "./types.js";
 
 /* GET STUFF  */
 
@@ -39,7 +36,7 @@ export async function getPlayers() {
 export async function getAllSessions() {
   const { rows } = await pool.query(
     `
-    SELECT s.date, bg.name as boardgamename, bg.slug as boardgameslug, bg.nopoints as nopoints, 
+    SELECT s.date, bg.name as boardgamename, bg.boardgameid as boardgameid, bg.slug as boardgameslug, bg.nopoints as nopoints, 
     COALESCE(
       json_agg(
         json_build_object(
@@ -61,7 +58,7 @@ export async function getAllSessions() {
     JOIN boardgame bg on bg.boardgameid = s.boardgameid
     JOIN sessionplayer sp on sp.sessionid = s.sessionid
     JOIN  player p on p.playerid = sp.playerid 
-    GROUP BY s.sessionid, s.date, bg.name, bg.slug, bg.nopoints
+    GROUP BY s.sessionid, s.date, bg.name, bg.slug, bg.nopoints, bg.boardgameid
     ORDER BY s.date DESC
     `,
   );
@@ -101,7 +98,7 @@ export async function getSessions(boardGameId: number) {
 
 export async function getSessionDetails(sessionId: number) {
   const { rows } = await pool.query(
-    `SELECT sp.score, sp.position, p.name, p.slug
+    `SELECT sp.score, sp.position, p.name, p.slug, sp.playerid
      FROM SessionPlayer sp 
      JOIN Player p on sp.playerid = p.playerid
      WHERE sp.sessionid = ${sessionId}
@@ -238,7 +235,7 @@ export async function updatePlayer(name: string, id: number) {
 export async function addSession(
   boardgameid: number,
   date: Date,
-  playersandscores: PlayerScoreInput[],
+  playersandscores: PlayerScore[],
 ) {
   const newPlayers = playersandscores.filter((playerrow) =>
     Boolean(playerrow.player.isNew),
@@ -262,7 +259,13 @@ export async function addSession(
     if (playerrow.player.isNew) {
       const addedPlayer = addedPlayers.find(
         (p) => p.name == playerrow.player.name,
-      )!;
+      );
+
+      if (!addedPlayer) {
+        throw new Error(
+          `New player "${playerrow.player.name}" was not created.`,
+        );
+      }
 
       return {
         ...playerrow,
@@ -295,6 +298,94 @@ export async function addSession(
       allPlayerScores.map((p) => p.score),
     ],
   );
+}
+
+export async function updateSession(
+  sessionid: number,
+  boardgameid: number,
+  date: Date,
+  playersandscores: PlayerScore[],
+) {
+  const newPlayers = playersandscores.filter((playerrow) =>
+    Boolean(playerrow.player.isNew),
+  );
+
+  const addedPlayers = newPlayers.length
+    ? await Promise.all(newPlayers.map((p) => addPlayer(p.player.name!)))
+    : [];
+
+  const allPlayerScores = playersandscores.map((playerrow) => {
+    if (playerrow.player.isNew) {
+      const addedPlayer = addedPlayers.find(
+        (p) => p.name == playerrow.player.name,
+      );
+      if (!addedPlayer) {
+        throw new Error(
+          `New player "${playerrow.player.name}" was not created.`,
+        );
+      }
+
+      return {
+        ...playerrow,
+        player: { id: addedPlayer.playerid, isNew: false },
+      };
+    } else {
+      return playerrow;
+    }
+  });
+
+  /* Using a transaction so that if one step fails everything rolls back */
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    await client.query(
+      `
+  UPDATE session
+  SET boardgameid = ${boardgameid},
+      date = $1
+  WHERE sessionid = ${sessionid}
+  `,
+      [date],
+    );
+
+    /* we delete old player scores and add the new ones */
+    await client.query(
+      `
+  DELETE FROM sessionplayer
+  WHERE sessionid = ${sessionid}
+  `,
+    );
+
+    await client.query(
+      `
+  INSERT INTO sessionplayer (sessionid, playerid, score, position)
+  SELECT
+    $1,
+    playerid,
+    score,
+    DENSE_RANK() OVER (ORDER BY score DESC)
+  FROM (
+    SELECT
+      unnest($2::int[]) AS playerid,
+      unnest($3::int[]) AS score
+  ) s
+  ORDER BY score DESC, playerid
+  `,
+      [
+        sessionid,
+        allPlayerScores.map((p) => p.player.id),
+        allPlayerScores.map((p) => p.score),
+      ],
+    );
+
+    await client.query("COMMIT");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~DELETE STUFF */

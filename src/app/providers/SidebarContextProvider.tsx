@@ -42,9 +42,17 @@ export default function SidebarContextProvider({
     });
   };
 
+  const setPayload = (payload?: Payload) => {
+    setSidebar((prev) => ({
+      isOpen: prev.isOpen,
+      mode: prev.mode,
+      payload,
+    }));
+  };
+
   return (
     <SidebarContext.Provider
-      value={{ sidebar, openSidebar, closeSidebar, setMode }}
+      value={{ sidebar, openSidebar, closeSidebar, setMode, setPayload }}
     >
       {children}
     </SidebarContext.Provider>

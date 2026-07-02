@@ -1,22 +1,31 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { addSession } from "../lib/queries";
+import { addSession, updateSession } from "../lib/queries";
 import { useParams, useRouter } from "next/navigation";
 import { useGlobalData } from "@/app/context/GlobalDataContext";
 import { PlayerScore } from "../lib/types";
+import { useSidebarContext } from "@/app/context/SideBarContext";
 
 const SessionForm = () => {
   const router = useRouter();
-  const sessionFormRef = useRef<HTMLFormElement>(null);
   const { players, boardGames } = useGlobalData();
   const { slug } = useParams();
 
   const [noScoreBoardGame, setNoScoreBoardGame] = useState<boolean>(false);
   const [selectedGameId, setSelectedGameId] = useState<number | "">("");
+  const [selectedDate, setSelectedDate] = useState<string | "">("");
+
+  const { closeSidebar, sidebar } = useSidebarContext();
 
   /* UX states */
   const [error, setError] = useState<string | null>(null);
   const [addingSession, setAddingSession] = useState<boolean>(false);
+  const [playerScores, setPlayerScores] = useState<PlayerScore[]>([
+    {
+      player: { id: undefined, name: "", isNew: false },
+      score: undefined,
+    },
+  ]);
 
   /* if we're on a boardgame page, then that board game should be preselected */
   useEffect(() => {
@@ -26,14 +35,28 @@ const SessionForm = () => {
       setSelectedGameId(game.boardgameid);
     }
   }, [boardGames, slug]);
-  /* Players and scores in player rows  */
 
-  const [playerScores, setPlayerScores] = useState<PlayerScore[]>([
-    {
-      player: { id: undefined, name: "", isNew: false },
-      score: undefined,
-    },
-  ]);
+  useEffect(() => {
+    if (
+      sidebar.mode == "edit-session" &&
+      sidebar.payload &&
+      sidebar.payload.session
+    ) {
+      setSelectedGameId(sidebar.payload.session.boardgameid);
+      setPlayerScores(sidebar.payload.session.playersandscores);
+      setSelectedDate(sidebar.payload.session.date.slice(0, 10));
+    } else {
+      setSelectedDate("");
+      setSelectedGameId("");
+      setPlayerScores([
+        {
+          player: { id: undefined, name: "", isNew: false },
+          score: undefined,
+        },
+      ]);
+    }
+  }, [sidebar.mode, sidebar.payload]);
+  /* Players and scores in player rows  */
 
   // Pass the changes and update the player in playerScores
   const updatePlayer = (
@@ -59,10 +82,12 @@ const SessionForm = () => {
   };
 
   const closeAndResetForm = () => {
-    sessionFormRef.current?.reset();
     setPlayerScores([
       { player: { id: undefined, name: "", isNew: false }, score: 0 },
     ]);
+    setSelectedGameId("");
+    setSelectedGameId("");
+    setSelectedDate("");
     setError(null);
   };
 
@@ -76,19 +101,15 @@ const SessionForm = () => {
   const submitSession = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
-    const dateValue = formData.get("date");
-    const boardgameid = Number(formData.get("boardgame"));
-
     if (
-      typeof dateValue !== "string" ||
-      !boardgameid ||
+      typeof selectedDate !== "string" ||
+      !selectedGameId ||
       (playerScores.length <= 1 && playerScores[0]?.player.id == undefined)
     ) {
       setError("You must fill all fields.");
       return;
     }
-    const date = new Date(dateValue);
+    const date = new Date(selectedDate);
 
     try {
       setAddingSession(true);
@@ -108,7 +129,7 @@ const SessionForm = () => {
         };
       });
 
-      await addSession(boardgameid, date, normalizedScores);
+      await addSession(selectedGameId, date, normalizedScores);
       closeAndResetForm();
       router.refresh();
     } catch (err: unknown) {
@@ -127,12 +148,45 @@ const SessionForm = () => {
     setAddingSession(false);
   };
 
+  const updateCurrentSession = async () => {
+    const session = sidebar.payload?.session;
+
+    if (
+      typeof selectedDate !== "string" ||
+      !session ||
+      !selectedGameId ||
+      (playerScores.length <= 1 && playerScores[0]?.player.id == undefined)
+    ) {
+      setError("You must fill all fields.");
+      return;
+    }
+    try {
+      setAddingSession(true);
+      const date = new Date(selectedDate);
+      await updateSession(
+        session.sessionid,
+        selectedGameId,
+        date,
+        playerScores,
+      );
+      closeAndResetForm();
+      closeSidebar();
+      router.refresh();
+    } catch (error: unknown) {
+      setError("Couldn't update board game");
+      console.log(error);
+    }
+
+    setAddingSession(false);
+  };
+
   return (
-    <form
-      ref={sessionFormRef}
-      className="flex flex-col gap-4"
-      onSubmit={submitSession}
-    >
+    <form className="flex flex-col gap-4" onSubmit={submitSession}>
+      {sidebar.mode == "add-session" ? (
+        <h3 className="text-lg">Add a New Session</h3>
+      ) : (
+        <h3 className="text-lg">Edit Session</h3>
+      )}
       <div className="flex flex-col gap-1">
         <label htmlFor="date">date</label>
         <input
@@ -140,6 +194,8 @@ const SessionForm = () => {
           required
           id="date"
           name="date"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
           className="border border-slate-400 px-2 py-1.5 outline-none focus:border-teal-700 transition-class"
         />
       </div>
@@ -184,6 +240,7 @@ const SessionForm = () => {
                 <select
                   id={`playerName-${i}`}
                   className={`outline-none border border-slate-400 px-1 py-1 flex-1 cursor-pointer  ${noScoreBoardGame ? "col-span-8" : "col-span-6"}`}
+                  value={item.player.id}
                   onChange={(e) => {
                     const value =
                       e.target.value === "new-player"
@@ -300,12 +357,27 @@ const SessionForm = () => {
         </div>
       </div>
       {error && <p className="text-red-500 text-sm">{error}</p>}
-      <button
-        type="submit"
-        className=" cursor-pointer border border-slate-400 hover:border-teal-700 transition-class px-2 py-1.5"
-      >
-        {addingSession ? "Adding..." : " Save Session"}
-      </button>
+      {sidebar.mode == "add-session" ? (
+        <button
+          type="submit"
+          className=" cursor-pointer border border-slate-400 hover:border-teal-700 transition-class px-2 py-1.5"
+        >
+          {addingSession ? "Adding..." : " Save Session"}
+        </button>
+      ) : (
+        <button
+          type="button"
+          disabled={
+            sidebar.payload?.session?.boardgameid == selectedGameId &&
+            sidebar.payload?.session?.date.slice(0, 10) == selectedDate &&
+            sidebar.payload?.session?.playersandscores == playerScores
+          }
+          className=" enabled:cursor-pointer border border-slate-400 enabled:hover:border-teal-700 transition-class disabled:opacity-50 px-2 py-1.5"
+          onClick={() => updateCurrentSession()}
+        >
+          {addingSession ? "Saving..." : " Save Changes"}
+        </button>
+      )}
     </form>
   );
 };

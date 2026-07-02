@@ -5,7 +5,7 @@ import GameForm from "./GameForm";
 import { useSidebarContext } from "@/app/context/SideBarContext";
 
 const SideBar = () => {
-  const { sidebar, closeSidebar, setMode } = useSidebarContext();
+  const { sidebar, closeSidebar, setMode, setPayload } = useSidebarContext();
   console.log(sidebar.payload);
 
   return (
@@ -63,7 +63,9 @@ const SideBar = () => {
           <PlayerForm />
         )}
 
-        {sidebar.mode == "add-session" && <SessionForm />}
+        {(sidebar.mode == "add-session" || sidebar.mode == "edit-session") && (
+          <SessionForm />
+        )}
       </div>
     </div>
   );

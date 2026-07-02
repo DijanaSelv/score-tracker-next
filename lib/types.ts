@@ -45,6 +45,11 @@ export type SessionRow = {
   nopoints: boolean;
 };
 
+/* export type PlayerScoreInput = {
+  player: PlayerInfo;
+  score: number;
+}; */
+
 export type SidebarMode =
   | "add-game"
   | "edit-game"
@@ -55,7 +60,12 @@ export type SidebarMode =
 
 export type Payload = {
   player?: Player;
-  session?: Session;
+  session?: {
+    boardgameid: number;
+    date: string;
+    playersandscores: PlayerScore[];
+    sessionid: number;
+  };
   game?: BoardGame;
 };
 export type SidebarState = {
@@ -69,4 +79,5 @@ export type SidebarContextType = {
   openSidebar: (mode: SidebarMode, payload?: Payload) => void;
   closeSidebar: () => void;
   setMode: (mode: SidebarMode) => void;
+  setPayload: (payload: Payload | undefined) => void;
 };
